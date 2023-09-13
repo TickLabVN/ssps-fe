@@ -1,7 +1,7 @@
 {
   "name": "react-template",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "start": "yarn barrels && cross-env NODE_ENV=development vite --host",
