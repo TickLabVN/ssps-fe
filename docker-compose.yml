@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  ssps-fe:
+    image: ghcr.io/ticklabvn/ssps-fe:latest
+    ports:
+      - 7000:7000
+    container_name: ssps-fe
+    restart: always
