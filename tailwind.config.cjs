@@ -18,7 +18,9 @@ module.exports = withMT({
       decimal: 'decimal',
       circle: 'circle'
     },
-    extend: {}
+    extend: {
+      'header': "url('src/assets/images/header.png')"
+    }
   },
   plugins: []
 });
