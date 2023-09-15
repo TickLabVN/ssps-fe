@@ -57,7 +57,7 @@ jobs:
 
           cd /tickserver/backends/ssps-fe
           export SUDO=${{ secrets.DEPLOY_PASSWORD }}
-          echo $SUDO | sudo curl https://raw.githubusercontent.com/ticklabvn/ssps-fe/main/docker-compose.yml -o docker-compose.yml
+          echo $SUDO | sudo -S curl https://raw.githubusercontent.com/ticklabvn/ssps-fe/main/docker-compose.yml -o docker-compose.yml
           docker compose stop ssps-fe
           docker compose rm -f ssps-fe
           docker compose up -d ssps-fe
