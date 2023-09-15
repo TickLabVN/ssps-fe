@@ -49,15 +49,15 @@ jobs:
     runs-on: self-hosted
     needs: [build]
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: start nginx
         run: |
           export CR_PAT=${{ secrets.GITHUB_TOKEN }}
           echo $CR_PAT | docker login ${{ env.REGISTRY }} -u ${{ env.ORG_USERNAME }} --password-stdin
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-          cd /tickserver/backends/ssps-fe
-          export SUDO=${{ secrets.DEPLOY_PASSWORD }}
-          echo $SUDO | sudo -S curl https://raw.githubusercontent.com/ticklabvn/ssps-fe/main/docker-compose.yml -o docker-compose.yml
           docker compose stop ssps-fe
           docker compose rm -f ssps-fe
           docker compose up -d ssps-fe
