@@ -19,7 +19,7 @@ module.exports = withMT({
       circle: 'circle'
     },
     extend: {
-      'header': "url('src/assets/images/header.png')"
+      
     }
   },
   plugins: []
