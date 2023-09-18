@@ -1,7 +1,7 @@
 import { ILayout } from '@interfaces';
 import logo from '@assets/images/logobk.png';
 import corner from '@assets/images/corner.png';
-export const AuthLayout: ILayout = function ({ children }) {
+export const AuthLayout: ILayout = ({ children }) => {
   return (
     <div className='flex flex-col items-center w-full h-[100vh] gap-6 bg-[#F8F9FA] fixed'>
       <div className="bg-[url('./src/assets/images/header.png')] bg-no-repeat bg-cover bg-center py-5">

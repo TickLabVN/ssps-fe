@@ -5,10 +5,10 @@ import { authService } from '@services';
 import { useUserStore } from '@states';
 import { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { validateSchema } from '@utils';
+import { validateSchema } from './validateSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-export function AuthPage() {
+export const AuthPage = () => {
   const {
     register,
     handleSubmit,
@@ -42,20 +42,20 @@ export function AuthPage() {
         <div className='mb-16 flex flex-col gap-6'>
           <Input
             size='lg'
-            label='Username'
-            {...register('username', {
+            label='Email'
+            {...register('email', {
               required: true,
               minLength: 5
             })}
             type='text'
             crossOrigin=''
             className={
-              errors.username
+              errors.email
                 ? 'focus:text-red-200 focus:font-bold focus:bg-[#fdf2f2]  !text-red-200 !font-bold !bg-[#fdf2f2]'
                 : 'bg-white'
             }
           />
-          <h4 className='text-[red] font-bold'>{errors.username?.message}</h4>
+          <h4 className='text-[red] font-bold'>{errors.email?.message}</h4>
           <div className='relative'>
             <Input
               type={showPassword}
@@ -94,4 +94,4 @@ export function AuthPage() {
       </form>
     </Card>
   );
-}
+};

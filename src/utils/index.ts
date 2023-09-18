@@ -3,4 +3,3 @@
  */
 
 export * from './escapeRegex';
-export * from './validateSchema';
