@@ -1,13 +1,28 @@
-import loginImage from '@assets/login.svg';
 import { ILayout } from '@interfaces';
-
-export const AuthLayout: ILayout = function ({ children }) {
+import logo from '@assets/images/logobk.png';
+import corner from '@assets/images/corner.png';
+export const AuthLayout: ILayout = ({ children }) => {
   return (
-    <div className='flex px-10 flex-col sm:flex-row justify-center items-center fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full gap-6'>
-      <div className='basis-1/2 flex justify-center items-end sm:items-center bg-emerald-100'>
-        <img src={loginImage} alt='TickLab Banner' width={370} />
+    <div className='flex flex-col items-center w-full h-[100vh] gap-6 bg-[#F8F9FA] fixed'>
+      <div className="bg-[url('./src/assets/images/header.png')] bg-no-repeat bg-cover bg-center py-5">
+        <div className='flex items-center justify-center sm:justify-start sm:px-20'>
+          <div className='w-[10%] mr-[5px] sm:w-[10%] lg:w-[5%]'>
+            <img src={logo} alt='' />
+          </div>
+          <div className='flex flex-col items-center justify-center'>
+            <p className='uppercase text-[#1488D8] text-[10px] sm:text-[12px] '>
+              đại học quốc gia thành phố hồ chí minh
+            </p>
+            <p className='uppercase font-bold text-[#030391] text-[16px] sm:text-[20px]'>
+              trường đại học bách khoa
+            </p>
+          </div>
+        </div>
       </div>
       <div className='basis-1/2 flex justify-center items-start sm:items-center'>{children}</div>
+      <div className='absolute bottom-0 left-[-250px] sm:left-[-200px] lg:left-0 lg:bottom-[-30px] '>
+        <img src={corner} alt='' />
+      </div>
     </div>
   );
 };
