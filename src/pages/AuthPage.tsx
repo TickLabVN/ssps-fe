@@ -34,8 +34,8 @@ export const AuthPage = () => {
   const submit = async (data: LoginFormData) => {
     try {
       await authService.login(data);
-      getUserData();
-      navigate('/home');
+      await getUserData();
+      navigate('/');
     } catch (err) {
       const errorMessage = (err as ResponseError).message;
       toast.error(errorMessage);

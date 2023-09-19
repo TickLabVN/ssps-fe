@@ -30,7 +30,7 @@ export default function App() {
         {
           type: 'item',
           icon: <HomeIcon className='h-5 w-5' />,
-          path: '/home',
+          path: '/',
           name: 'Trang chủ',
           element: <HomePage />
         }
