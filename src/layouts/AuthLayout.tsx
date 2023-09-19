@@ -1,10 +1,11 @@
+import logo from '@assets/logobk.png';
+import corner from '@assets/corner.png';
 import { ILayout } from '@interfaces';
-import logo from '@assets/images/logobk.png';
-import corner from '@assets/images/corner.png';
+
 export const AuthLayout: ILayout = ({ children }) => {
   return (
     <div className='flex flex-col items-center w-full h-[100vh] gap-6 bg-[#F8F9FA] fixed'>
-      <div className="bg-[url('./src/assets/images/header.png')] bg-no-repeat bg-cover bg-center py-5">
+      <div className="bg-[url('./src/assets/header.png')] bg-no-repeat bg-cover bg-center py-5">
         <div className='flex items-center justify-center sm:justify-start sm:px-20'>
           <div className='w-[10%] mr-[5px] sm:w-[10%] lg:w-[5%]'>
             <img src={logo} alt='' />

@@ -18,9 +18,7 @@ module.exports = withMT({
       decimal: 'decimal',
       circle: 'circle'
     },
-    extend: {
-      
-    }
+    extend: {}
   },
   plugins: []
 });

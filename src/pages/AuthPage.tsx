@@ -1,14 +1,27 @@
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Card, Input, Button, Typography } from '@material-tailwind/react';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { authService } from '@services';
 import { useUserStore } from '@states';
-import { useState } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { validateSchema } from './validateSchema';
-import { yupResolver } from '@hookform/resolvers/yup';
 
 export const AuthPage = () => {
+  const navigate: NavigateFunction = useNavigate();
+  const { getUserData } = useUserStore();
+
+  const validateSchema = Yup.object().shape({
+    email: Yup.string()
+      .required('Username is required!')
+      .min(5, 'Username must be at least 5 characters'),
+    password: Yup.string()
+      .required('Password is required!')
+      .min(8, 'Password must be at least 8 characters')
+  });
+
   const {
     register,
     handleSubmit,
@@ -17,17 +30,16 @@ export const AuthPage = () => {
     resolver: yupResolver(validateSchema)
   });
   const [showPassword, setShowPassword] = useState<string>('password');
-  const { getUserData } = useUserStore();
 
-  const submit = (data: LoginFormData) => {
-    authService
-      .login(data)
-      .then(() => {
-        getUserData();
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+  const submit = async (data: LoginFormData) => {
+    try {
+      await authService.login(data);
+      getUserData();
+      navigate('/home');
+    } catch (err) {
+      const errorMessage = (err as ResponseError).message;
+      toast.error(errorMessage);
+    }
   };
 
   return (
