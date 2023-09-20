@@ -19,6 +19,12 @@ type LogoutBtn = BaseRoute & {
   onClick: () => void;
 };
 
-type RouteMenuItem = RouteItem | RoutesList | 'divider' | LogoutBtn;
+type RouteSkeleton = {
+  type: 'skeleton';
+  path: string;
+  element: React.ReactElement;
+};
+
+type RouteMenuItem = RouteItem | RoutesList | 'divider' | RouteSkeleton | LogoutBtn;
 
 type RouteMenu = RouteMenuItem[];
