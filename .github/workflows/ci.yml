@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: ['main']
+    branches: ['staging']
     paths-ignore:
       - '*.md'
 jobs:
