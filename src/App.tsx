@@ -1,16 +1,24 @@
 import { useEffect } from 'react';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { HomeIcon } from '@heroicons/react/24/outline';
+import { AppSkeleton } from '@components';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
 import { useUserStore } from '@states';
-import { AppSkeleton } from '@components';
 
 export default function App() {
+  const navigate: NavigateFunction = useNavigate();
   const { userStatus, getUserData } = useUserStore();
 
   useEffect(() => {
     getUserData();
   }, [getUserData]);
+
+  useEffect(() => {
+    if (userStatus === 'SUCCESS') {
+      navigate('/home');
+    }
+  }, [userStatus, navigate]);
 
   if (userStatus === 'UNINIT' || userStatus === 'PENDING') {
     return <AppSkeleton />;
@@ -28,9 +36,14 @@ export default function App() {
     <AppLayout
       menu={[
         {
+          type: 'skeleton',
+          path: '/',
+          element: <AppSkeleton />
+        },
+        {
           type: 'item',
           icon: <HomeIcon className='h-5 w-5' />,
-          path: '/',
+          path: '/home',
           name: 'Trang chủ',
           element: <HomePage />
         }
