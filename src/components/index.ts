@@ -5,4 +5,6 @@
 export * from './AppDrawer';
 export * from './AppNavigation';
 export * from './AppSkeleton';
+export * from './Orders';
+export * from './Slides';
 export * from './ToggleSidebarBtn';

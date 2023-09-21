@@ -22,7 +22,7 @@ export const AppLayout: Component<{ menu: RouteMenu }> = ({ menu }) => {
   return (
     <div className='flex flex-col h-screen sm:min-h-screen'>
       <AppNavigation menu={menu} />
-      <div className='lg:p-4 flex-1 h-full'>
+      <div className='lg:p-4 flex-1 h-100vh bg-[#f8f9fa] '>
         <Routes>
           {routeItems.map((item) => (
             <Route path={item.path} element={item.element} key={item.path} />
