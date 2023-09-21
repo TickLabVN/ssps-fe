@@ -18,7 +18,7 @@ interface OrdersProps {
   orders: Order[];
 }
 const Orders: FC<OrdersProps> = ({ orders }) => {
-  const sliderRef = useRef(null);
+  const sliderRef = useRef(document.createElement('div'));
 
   const scrollLeft = () => {
     sliderRef.current.scrollLeft -= 400;
