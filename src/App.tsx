@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { HomeIcon } from '@heroicons/react/24/outline';
-import { AppSkeleton } from '@components';
+import { AppSkeleton } from '@components/common';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
 import { useUserStore } from '@states';

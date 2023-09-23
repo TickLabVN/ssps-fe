@@ -1,7 +1,7 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRef } from 'react';
-import location from '../assets/location-marker.jpg';
-import coin from '../assets/coin.png';
+import location from '@assets/location-marker.jpg';
+import coin from '@assets/coin.png';
 import { FC } from 'react';
 interface Order {
   id: string;
@@ -17,7 +17,7 @@ interface Order {
 interface OrdersProps {
   orders: Order[];
 }
-const Orders: FC<OrdersProps> = ({ orders }) => {
+export const Orders: FC<OrdersProps> = ({ orders }) => {
   const sliderRef = useRef(document.createElement('div'));
 
   const scrollLeft = () => {
@@ -90,5 +90,3 @@ const Orders: FC<OrdersProps> = ({ orders }) => {
     </div>
   );
 };
-
-export default Orders;

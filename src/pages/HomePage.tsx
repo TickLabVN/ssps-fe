@@ -1,9 +1,8 @@
-import { Slides } from '../components/Slides';
-import printerPicture from '../assets/printer.jpg';
+import { Orders, Slides } from '@components/home';
+import printerPicture from '@assets/printer.jpg';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import Orders from '../components/Orders';
 
 export function HomePage() {
   const [orders, setOrders] = useState([]);

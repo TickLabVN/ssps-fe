@@ -1,6 +1,7 @@
 {
   "directory": [
-    "./src/components",
+    "./src/components/common",
+    "./src/components/home",
     "./src/constants",
     "./src/hooks",
     "./src/interfaces",

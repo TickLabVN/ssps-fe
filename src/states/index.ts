@@ -3,5 +3,4 @@
  */
 
 export * from './navigationBar';
-export * from './projectGeneral';
 export * from './user';
