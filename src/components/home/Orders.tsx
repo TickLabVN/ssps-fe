@@ -2,22 +2,8 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRef } from 'react';
 import location from '@assets/location-marker.jpg';
 import coin from '@assets/coin.png';
-import { FC } from 'react';
-interface Order {
-  id: string;
-  status: string;
-  location: string;
-  number: number;
-  fileName: string;
-  pageNumber: number;
-  coins: number;
-  paid: string;
-}
 
-interface OrdersProps {
-  orders: Order[];
-}
-export const Orders: FC<OrdersProps> = ({ orders }) => {
+export const Orders: Component<{ orders: OrderData[] }> = ({ orders }) => {
   const sliderRef = useRef(document.createElement('div'));
 
   const scrollLeft = () => {

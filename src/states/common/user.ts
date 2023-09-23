@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { userService } from '@services';
+import { userService } from '@services/common';
 
 export const useUserStore = create<UserStore>()((set) => ({
   userStatus: 'UNINIT',

@@ -4,7 +4,7 @@ import { HomeIcon } from '@heroicons/react/24/outline';
 import { AppSkeleton } from '@components/common';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
-import { useUserStore } from '@states';
+import { useUserStore } from '@states/common';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();

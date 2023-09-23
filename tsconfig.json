@@ -27,8 +27,10 @@
       "@interfaces": ["src/interfaces"],
       "@layouts": ["src/layouts"],
       "@pages": ["src/pages"],
-      "@services": ["src/services"],
-      "@states": ["src/states"],
+      "@services/common": ["src/services/common"],
+      "@services/home": ["src/services/home"],
+      "@states/common": ["src/states/common"],
+      "@states/home": ["src/states/home"],
       "@utils": ["src/utils"]
     }
   },
