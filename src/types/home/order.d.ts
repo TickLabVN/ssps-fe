@@ -1,6 +1,8 @@
+type OrderStatus = 'progressing' | 'ready' | 'done' | 'canceled';
+
 type OrderData = {
   id: string;
-  status: string;
+  status: OrderStatus;
   location: string;
   number: number;
   fileName: string;
