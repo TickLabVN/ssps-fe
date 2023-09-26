@@ -1,0 +1,72 @@
+{
+  "orders": [
+    {
+      "id": "1233-defc",
+      "status": "progressing",
+      "location": "Thu Duc, Ho Chi Minh, Viet Nam",
+      "number": 2,
+      "fileName": "file1.pdf",
+      "pageNumber": 10,
+      "coins": 50,
+      "paid": "Paid"
+    },
+    {
+      "id": "1245-afce",
+      "status": "ready",
+      "location": "Tan Phu, Ho Chi Minh, Viet Nam",
+      "number": 2,
+      "fileName": "file2.docx",
+      "pageNumber": 20,
+      "coins": 75,
+      "paid": "Paid"
+    },
+    {
+      "id": "1267-rfce",
+      "status": "done",
+      "location": "Tan Phu, Ho Chi Minh, Viet Nam",
+      "number": 2,
+      "fileName": "file3.txt",
+      "pageNumber": 5,
+      "coins": 30,
+      "paid": "Not Paid"
+    },
+    {
+      "id": "1267-rfce",
+      "status": "canceled",
+      "location": "Tan Phu, Ho Chi Minh, Viet Nam",
+      "number": 2,
+      "fileName": "file3.txt",
+      "pageNumber": 5,
+      "coins": 30,
+      "paid": "Not Paid"
+    },
+    {
+      "id": "1267-rfce",
+      "status": "done",
+      "location": "Tan Phu, Ho Chi Minh, Viet Nam",
+      "number": 2,
+      "fileName": "file3.txt",
+      "pageNumber": 5,
+      "coins": 30,
+      "paid": "Paid"
+    }
+  ],
+  "slides": [
+    {
+      "src": "https://e-learning.hcmut.edu.vn/theme/boost/images/slbktv.jpg?1695219022292",
+      "alt": "slide1"
+    },
+    {
+      "src": "https://e-learning.hcmut.edu.vn/theme/boost/images/slbk.jpg?1695219022805",
+      "alt": "slide2"
+    },
+    {
+      "src": "https://static.tuoitre.vn/tto/i/s626/2016/04/05/dai-hoc-bach-khoa-tp-hcm-cong-bo-phuong-an-tuyen-sinh-2015jpg-1459820200.jpg",
+      "alt": "slide3"
+    },
+    {
+      "src": "https://we25.vn/media2018/Img_News/2020/06/08/khuon-vien-dh-bach-khoa-tp-hcm-khien-dan-tinh-me-man-voi-nhung-hanh-cay-xanh-tham-toa-bong-mat-quanh-nam-14_20200608150159.jpg",
+      "alt": "slide4"
+    }
+  ]
+}

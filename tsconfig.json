@@ -20,14 +20,17 @@
     "strict": true,
     "paths": {
       "@assets/*": ["src/assets/*"],
-      "@components": ["src/components"],
+      "@components/common": ["src/components/common"],
+      "@components/home": ["src/components/home"],
       "@constants": ["src/constants"],
       "@hooks": ["src/hooks"],
       "@interfaces": ["src/interfaces"],
       "@layouts": ["src/layouts"],
       "@pages": ["src/pages"],
-      "@services": ["src/services"],
-      "@states": ["src/states"],
+      "@services/common": ["src/services/common"],
+      "@services/home": ["src/services/home"],
+      "@states/common": ["src/states/common"],
+      "@states/home": ["src/states/home"],
       "@utils": ["src/utils"]
     }
   },
