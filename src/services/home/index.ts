@@ -4,3 +4,4 @@
 
 export * from './order';
 export * from './slide';
+export * from './userInfo';
