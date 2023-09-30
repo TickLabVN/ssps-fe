@@ -8,7 +8,7 @@ export const AppDrawer: Component<{
 }> = ({ open, children, onClose }) => {
   return (
     <React.Fragment>
-      <Drawer open={open} className='p-0' onClose={onClose} size={256}>
+      <Drawer open={open} className='p-0 rounded-r-2xl' onClose={onClose} size={320}>
         {children}
       </Drawer>
     </React.Fragment>

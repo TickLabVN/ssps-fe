@@ -1,16 +1,18 @@
 import { useEffect } from 'react';
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides } from '@components/home';
-import { useOrderStore, useSlideStore } from '@states/home';
+import { useOrderStore, useSlideStore, useUserInfoStore } from '@states/home';
 
 export function HomePage() {
   const { orderData, getOrderData } = useOrderStore();
   const { slideData, getSlideData } = useSlideStore();
+  const { getUserInfoData } = useUserInfoStore();
 
   useEffect(() => {
     getOrderData();
     getSlideData();
-  }, [getOrderData, getSlideData]);
+    getUserInfoData();
+  }, [getOrderData, getSlideData, getUserInfoData]);
 
   return (
     <div className='p-6 lg:py-5 lg:px-56'>
