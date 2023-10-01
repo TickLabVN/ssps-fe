@@ -3,12 +3,10 @@ import { Dialog, DialogBody } from '@material-tailwind/react';
 import { useUploadDocumentBox } from './UploadDocumentBox';
 
 // Loc's task in here.
-// This style is using custom hook. See ../common/SidebarMenu.tsx
 // This hook is used in ./src/pages/HomePage.tsx
 
 export function useChooseFileBox() {
   const { openUploadDocumentBox, UploadDocumentBox } = useUploadDocumentBox();
-
   const [openBox, setOpenBox] = useState<boolean>(false);
 
   const ChooseFileBox = useMemo(
@@ -17,7 +15,14 @@ export function useChooseFileBox() {
       return (
         <>
           <Dialog open={openBox} handler={handleOpenBox}>
-            <DialogBody onClick={openUploadDocumentBox}>A</DialogBody>
+            <DialogBody
+              onClick={() => {
+                setOpenBox(false);
+                openUploadDocumentBox();
+              }}
+            >
+              A
+            </DialogBody>
           </Dialog>
           {<UploadDocumentBox />}
         </>
