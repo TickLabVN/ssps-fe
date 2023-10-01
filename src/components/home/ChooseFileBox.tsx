@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
-import { useUploadDocumentBox } from './UploadDocumentBox';
+import { useUploadDocumentBox } from '@components/order';
 
 // Loc's task in here.
-// This hook is used in ./src/pages/HomePage.tsx
+// This hook is used in ./src/pages/HomePage.tsx.
 
 export function useChooseFileBox() {
   const { openUploadDocumentBox, UploadDocumentBox } = useUploadDocumentBox();

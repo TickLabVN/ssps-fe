@@ -5,4 +5,3 @@
 export * from './ChooseFileBox';
 export * from './Orders';
 export * from './Slides';
-export * from './UploadDocumentBox';
