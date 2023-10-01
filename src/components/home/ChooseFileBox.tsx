@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
-import { useOrderWorkflow } from '@components/order';
+import { useOrderWorkflowBox } from '@components/order';
 import { useOrderWorkflowStore } from '@states/order';
 
 // Loc's task in here.
 // This hook is used in ./src/pages/HomePage.tsx.
 
 export function useChooseFileBox() {
-  const { handleOrderWorkflow, OrderWorkflow } = useOrderWorkflow();
+  const { openOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
   const [openBox, setOpenBox] = useState<boolean>(false);
 
   const ChooseFileBox = () => {
@@ -20,14 +20,14 @@ export function useChooseFileBox() {
           <DialogBody
             onClick={() => {
               setOpenBox(false);
-              handleOrderWorkflow();
+              openOrderWorkflowBox();
               setOrderStep(1);
             }}
           >
             A
           </DialogBody>
         </Dialog>
-        {<OrderWorkflow />}
+        {<OrderWorkflowBox />}
       </>
     );
   };

@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
-import { UploadDocumentBox, OrderListBox } from '@components/order';
+import { UploadDocumentForm, OrderListForm, ConfirmOrderForm } from '@components/order';
 import { useOrderWorkflowStore } from '@states/order';
 
-export function useOrderWorkflow() {
+export function useOrderWorkflowBox() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const DialogBodyWorkflow = () => {
     const { orderStep } = useOrderWorkflowStore();
     if (orderStep === 1) {
-      return <UploadDocumentBox />;
+      return <UploadDocumentForm />;
     } else if (orderStep === 2) {
-      return <OrderListBox />;
+      return <OrderListForm />;
+    } else if (orderStep === 3) {
+      return <ConfirmOrderForm />;
     }
   };
 
@@ -27,7 +29,7 @@ export function useOrderWorkflow() {
   };
 
   return {
-    handleOrderWorkflow: () => setOpenDialog(true),
-    OrderWorkflow: OrderWorkflow
+    openOrderWorkflowBox: () => setOpenDialog(true),
+    OrderWorkflowBox: OrderWorkflow
   };
 }
