@@ -1,25 +1,14 @@
-import { useMemo, useState } from 'react';
-import { Dialog, DialogBody } from '@material-tailwind/react';
+import { Button } from '@material-tailwind/react';
+import { useOrderWorkflowStore } from '@states/order';
 
-// Tan's task in here.
+// Tan's first-task in here.
+export function UploadDocumentBox() {
+  const { setOrderStep } = useOrderWorkflowStore();
 
-export function useUploadDocumentBox() {
-  const [openBox, setOpenBox] = useState<boolean>(false);
-
-  const UploadDocumentBox = useMemo(
-    () => () => {
-      const handleOpenBox = () => setOpenBox(!openBox);
-      return (
-        <Dialog open={openBox} handler={handleOpenBox} size='xxl'>
-          <DialogBody>A</DialogBody>
-        </Dialog>
-      );
-    },
-    [openBox]
+  return (
+    <>
+      <div>UploadDocumentBox</div>
+      <Button onClick={() => setOrderStep(2)}>Save</Button>
+    </>
   );
-
-  return {
-    openUploadDocumentBox: () => setOpenBox(true),
-    UploadDocumentBox: UploadDocumentBox
-  };
 }

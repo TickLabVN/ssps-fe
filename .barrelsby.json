@@ -12,6 +12,7 @@
     "./src/services/home",
     "./src/states/common",
     "./src/states/home",
+    "./src/states/order",
     "./src/utils"
   ],
   "delete": true
