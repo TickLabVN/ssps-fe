@@ -13,12 +13,12 @@ export const Orders: Component<{ orders: OrderData[] }> = ({ orders }) => {
 
   const scrollLeft = () => {
     if (sliderRef.current) {
-      sliderRef.current.scrollLeft -= 400;
+      sliderRef.current.scrollLeft -= 500;
     }
   };
   const scrollRight = () => {
     if (sliderRef.current) {
-      sliderRef.current.scrollLeft += 400;
+      sliderRef.current.scrollLeft += 500;
     }
   };
   return (

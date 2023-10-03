@@ -9,7 +9,9 @@
     overflow-x: auto; 
     padding: 10px 0; 
     scrollbar-width: none; 
+    transition: transform 0.3s ease;
     -ms-overflow-style: none; 
+    scroll-behavior: smooth;
 }
 
 .slider-container::-webkit-scrollbar {
