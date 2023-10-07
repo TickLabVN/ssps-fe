@@ -8,7 +8,6 @@ import { Card, Input, Button, Typography } from '@material-tailwind/react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { authService } from '@services/common';
 import { useUserStore } from '@states/common';
-
 export const AuthPage = () => {
   const navigate: NavigateFunction = useNavigate();
   const { getUserData } = useUserStore();

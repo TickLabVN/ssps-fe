@@ -31,7 +31,7 @@ export function useOrderWorkflowBox() {
     const handleOpenDialog = () => setOpenDialog(!openDialog);
     return (
       <Dialog open={openDialog} handler={handleOpenDialog} size='xxl'>
-        <DialogBody>
+        <DialogBody className='bg-gray/1 h-fit w-screen p-0'>
           <DialogBodyWorkflow />
         </DialogBody>
       </Dialog>

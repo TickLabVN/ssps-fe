@@ -22,6 +22,7 @@ module.exports = withMT({
       colors: {
         'blue/1': '#1488D8',
         'blue/2': '#030391',
+        'blue/500': '#38B2F6',
         'gray/1': '#F5F5F5',
         'gray/3': '#ACB5BD',
         'gray/4': '#495057'
