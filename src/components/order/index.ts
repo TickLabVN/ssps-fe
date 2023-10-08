@@ -3,8 +3,11 @@
  */
 
 export * from './ConfirmOrderForm';
+export * from './ExchangeRateInfo';
 export * from './OrderListForm';
 export * from './OrderSuccessForm';
 export * from './OrderWorkflowBox';
+export * from './PaymentMethod';
 export * from './TopupWalletForm';
+export * from './TopupWalletInput';
 export * from './UploadDocumentForm';

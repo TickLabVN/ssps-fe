@@ -1,8 +1,8 @@
+import { WalletIcon } from '@heroicons/react/24/outline';
+import { Card, CardBody, Radio, Typography } from '@material-tailwind/react';
 import VNPay from '@assets/VNPay.png';
 import momo from '@assets/momo.png';
 import zaloPay from '@assets/zaloPay.png';
-import { WalletIcon } from '@heroicons/react/24/outline';
-import { Card, CardBody, Radio, Typography } from '@material-tailwind/react';
 export function PaymentMethod() {
   return (
     <Card className='rounded-none shadow-sm my-4'>

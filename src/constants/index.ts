@@ -4,5 +4,6 @@
 
 export * from './home';
 export * from './menuBar';
+export * from './paymentMethod';
 export * from './screen';
 export * from './suggestAmount';

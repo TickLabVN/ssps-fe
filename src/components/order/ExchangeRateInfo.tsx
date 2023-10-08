@@ -14,15 +14,17 @@ export const ExchangeRateInfo = () => {
   const [rateTitleClassName, setRateTitleClassName] = useState(
     'px-6 py-4 flex items-center justify-between cursor-pointer'
   );
-  const [rateClassName, setRateClassName] = useState('px-6 pt-4 pb-6 flex flex-col hidden');
+  const [rateClassName, setRateClassName] = useState('hidden');
   const expandExchangeRate = () => {
     setChevronIcon(!chevronIcon);
     if (!chevronIcon) {
-      setRateClassName((prev) => prev.replace('hidden', ''));
-      setRateTitleClassName((prev) => prev + ' bg-[#EFF6FF]');
+      setRateClassName('px-6 pt-4 pb-6 flex flex-col');
+      setRateTitleClassName(
+        'px-6 py-4 flex items-center justify-between cursor-pointer bg-[#EFF6FF]'
+      );
     } else {
-      setRateClassName((prev) => prev + ' hidden');
-      setRateTitleClassName((prev) => prev.replace('bg-[#EFF6FF]', ''));
+      setRateClassName('hidden');
+      setRateTitleClassName('px-6 py-4 flex items-center justify-between cursor-pointer');
     }
   };
   return (
