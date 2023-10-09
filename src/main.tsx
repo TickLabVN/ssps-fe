@@ -8,12 +8,10 @@ import './index.css';
 import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider>
-        <ToastContainer limit={1} />
-        <App />
-      </ThemeProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <BrowserRouter>
+    <ThemeProvider>
+      <ToastContainer limit={1} />
+      <App />
+    </ThemeProvider>
+  </BrowserRouter>
 );

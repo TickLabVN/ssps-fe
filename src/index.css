@@ -5,17 +5,16 @@
 @tailwind utilities;
 
 .slider-container {
-    display: flex;
-    overflow-x: auto; 
-    padding: 10px 0; 
-    scrollbar-width: none; 
-    transition: transform 0.3s ease;
-    -ms-overflow-style: none; 
-    scroll-behavior: smooth;
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
 }
 
 .slider-container::-webkit-scrollbar {
-    width: 0; 
+  width: 0;
 }
 
 .prevButton,
@@ -28,3 +27,5 @@
   top: 50%;
   z-index: 1;
 }
+
+.grayscale { filter: grayscale(100%); }

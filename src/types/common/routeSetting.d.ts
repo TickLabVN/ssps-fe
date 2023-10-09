@@ -1,30 +1,29 @@
-type BaseRoute = {
-  icon: React.ReactElement;
+type RoutesList = {
   name: string;
-};
-
-type RoutesList = BaseRoute & {
   type: 'list';
   routes: RouteItem[];
 };
 
-type RouteItem = BaseRoute & {
-  type: 'item';
+type RouteItem = {
+  name: string;
+  type: 'main-item' | 'sub-item';
   path: string;
   element: React.ReactElement;
 };
 
-type LogoutBtn = BaseRoute & {
+type LogoutBtn = {
+  name: string;
   type: 'logout-btn';
   onClick: () => void;
 };
 
 type RouteSkeleton = {
+  name: string;
   type: 'skeleton';
   path: string;
   element: React.ReactElement;
 };
 
-type RouteMenuItem = RouteItem | RoutesList | 'divider' | RouteSkeleton | LogoutBtn;
+type RouteMenuItem = RouteItem | RoutesList | RouteSkeleton | LogoutBtn;
 
 type RouteMenu = RouteMenuItem[];
