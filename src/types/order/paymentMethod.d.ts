@@ -1,5 +1,5 @@
 type paymentMethod = {
   name: string;
-  src: string;
+  img: string;
   description: string;
 };

@@ -1,54 +1,40 @@
 import coin from '@assets/coin.png';
-import { SUGGEST_AMOUNT } from '@constants/suggestAmount';
+import { SUGGEST_AMOUNT } from '@constants';
 import { BanknotesIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Button, Card, CardBody, Input, Typography } from '@material-tailwind/react';
 import { useUserInfoStore } from '@states/home';
 import { useBonusStore, useCoinExchangeStore } from '@states/order';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-// Tue's first-task in here.
 export function TopupWalletInput() {
   const { userInfoData } = useUserInfoStore();
   const { bonusData } = useBonusStore();
   const { coinExchangeData } = useCoinExchangeStore();
-  const [showInfo, setShowInfo] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const { coinToMoney } = coinExchangeData;
   const [coinExchange, setCoinExchange] = useState(0);
   const [bonus, setBonus] = useState(0);
-  const [buttonClassName, setButtonClassName] = useState<string>(
-    'my-4 flex items-start content-start flex-wrap gap-2'
-  );
-  const [abortClassName, setAbortClassName] = useState<string>(
-    'flex absolute left-2 bottom-[-24px]'
-  );
+  const [showInfo, setShowInfo] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const calculateValues = useCallback(() => {
+    if (inputValue) {
+      const value = Number(inputValue.replace(/[^0-9]/g, ''));
+      const exchangeValue = Math.floor((value * coinToMoney.coins) / coinToMoney.amounts);
+      const bonus = Math.floor(value / bonusData.money) * bonusData.coins;
+      return { exchangeValue, bonus };
+    }
+    return { exchangeValue: 0, bonus: 0 };
+  }, [bonusData.coins, bonusData.money, coinToMoney.amounts, coinToMoney.coins, inputValue]);
+
   useEffect(() => {
-    const calculateCoinExchange = () => {
-      if (inputValue) {
-        const value = Number(inputValue.replace(/[^0-9]/g, ''));
-        const amounts = Number(coinExchangeData.coinToMoney[0]?.amounts.slice(0, -1));
-        const coins = coinExchangeData.coinToMoney[0]?.coins;
-        const exchangeValue = Math.floor((value * coins) / amounts);
-        const bonus = (value / Number(bonusData.money.replace(/[^0-9]/g, ''))) * bonusData.coins;
-        setCoinExchange(exchangeValue);
-        setBonus(bonus >= bonusData.coins ? bonus : 0);
-      }
-    };
-    calculateCoinExchange();
-  }, [coinExchangeData, bonusData, bonus, coinExchange, inputValue]);
-  useEffect(() => {
-    const handleAbort = () => {
-      if (!inputValue || Number(inputValue.replace(/[^0-9]/g, '')) >= 10000) {
-        setAbortClassName('hidden');
-        setButtonClassName('my-4 flex items-start content-start flex-wrap gap-2');
-      } else {
-        setAbortClassName('flex absolute left-2 bottom-[-24px]');
-        setButtonClassName('mt-6 mb-4 flex items-start content-start flex-wrap gap-2');
-      }
-    };
-    handleAbort();
-  }, [inputValue, setAbortClassName, abortClassName]);
+    const { exchangeValue, bonus } = calculateValues();
+    setCoinExchange(exchangeValue);
+    setBonus(bonus >= bonusData.coins ? bonus : 0);
+  }, [bonusData.coins, calculateValues]);
+
   return (
     <Card className='rounded-none shadow-sm my-4'>
       <CardBody className='px-6 py-4 flex items-center'>
@@ -82,6 +68,7 @@ export function TopupWalletInput() {
               setInputValue(e.target.value);
               setShowInfo(true);
             }}
+            maxLength={10}
           />
           <div className={showInfo ? '' : 'hidden'}>
             <XMarkIcon
@@ -92,26 +79,34 @@ export function TopupWalletInput() {
               }}
             />
             <div className='px-4 absolute flex justify-between w-full left-0 bottom-3'>
-              <div className='flex items-center'>
+              <div className='flex items-center flex-wrap'>
                 <Typography className='text-gray/4 text-xs'>Exchange to:</Typography>
                 <img className='w-4 h-4 ml-1' src={coin}></img>
                 <Typography className='text-[#D97706] text-xs font-bold'>{coinExchange}</Typography>
               </div>
-              <div className='flex items-center'>
+              <div className='flex items-center flex-wrap'>
                 <Typography className='text-gray/4 text-xs'>(Bonus:</Typography>
                 <img className='w-4 h-4 mix-blend-luminosity' src={coin}></img>
                 <Typography className='text-gray/4 text-xs'>{bonus})</Typography>
               </div>
             </div>
-            <div className={abortClassName}>
-              <ExclamationTriangleIcon className='w-5 h-5 text-[#F42500] mr-2 ' />
-              <Typography className='text-gray/4 text-xs text-[#F42500]'>
-                Minum amount is {SUGGEST_AMOUNT[0]}
-              </Typography>
-            </div>
+            {Number(inputValue.replace(/[^0-9]/g, '')) < 10000 && (
+              <div className='flex absolute left-2 bottom-[-24px]'>
+                <ExclamationTriangleIcon className='w-5 h-5 text-[#F42500] mr-2 ' />
+                <Typography className='text-gray/4 text-xs text-[#F42500]'>
+                  Minimum amount is {SUGGEST_AMOUNT[0]}
+                </Typography>
+              </div>
+            )}
           </div>
         </div>
-        <div className={buttonClassName}>
+        <div
+          className={
+            showInfo && Number(inputValue.replace(/[^0-9]/g, '')) < 10000
+              ? 'mt-6 mb-4 flex items-start content-start flex-wrap gap-2'
+              : 'my-4 flex items-start content-start flex-wrap gap-2'
+          }
+        >
           {SUGGEST_AMOUNT.map((item: string, index: number) => (
             <Button
               key={index}
@@ -130,7 +125,7 @@ export function TopupWalletInput() {
           <img className='w-4 h-4' src={coin}></img>
           <Typography className='text-[#D97706] text-xs font-bold'>{bonusData.coins}</Typography>
           <Typography className='text-gray/3 text-xs font-normal ml-1'>
-            (for every {bonusData.money} coins)
+            (for every {bonusData.money.toLocaleString()}đ)
           </Typography>
         </div>
       </CardBody>

@@ -16,7 +16,6 @@ export function TopupWalletForm() {
   }, [getBonusData, getCoinExchangeData]);
   return (
     <>
-      {/* // Header */}
       <Card className='rounded-none shadow-md'>
         <CardBody className='px-6 py-4'>
           <div className='flex items-center'>
@@ -28,17 +27,11 @@ export function TopupWalletForm() {
           </div>
         </CardBody>
       </Card>
-
-      {/* // Exchange rate */}
-
       <div className='w-screen py-6'>
         <ExchangeRateInfo />
-        {/* // Top up amount */}
         <TopupWalletInput />
-        {/* // Payment Method */}
         <PaymentMethod />
       </div>
-      {/* // Footer */}
       <footer className='relative w-full'>
         <Button
           className='w-full px-4 py-8 bg-blue/1 rounded-none focus:bg-blue/2 active:bg-blue-2 sticky'

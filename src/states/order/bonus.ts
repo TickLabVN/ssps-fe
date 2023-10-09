@@ -4,7 +4,7 @@ export const useBonusStore = create<BonusStore>()((set) => ({
   bonusStatus: 'UNINIT',
   bonusData: {
     coins: 0,
-    amount: '0đ'
+    money: 0
   },
   getBonusData: async () => {
     set(() => ({ bonusStatus: 'PENDING' }));

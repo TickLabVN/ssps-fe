@@ -1,14 +1,14 @@
 type CoinToMoney = {
   coins: number;
-  amounts: string;
+  amounts: number;
 };
 type CoinToPaper = {
   coins: number;
-  amounts: string;
+  amounts: number;
 };
 type CoinExchangeData = {
-  coinToMoney: CoinToMoney[];
-  coinToPaper: CoinToPaper[];
+  coinToMoney: CoinToMoney;
+  coinToPaper: CoinToPaper;
 };
 
 type CoinExchangeStore = {

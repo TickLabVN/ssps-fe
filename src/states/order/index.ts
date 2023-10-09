@@ -4,5 +4,4 @@
 
 export * from './bonus';
 export * from './coinExchange';
-export * from './currentOrder';
 export * from './orderWorkflow';

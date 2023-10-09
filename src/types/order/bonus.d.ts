@@ -1,6 +1,6 @@
 type BonusData = {
   coins: number;
-  money: string;
+  money: number;
 };
 type BonusStore = {
   bonusStatus: StoreStatus;

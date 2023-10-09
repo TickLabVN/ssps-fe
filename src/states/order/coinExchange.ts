@@ -3,8 +3,14 @@ import { coinExchangeService } from '@services/order';
 export const useCoinExchangeStore = create<CoinExchangeStore>((set) => ({
   coinExchangeStatus: 'UNINIT',
   coinExchangeData: {
-    coinToMoney: [],
-    coinToPaper: []
+    coinToMoney: {
+      coins: 0,
+      amounts: 0
+    },
+    coinToPaper: {
+      coins: 0,
+      amounts: 0
+    }
   },
   getCoinExchangeData: async () => {
     set(() => ({ coinExchangeStatus: 'PENDING' }));

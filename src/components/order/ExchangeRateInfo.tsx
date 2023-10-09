@@ -11,21 +11,33 @@ export const ExchangeRateInfo = () => {
   const [chevronIcon, setChevronIcon] = useState(false);
   const CHEVRON_CLASSNAME =
     'w-5 h-5 opacity-40 hover:text-[#0F172A] hover:opacity-100 focus:opacity-100 active:opacity-100';
-  const [rateTitleClassName, setRateTitleClassName] = useState(
-    'px-6 py-4 flex items-center justify-between cursor-pointer'
-  );
-  const [rateClassName, setRateClassName] = useState('hidden');
+  const rateTitleClassName = `px-6 py-4 flex items-center justify-between cursor-pointer ${
+    chevronIcon ? 'bg-[#EFF6FF]' : ''
+  }`;
+  const rateClassName = `px-6 pt-4 pb-6 flex flex-col ${!chevronIcon ? 'hidden' : ''}`;
   const expandExchangeRate = () => {
     setChevronIcon(!chevronIcon);
-    if (!chevronIcon) {
-      setRateClassName('px-6 pt-4 pb-6 flex flex-col');
-      setRateTitleClassName(
-        'px-6 py-4 flex items-center justify-between cursor-pointer bg-[#EFF6FF]'
-      );
-    } else {
-      setRateClassName('hidden');
-      setRateTitleClassName('px-6 py-4 flex items-center justify-between cursor-pointer');
-    }
+  };
+  const ExchangeRateRow: Component<{
+    title: string;
+    coins: number;
+    amount: string;
+    paper: boolean;
+  }> = ({ title, coins, amount, paper }) => {
+    return (
+      <div className='flex items-center justify-between'>
+        <Typography className='text-gray/3 text-xs font-normal '>{title}</Typography>
+        <div className='flex items-center'>
+          <Typography className='text-gray/4 text-xs font-medium '>{coins}</Typography>
+          <img className='w-4 h-4 mix-blend-luminosity' src={coin}></img>
+          <Typography className='text-gray/4 text-xs font-medium mx-1'>=</Typography>
+          <div className='min-w-[48px] flex justify-end'>
+            <Typography className='text-gray/4 text-xs font-medium'>{amount}</Typography>
+            {paper && <DocumentTextIcon className='w-4 h-4 text-gray/4 ml-1' />}
+          </div>
+        </div>
+      </div>
+    );
   };
   return (
     <Card className='rounded-none shadow-sm'>
@@ -41,37 +53,18 @@ export const ExchangeRateInfo = () => {
         )}
       </CardBody>
       <CardBody className={rateClassName}>
-        <div className='flex items-center justify-between'>
-          <Typography className='text-gray/3 text-xs font-normal '>To VND:</Typography>
-          <div className='flex items-center'>
-            <Typography className='text-gray/4 text-xs font-medium '>
-              {coinToMoney[0]?.coins}
-            </Typography>
-            <img className='w-4 h-4 mix-blend-luminosity' src={coin}></img>
-            <Typography className='text-gray/4 text-xs font-medium mx-1'>=</Typography>
-            <div className='min-w-[48px] flex justify-end'>
-              <Typography className='text-gray/4 text-xs font-medium'>
-                {coinToMoney[0]?.amounts}
-              </Typography>
-            </div>
-          </div>
-        </div>
-        <div className='flex items-center justify-between'>
-          <Typography className='text-gray/3 text-xs font-normal '>To A4 paper:</Typography>
-          <div className='flex items-center'>
-            <Typography className='text-gray/4 text-xs font-medium '>
-              {coinToPaper[0]?.coins}
-            </Typography>
-            <img className='w-4 h-4 mix-blend-luminosity' src={coin}></img>
-            <Typography className='text-gray/4 text-xs font-medium mx-1'>=</Typography>
-            <div className='min-w-[48px] flex justify-end '>
-              <Typography className='text-gray/4 text-xs font-medium'>
-                {coinToPaper[0]?.amounts}
-              </Typography>
-              <DocumentTextIcon className='w-4 h-4 text-gray/4 shrink-0' />
-            </div>
-          </div>
-        </div>
+        <ExchangeRateRow
+          title='To VND'
+          coins={coinToMoney.coins}
+          amount={`${coinToMoney.amounts.toLocaleString()}đ`}
+          paper={false}
+        />
+        <ExchangeRateRow
+          title='To A4 paper'
+          coins={coinToPaper.coins}
+          amount={`${coinToPaper.amounts.toLocaleString()} A4`}
+          paper={true}
+        />
       </CardBody>
     </Card>
   );

@@ -4,17 +4,17 @@ import zaloPay from '@assets/zaloPay.png';
 export const PAYMENT_METHOD = [
   {
     name: 'Pay with Momo wallet',
-    src: momo,
+    img: momo,
     description: 'Redirect to Momo'
   },
   {
     name: 'Pay with Zalo wallet',
-    src: zaloPay,
+    img: zaloPay,
     description: 'Redirect to Zalo Pay'
   },
   {
     name: 'Pay with VNPay',
-    src: VNPay,
+    img: VNPay,
     description: 'Redirect to VNPay'
   }
 ];

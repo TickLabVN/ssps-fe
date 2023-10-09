@@ -73,21 +73,17 @@
     "coins": 200
   },
   "coinExChange": {
-    "coinToMoney": [
-      {
-        "coins": 1,
-        "amounts": "500đ"
-      }
-    ],
-    "coinToPaper": [
-      {
-        "coins": 1,
-        "amounts": "1 A4"
-      }
-    ]
+    "coinToMoney": {
+      "coins": 1,
+      "amounts": 500
+    },
+    "coinToPaper": {
+      "coins": 1,
+      "amounts": 1
+    }
   },
   "bonus": {
     "coins": 20,
-    "money": "100.000đ"
+    "money": 100000
   }
 }
