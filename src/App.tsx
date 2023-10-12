@@ -3,7 +3,7 @@ import { NavigateFunction, useNavigate, useLocation } from 'react-router-dom';
 import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
 import { AppLayout, AuthLayout } from '@layouts';
-import { AuthPage, HomePage, TestPreviewPage } from '@pages';
+import { AuthPage, HomePage } from '@pages';
 import { useUserStore } from '@states/common';
 
 export default function App() {
@@ -84,12 +84,6 @@ export default function App() {
           name: SUB_MENU.logout,
           onClick() {}
           //onClick: () => authService.logout().then(() => getData())
-        },
-        {
-          type: 'sub-item',
-          path: '/test-preview',
-          name: 'Test Document Preview',
-          element: <TestPreviewPage />
         }
       ]}
     />

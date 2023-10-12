@@ -1,4 +1,5 @@
 import { Button } from '@material-tailwind/react';
+import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { useFileStore } from '@states/home';
 import { useOrderWorkflowStore } from '@states/order';
 
@@ -6,12 +7,13 @@ import { useOrderWorkflowStore } from '@states/order';
 export function UploadDocumentForm() {
   const { setOrderStep } = useOrderWorkflowStore();
   const { fileTarget } = useFileStore();
-  console.log(fileTarget);
 
   return (
     <>
       <div>UploadDocumentForm</div>
-      {fileTarget && <img src={fileTarget.url} alt='docs' width='30%' />}
+      {fileTarget && (
+        <DocViewer pluginRenderers={DocViewerRenderers} documents={[{ uri: fileTarget.url }]} />
+      )}
       <Button onClick={() => setOrderStep(2)}>Save</Button>
     </>
   );

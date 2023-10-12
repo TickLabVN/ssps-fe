@@ -29,7 +29,7 @@ export function HomePage() {
           <Slides slides={slideData} />
         </div>
         <div
-          className='flex items-center justify-between bg-blue/1 rounded-lg p-4 mb-16 lg:mb-24 lg:h-[120px] lg:px-6'
+          className='flex items-center justify-between bg-blue/1 rounded-lg p-4 mb-16 lg:mb-24 lg:h-[120px] lg:px-6 cursor-pointer'
           onClick={openChooseFileBox}
         >
           <div className='flex items-center gap-4'>
