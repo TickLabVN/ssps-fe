@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
-import { UploadDocumentForm, OrderListForm, ConfirmOrderForm } from '@components/order';
+import {
+  UploadDocumentForm,
+  OrderListForm,
+  ConfirmOrderForm,
+  TopupWalletForm,
+  OrderSuccessForm
+} from '@components/order';
 import { useOrderWorkflowStore } from '@states/order';
 
 export function useOrderWorkflowBox() {
@@ -14,6 +20,10 @@ export function useOrderWorkflowBox() {
       return <OrderListForm />;
     } else if (orderStep === 3) {
       return <ConfirmOrderForm />;
+    } else if (orderStep === 4) {
+      return <TopupWalletForm />;
+    } else if (orderStep === 5) {
+      return <OrderSuccessForm />;
     }
   };
 
