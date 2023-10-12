@@ -1,9 +1,3 @@
-type RoutesList = {
-  name: string;
-  type: 'list';
-  routes: RouteItem[];
-};
-
 type RouteItem = {
   name: string;
   type: 'main-item' | 'sub-item';
@@ -24,6 +18,6 @@ type RouteSkeleton = {
   element: React.ReactElement;
 };
 
-type RouteMenuItem = RouteItem | RoutesList | RouteSkeleton | LogoutBtn;
+type RouteMenuItem = RouteItem | RouteSkeleton | LogoutBtn;
 
 type RouteMenu = RouteMenuItem[];

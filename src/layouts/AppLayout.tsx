@@ -13,44 +13,23 @@ export const AppLayout: Component<{ menu: RouteMenu }> = ({ menu }) => {
         subItem.push({ type: menuItem.type, name: menuItem.name, onClick: menuItem.onClick });
         continue;
       }
-      if (menuItem.type === 'list') {
-        for (const route of menuItem.routes) {
-          items.push({ path: route.path, element: route.element });
-          if (route.type === 'main-item') {
-            mainItem.push({
-              type: route.type,
-              name: route.name,
-              path: route.path,
-              element: route.element
-            });
-          }
-          if (route.type === 'sub-item') {
-            subItem.push({
-              type: route.type,
-              name: route.name,
-              path: route.path,
-              element: route.element
-            });
-          }
-        }
-      } else {
-        items.push({ path: menuItem.path, element: menuItem.element });
-        if (menuItem.type === 'main-item') {
-          mainItem.push({
-            type: menuItem.type,
-            name: menuItem.name,
-            path: menuItem.path,
-            element: menuItem.element
-          });
-        }
-        if (menuItem.type === 'sub-item') {
-          subItem.push({
-            type: menuItem.type,
-            name: menuItem.name,
-            path: menuItem.path,
-            element: menuItem.element
-          });
-        }
+
+      items.push({ path: menuItem.path, element: menuItem.element });
+      if (menuItem.type === 'main-item') {
+        mainItem.push({
+          type: menuItem.type,
+          name: menuItem.name,
+          path: menuItem.path,
+          element: menuItem.element
+        });
+      }
+      if (menuItem.type === 'sub-item') {
+        subItem.push({
+          type: menuItem.type,
+          name: menuItem.name,
+          path: menuItem.path,
+          element: menuItem.element
+        });
       }
     }
 
