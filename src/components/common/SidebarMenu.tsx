@@ -32,44 +32,52 @@ export function useSidebarMenu() {
             </div>
             <div className='min-h-[90%] mt-10 flex flex-col justify-between pb-4'>
               <List className='p-0'>
-                {mainMenu.map((menuItem, idx) => (
-                  <Link key={idx} to='#'>
-                    <ListItem
-                      className={
-                        ITEM_CLASSNAME +
-                        (selectedMenu === menuItem.name
-                          ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
-                          : '')
-                      }
-                      onClick={() => {
-                        setSelectedMenu(menuItem.name);
-                        setOpenSidebar(false);
-                      }}
-                    >
-                      {menuItem.name}
-                    </ListItem>
-                  </Link>
-                ))}
+                {mainMenu.map((menuItem, idx) => {
+                  if (menuItem.type === 'main-item') {
+                    return (
+                      <Link key={idx} to={menuItem.path}>
+                        <ListItem
+                          className={
+                            ITEM_CLASSNAME +
+                            (selectedMenu === menuItem.name
+                              ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
+                              : '')
+                          }
+                          onClick={() => {
+                            setSelectedMenu(menuItem.name);
+                            setOpenSidebar(false);
+                          }}
+                        >
+                          {menuItem.name}
+                        </ListItem>
+                      </Link>
+                    );
+                  }
+                })}
               </List>
               <List className='p-0'>
-                {subMenu.map((menuItem, idx) => (
-                  <Link key={idx} to='#'>
-                    <ListItem
-                      className={
-                        ITEM_CLASSNAME +
-                        (selectedMenu === menuItem.name
-                          ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
-                          : '')
-                      }
-                      onClick={() => {
-                        setSelectedMenu(menuItem.name);
-                        setOpenSidebar(false);
-                      }}
-                    >
-                      {menuItem.name}
-                    </ListItem>
-                  </Link>
-                ))}
+                {subMenu.map((menuItem, idx) => {
+                  if (menuItem.type === 'sub-item') {
+                    return (
+                      <Link key={idx} to={menuItem.path}>
+                        <ListItem
+                          className={
+                            ITEM_CLASSNAME +
+                            (selectedMenu === menuItem.name
+                              ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
+                              : '')
+                          }
+                          onClick={() => {
+                            setSelectedMenu(menuItem.name);
+                            setOpenSidebar(false);
+                          }}
+                        >
+                          {menuItem.name}
+                        </ListItem>
+                      </Link>
+                    );
+                  }
+                })}
               </List>
             </div>
           </>

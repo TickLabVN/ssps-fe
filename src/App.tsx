@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate, useLocation } from 'react-router-dom';
 import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
 import { AppLayout, AuthLayout } from '@layouts';
@@ -10,15 +10,17 @@ export default function App() {
   const navigate: NavigateFunction = useNavigate();
   const { userStatus, getUserData } = useUserStore();
 
+  const { pathname } = useLocation();
+
   useEffect(() => {
     getUserData();
   }, [getUserData]);
 
   useEffect(() => {
-    if (userStatus === 'SUCCESS') {
+    if (pathname === '/' && userStatus === 'SUCCESS') {
       navigate('/home');
     }
-  }, [userStatus, navigate]);
+  }, [pathname, userStatus, navigate]);
 
   if (userStatus === 'UNINIT' || userStatus === 'PENDING') {
     return <AppSkeleton />;

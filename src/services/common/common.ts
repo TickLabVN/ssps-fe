@@ -10,6 +10,11 @@ export const mockServer = axios.create({
   withCredentials: true
 });
 
+export const mockFileServer = axios.create({
+  baseURL: 'http://localhost:3003',
+  withCredentials: true
+});
+
 export async function invoke<R = unknown, D = unknown>(call: Promise<AxiosResponse<R, D>>) {
   try {
     const response = await call;

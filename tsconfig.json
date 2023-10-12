@@ -22,6 +22,7 @@
       "@assets/*": ["src/assets/*"],
       "@components/common": ["src/components/common"],
       "@components/home": ["src/components/home"],
+      "@components/order": ["src/components/order"],
       "@constants": ["src/constants"],
       "@hooks": ["src/hooks"],
       "@interfaces": ["src/interfaces"],
@@ -31,6 +32,7 @@
       "@services/home": ["src/services/home"],
       "@states/common": ["src/states/common"],
       "@states/home": ["src/states/home"],
+      "@states/order": ["src/states/order"],
       "@utils": ["src/utils"]
     }
   },
