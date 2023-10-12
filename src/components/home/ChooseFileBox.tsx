@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useOrderWorkflowBox } from '@components/order';
+import { useFileStore } from '@states/home';
 import { useOrderWorkflowStore } from '@states/order';
 
 export function useChooseFileBox() {
@@ -10,12 +11,21 @@ export function useChooseFileBox() {
 
   const ChooseFileBox = () => {
     const { setOrderStep } = useOrderWorkflowStore();
+    const { uploadFile } = useFileStore();
+
     const handleOpenBox = () => setOpenBox(!openBox);
+    const handleUploadDocument = async (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files) {
+        await uploadFile(event.target.files[0]);
+        setOpenBox(false);
+        openOrderWorkflowBox();
+        setOrderStep(1);
+      }
+    };
 
     return (
       <>
         <Dialog
-          size='xs'
           className='2xl:max-w-fit 2xl:w-fit 2xl:min-w-fit lg:max-w-fit lg:w-fit lg:min-w-fit max-w-fit w-fit min-w-fit'
           open={openBox}
           handler={handleOpenBox}
@@ -25,7 +35,7 @@ export function useChooseFileBox() {
               htmlFor='dropzone-file'
               className='flex flex-col items-center w-[310px] h-[148px] gap-4 p-4 lg:w-[384px] lg:h-[190px] lg:p-7 border-2 border-blue/1 border-dashed rounded-lg cursor-pointer bg-blue-50 hover:bg-blue-100'
             >
-              <div className='flex gap-4'>
+              <div className='flex items-center gap-4'>
                 <ArrowUpTrayIcon
                   strokeWidth={2}
                   className='bg-blue/1 text-white rounded-full w-[40px] h-[40px] p-2 lg:w-[48px] lg:h-[48px] lg:p-3'
@@ -35,7 +45,7 @@ export function useChooseFileBox() {
                 </span>
               </div>
 
-              <div className='text-sm lg:text-base gap-1'>
+              <div className='text-sm lg:text-base'>
                 <span className='font-semibold h-[32px]'>Allowed formats:</span> .doc, .docx, .xls,
                 .xlsx, .ppt, .jpg, .png, .pdf
                 <div className='text-sm lg:text-base'>
@@ -47,11 +57,7 @@ export function useChooseFileBox() {
                 id='dropzone-file'
                 type='file'
                 className='hidden'
-                onChange={() => {
-                  setOpenBox(false);
-                  openOrderWorkflowBox();
-                  setOrderStep(1);
-                }}
+                onChange={handleUploadDocument}
               />
             </label>
           </DialogBody>

@@ -5,7 +5,8 @@ const app = express();
 global.__basedir = __dirname;
 
 var corsOptions = {
-  origin: 'http://localhost:3000'
+  origin: 'http://localhost:3000',
+  credentials: true
 };
 
 app.use(cors(corsOptions));
