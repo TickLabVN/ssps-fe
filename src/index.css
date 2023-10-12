@@ -5,15 +5,16 @@
 @tailwind utilities;
 
 .slider-container {
-    display: flex;
-    overflow-x: auto; 
-    padding: 10px 0; 
-    scrollbar-width: none; 
-    -ms-overflow-style: none; 
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
 }
 
 .slider-container::-webkit-scrollbar {
-    width: 0; 
+  width: 0;
 }
 
 .prevButton,

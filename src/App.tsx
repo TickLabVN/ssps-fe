@@ -1,24 +1,26 @@
 import { useEffect } from 'react';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
-import { HomeIcon } from '@heroicons/react/24/outline';
-import { AppSkeleton } from '@components';
+import { NavigateFunction, useNavigate, useLocation } from 'react-router-dom';
+import { AppSkeleton } from '@components/common';
+import { MAIN_MENU, SUB_MENU } from '@constants';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
-import { useUserStore } from '@states';
+import { useUserStore } from '@states/common';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();
   const { userStatus, getUserData } = useUserStore();
+
+  const { pathname } = useLocation();
 
   useEffect(() => {
     getUserData();
   }, [getUserData]);
 
   useEffect(() => {
-    if (userStatus === 'SUCCESS') {
+    if (pathname === '/' && userStatus === 'SUCCESS') {
       navigate('/home');
     }
-  }, [userStatus, navigate]);
+  }, [pathname, userStatus, navigate]);
 
   if (userStatus === 'UNINIT' || userStatus === 'PENDING') {
     return <AppSkeleton />;
@@ -38,50 +40,51 @@ export default function App() {
         {
           type: 'skeleton',
           path: '/',
+          name: 'Skeleton',
           element: <AppSkeleton />
         },
         {
-          type: 'item',
-          icon: <HomeIcon className='h-5 w-5' />,
+          type: 'main-item',
           path: '/home',
-          name: 'Trang chủ',
+          name: MAIN_MENU.home,
           element: <HomePage />
+        },
+        {
+          type: 'main-item',
+          path: '/order',
+          name: MAIN_MENU.order,
+          element: <></>
+        },
+        {
+          type: 'main-item',
+          path: '/payment',
+          name: MAIN_MENU.payment,
+          element: <></>
+        },
+        {
+          type: 'main-item',
+          path: '/location',
+          name: MAIN_MENU.location,
+          element: <></>
+        },
+        {
+          type: 'sub-item',
+          path: '/help',
+          name: SUB_MENU.help,
+          element: <></>
+        },
+        {
+          type: 'sub-item',
+          path: '/settings',
+          name: SUB_MENU.settings,
+          element: <></>
+        },
+        {
+          type: 'logout-btn',
+          name: SUB_MENU.logout,
+          onClick() {}
+          //onClick: () => authService.logout().then(() => getData())
         }
-        // {
-        //   type: 'list',
-        //   icon: <CurrencyDollarIcon className='h-5 w-5' />,
-        //   name: 'Quỹ lab',
-        //   routes: [
-        //     {
-        //       type: 'item',
-        //       name: 'Thống kê',
-        //       icon: <ChartBarSquareIcon strokeWidth={2} className='h-4 w-4' />,
-        //       path: '/finance/statistic',
-        //       element: <></>
-        //     },
-        //     {
-        //       type: 'item',
-        //       icon: <CreditCardIcon strokeWidth={2} className='h-4 w-4' />,
-        //       name: 'Giao dịch',
-        //       path: '/finance/transaction',
-        //       element: <></>
-        //     }
-        //   ]
-        // },
-        // 'divider',
-        // {
-        //   type: 'item',
-        //   icon: <UserCircleIcon className='h-5 w-5' />,
-        //   path: '/user',
-        //   name: 'Cá nhân',
-        //   element: <></>
-        // },
-        // {
-        //   type: 'logout-btn',
-        //   icon: <PowerIcon className='h-5 w-5' />,
-        //   name: 'Đăng xuất',
-        //   //onClick: () => authService.logout().then(() => getData())
-        // }
       ]}
     />
   );
