@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { NavigateFunction, useNavigate, useLocation } from 'react-router-dom';
 import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
-import { AppLayout } from '@layouts';
-import { HomePage, TestPreviewPage } from '@pages';
+import { AppLayout, AuthLayout } from '@layouts';
+import { AuthPage, HomePage, TestPreviewPage } from '@pages';
 import { useUserStore } from '@states/common';
 
 export default function App() {
@@ -26,13 +26,13 @@ export default function App() {
     return <AppSkeleton />;
   }
 
-  // if (userStatus === 'REJECT') {
-  //   return (
-  //     <AuthLayout>
-  //       <AuthPage />
-  //     </AuthLayout>
-  //   );
-  // }
+  if (userStatus === 'REJECT') {
+    return (
+      <AuthLayout>
+        <AuthPage />
+      </AuthLayout>
+    );
+  }
 
   return (
     <AppLayout
