@@ -2,11 +2,14 @@ import { useEffect } from 'react';
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
 import { useOrderStore, useSlideStore, useUserInfoStore } from '@states/home';
+import { useOrderExtraStore, useOrderPrintStore } from '@states/order';
 
 export function HomePage() {
   const { orderData, getOrderData } = useOrderStore();
   const { slideData, getSlideData } = useSlideStore();
+  const { setOrderList } = useOrderPrintStore();
   const { getUserInfoData } = useUserInfoStore();
+  const { getOrderExtraData } = useOrderExtraStore();
 
   const { openChooseFileBox, ChooseFileBox } = useChooseFileBox();
 
@@ -14,7 +17,12 @@ export function HomePage() {
     getOrderData();
     getSlideData();
     getUserInfoData();
-  }, [getOrderData, getSlideData, getUserInfoData]);
+    getOrderExtraData();
+  }, [getOrderData, getSlideData, getUserInfoData, getOrderExtraData]);
+
+  useEffect(() => {
+    setOrderList(orderData);
+  }, []);
 
   return (
     <>

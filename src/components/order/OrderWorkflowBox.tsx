@@ -7,6 +7,7 @@ import {
   TopupWalletForm,
   OrderSuccessForm
 } from '@components/order';
+import { HomePage } from '@pages';
 import { useOrderWorkflowStore } from '@states/order';
 
 export function useOrderWorkflowBox() {
@@ -14,7 +15,9 @@ export function useOrderWorkflowBox() {
 
   const DialogBodyWorkflow = () => {
     const { orderStep } = useOrderWorkflowStore();
-    if (orderStep === 1) {
+    if (orderStep === 0) {
+      return <HomePage />;
+    } else if (orderStep === 1) {
       return <UploadDocumentForm />;
     } else if (orderStep === 2) {
       return <OrderListForm />;
@@ -31,7 +34,7 @@ export function useOrderWorkflowBox() {
     const handleOpenDialog = () => setOpenDialog(!openDialog);
     return (
       <Dialog open={openDialog} handler={handleOpenDialog} size='xxl'>
-        <DialogBody>
+        <DialogBody className='p-0 bg-gray/1'>
           <DialogBodyWorkflow />
         </DialogBody>
       </Dialog>

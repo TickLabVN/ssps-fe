@@ -30,6 +30,7 @@
       "@pages": ["src/pages"],
       "@services/common": ["src/services/common"],
       "@services/home": ["src/services/home"],
+      "@services/order": ["src/services/order"],
       "@states/common": ["src/states/common"],
       "@states/home": ["src/states/home"],
       "@states/order": ["src/states/order"],

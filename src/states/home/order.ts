@@ -4,11 +4,13 @@ import { orderService } from '@services/home';
 export const useOrderStore = create<OrderStore>()((set) => ({
   orderStatus: 'UNINIT',
   orderData: [],
+  totalSize: 0,
   getOrderData: async () => {
     set(() => ({ orderStatus: 'PENDING' }));
     try {
       const orderData = await orderService.getOrder();
-      set(() => ({ orderData: orderData, orderStatus: 'SUCCESS' }));
+      const totalSize = orderData.reduce((total, order) => total + order.size, 0);
+      set(() => ({ orderData: orderData, totalSize: totalSize, orderStatus: 'SUCCESS' }));
     } catch (err) {
       set(() => ({ orderStatus: 'REJECT' }));
     }

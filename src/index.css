@@ -27,3 +27,5 @@
   top: 50%;
   z-index: 1;
 }
+
+.grayscale { filter: grayscale(100%); }

@@ -10,6 +10,7 @@
     "./src/pages",
     "./src/services/common",
     "./src/services/home",
+    "./src/services/order",
     "./src/states/common",
     "./src/states/home",
     "./src/states/order",
