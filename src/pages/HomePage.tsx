@@ -7,7 +7,7 @@ import { useOrderExtraStore, useOrderPrintStore } from '@states/order';
 export function HomePage() {
   const { orderData, getOrderData } = useOrderStore();
   const { slideData, getSlideData } = useSlideStore();
-  const { setOrderList } = useOrderPrintStore();
+  const { setOrderPrintList } = useOrderPrintStore();
   const { getUserInfoData } = useUserInfoStore();
   const { getOrderExtraData } = useOrderExtraStore();
 
@@ -21,8 +21,8 @@ export function HomePage() {
   }, [getOrderData, getSlideData, getUserInfoData, getOrderExtraData]);
 
   useEffect(() => {
-    setOrderList(orderData);
-  }, []);
+    setOrderPrintList(orderData);
+  }, [orderData, setOrderPrintList]);
 
   return (
     <>

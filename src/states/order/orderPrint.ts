@@ -1,13 +1,12 @@
 import { create } from 'zustand';
-// import { useOrderStore } from "@states/home";
 
 export const useOrderPrintStore = create<OrderPrintStore>()((set) => ({
   totalCost: 0,
   orderPrintList: [],
-  setOrderList: (orderPrintList) => {
+  setOrderPrintList: (orderPrintList) => {
     set({ orderPrintList: orderPrintList });
   },
-  setCost: (totalCost) => {
+  setTotalCost: (totalCost) => {
     set({ totalCost: totalCost });
   }
 }));

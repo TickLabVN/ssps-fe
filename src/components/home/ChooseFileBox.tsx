@@ -4,7 +4,6 @@ import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useOrderWorkflowBox } from '@components/order';
 import { useFileStore } from '@states/home';
 import { useOrderWorkflowStore } from '@states/order';
-import { FileBox } from '../order/FileBox';
 
 export function useChooseFileBox() {
   const { openOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
@@ -61,7 +60,6 @@ export function useChooseFileBox() {
                 onChange={handleUploadDocument}
               />
             </label>
-            {<FileBox />}
           </DialogBody>
         </Dialog>
         {<OrderWorkflowBox />}

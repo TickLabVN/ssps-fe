@@ -12,6 +12,7 @@ export * from './OrderListForm';
 export * from './OrderListItem';
 export * from './OrderSuccessForm';
 export * from './OrderWorkflowBox';
+export * from './PreviewDocument';
 export * from './TopupWalletForm';
 export * from './UploadDocumentForm';
 export * from './UploadDocumentItem';

@@ -1,5 +1,4 @@
-// import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
-// import { useFileStore } from '@states/home';
+import React, { useState } from 'react';
 import {
   Button,
   Radio,
@@ -12,17 +11,16 @@ import {
   DialogBody,
   IconButton
 } from '@material-tailwind/react';
-import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
-import React, { useState } from 'react';
 import { UploadDocumentItem, FormFooter, DialogForm } from '@components/order';
 import { useOrderStore } from '@states/home';
+import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 
 // Tan's first-task in here.
 export function UploadDocumentForm() {
   const [open, setOpen] = useState<boolean>(false);
   const [openXDialog, setOpenXDialog] = useState<boolean>(false);
-  const { setOrderList, orderPrintList } = useOrderPrintStore();
+  //const { orderPrintList, setOrderPrintList } = useOrderPrintStore();
   const handleOpen = () => {
     setOpen(!open);
   };
@@ -31,39 +29,30 @@ export function UploadDocumentForm() {
   };
   const { orderData } = useOrderStore();
   const { setOrderStep } = useOrderWorkflowStore();
-  //const { fileTarget } = useFileStore();
 
-  // return (
-  //   <>
-  //     <div>UploadDocumentForm</div>
-  //     {fileTarget && (
-  //       <DocViewer pluginRenderers={DocViewerRenderers} documents={[{ uri: fileTarget.url }]} />
-  //     )}
-  //     <Button onClick={() => setOrderStep(2)}>Save</Button>
-  //   </>
   const { totalCost } = useOrderPrintStore();
   const [selectedLayout, setSelectedLayout] = useState<string>('Portrait');
   const handleLayoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedLayout(e.target.value);
   };
   const handleSave = () => {
-    const newOrderPrintItem = {
-      id: '1278-cfdb',
-      status: 'ready',
-      location: 'aaa',
-      fileName: 'showMaker.txt',
-      coins: 50,
-      size: 50,
-      number: 50,
-      pageNumber: 20,
-      paid: 'Not paid'
-    };
-    const newOrderPrintList = [...orderPrintList, newOrderPrintItem];
-    setOrderList(newOrderPrintList);
+    // const newOrderPrintItem = {
+    //   id: '1278-cfdb',
+    //   status: 'ready',
+    //   location: 'aaa',
+    //   fileName: 'showMaker.txt',
+    //   coins: 50,
+    //   size: 50,
+    //   number: 50,
+    //   pageNumber: 20,
+    //   paid: 'Not paid'
+    // };
+    //const newOrderPrintList = [...orderPrintList, newOrderPrintItem];
+    //setOrderPrintList(newOrderPrintList);
     setOrderStep(2);
   };
   return (
-    <div>
+    <>
       <div className='flex justify-between shadow-md px-6 py-3 bg-white mb-6'>
         <span className='text-gray/4 font-bold'>Upload document</span>
         <XMarkIcon width={28} onClick={handleOpenX} />
@@ -97,13 +86,7 @@ export function UploadDocumentForm() {
         </Dialog>
       </div>
       {/* {<FileBox />} */}
-      <UploadDocumentItem
-        id='1264-erfc'
-        fileName='showMaker.txt'
-        coins={50}
-        size={50}
-        number={50}
-      />
+      <UploadDocumentItem fileName='showMaker.txt' coins={50} size={50} numberItem={50} />
       <div className='p-6 text-gray/4 bg-white mt-4'>
         <div className='mb-8'>
           <Typography className='font-bold'>Layout</Typography>
@@ -202,6 +185,6 @@ export function UploadDocumentForm() {
           Save
         </Button>
       </FormFooter>
-    </div>
+    </>
   );
 }

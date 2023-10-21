@@ -5,7 +5,8 @@ import {
   OrderListForm,
   ConfirmOrderForm,
   TopupWalletForm,
-  OrderSuccessForm
+  OrderSuccessForm,
+  PreviewDocument
 } from '@components/order';
 import { HomePage } from '@pages';
 import { useOrderWorkflowStore } from '@states/order';
@@ -27,6 +28,8 @@ export function useOrderWorkflowBox() {
       return <TopupWalletForm />;
     } else if (orderStep === 5) {
       return <OrderSuccessForm />;
+    } else if (orderStep === 6) {
+      return <PreviewDocument />;
     }
   };
 

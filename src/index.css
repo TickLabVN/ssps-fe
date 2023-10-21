@@ -29,3 +29,7 @@
 }
 
 .grayscale { filter: grayscale(100%); }
+
+#react-doc-viewer #pdf-controls {
+  z-index: 5;
+}

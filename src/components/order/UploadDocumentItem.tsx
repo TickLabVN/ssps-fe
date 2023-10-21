@@ -1,31 +1,34 @@
-import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
-import coin from '../../assets/coin.png';
 import { useState } from 'react';
+import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
+import coin from '@assets/coin.png';
+import { useOrderWorkflowStore } from '@states/order';
 
 export const UploadDocumentItem: Component<{
-  id: string;
   fileName: string;
   size: number;
   coins: number;
-  number: number;
-}> = ({ id, fileName, size, coins, number }) => {
-  const [currentNumber, setCurrentNumber] = useState<number>(number);
+  numberItem: number;
+}> = ({ fileName, size, coins, numberItem }) => {
+  const { setOrderStep } = useOrderWorkflowStore();
+  const [currentNumber, setCurrentNumber] = useState<number>(numberItem);
+
   const handleDecrease = () => {
     if (currentNumber > 1) {
-      id = id;
       setCurrentNumber(currentNumber - 1);
-      //   updateCurrentNumber(currentNumber - 1);
     }
   };
   const handleIncrease = () => {
     setCurrentNumber(currentNumber + 1);
-    // updateCurrentNumber(currentNumber + 1);
   };
+
   return (
     <div className='flex gap-4 px-4 py-2 bg-white '>
-      <div className="bg-[url('./src/assets/logobk.png')] bg-no-repeat bg-contain bg-center text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer">
-        <EyeIcon width={12} />
-        <div className='text-xs'>Preview</div>
+      <div
+        className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
+        onClick={() => setOrderStep(6)}
+      >
+        <EyeIcon width={20} />
+        <span className='text-xs'>Preview</span>
       </div>
       <div className='w-full'>
         <div className='flex flex-col text-gray/4'>
