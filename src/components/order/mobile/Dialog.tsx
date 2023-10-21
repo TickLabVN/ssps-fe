@@ -8,14 +8,14 @@ import {
   ListItemPrefix,
   Typography
 } from '@material-tailwind/react';
-import portraitBottom from '../../assets/portrait-bottom.jpg';
-import portraitTop from '../../assets/portrait-top.jpg';
-import portraitLeft from '../../assets/portrait-left.jpg';
-import portraitRight from '../../assets/portrait-right.jpg';
-import landscapeBottom from '../../assets/landscape-bottom.jpg';
-import landscapeTop from '../../assets/landscape-top.jpg';
-import landscapeLeft from '../../assets/landscape-left.png';
-import landscapeRight from '../../assets/landscape-right.jpg';
+import portraitBottom from '@assets/portrait-bottom.jpg';
+import portraitTop from '@assets/portrait-top.jpg';
+import portraitLeft from '@assets/portrait-left.jpg';
+import portraitRight from '@assets/portrait-right.jpg';
+import landscapeBottom from '@assets/landscape-bottom.jpg';
+import landscapeTop from '@assets/landscape-top.jpg';
+import landscapeLeft from '@assets/landscape-left.png';
+import landscapeRight from '@assets/landscape-right.jpg';
 export const DialogForm: Component<{ layout: string; open: boolean; handleOpen: () => void }> = ({
   layout,
   open,

@@ -1,4 +1,4 @@
-import coin from '../../assets/coin.png';
+import coin from '@assets/coin.png';
 // import { ILayout } from '@interfaces';
 import { useUserInfoStore } from '@states/home';
 import { ReactNode } from 'react';

@@ -1,5 +1,5 @@
 import { EyeIcon } from '@heroicons/react/24/solid';
-import coin from '../../assets/coin.png';
+import coin from '@assets/coin.png';
 import { Typography } from '@material-tailwind/react';
 export const ConfirmOrderItem: Component<{
   fileName: string;

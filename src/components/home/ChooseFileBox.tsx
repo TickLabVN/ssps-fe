@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { useOrderWorkflowBox } from '@components/order';
+import { useOrderWorkflowBox } from '@components/order/mobile';
 import { useFileStore } from '@states/home';
 import { useOrderWorkflowStore } from '@states/order';
 
@@ -10,7 +10,7 @@ export function useChooseFileBox() {
   const [openBox, setOpenBox] = useState<boolean>(false);
 
   const ChooseFileBox = () => {
-    const { setOrderStep } = useOrderWorkflowStore();
+    const { setMobileOrderStep } = useOrderWorkflowStore();
     const { uploadFile } = useFileStore();
 
     const handleOpenBox = () => setOpenBox(!openBox);
@@ -19,7 +19,7 @@ export function useChooseFileBox() {
         await uploadFile(event.target.files[0]);
         setOpenBox(false);
         openOrderWorkflowBox();
-        setOrderStep(1);
+        setMobileOrderStep(1);
       }
     };
 

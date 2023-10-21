@@ -32,4 +32,5 @@
 
 #react-doc-viewer #pdf-controls {
   z-index: 5;
+  padding-top: 0;
 }

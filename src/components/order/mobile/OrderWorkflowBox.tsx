@@ -7,7 +7,9 @@ import {
   TopupWalletForm,
   OrderSuccessForm,
   PreviewDocument
-} from '@components/order';
+} from '@components/order/mobile';
+//import { ScreenSize } from '@constants';
+//import { useScreenSize } from '@hooks';
 import { HomePage } from '@pages';
 import { useOrderWorkflowStore } from '@states/order';
 
@@ -15,20 +17,22 @@ export function useOrderWorkflowBox() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const DialogBodyWorkflow = () => {
-    const { orderStep } = useOrderWorkflowStore();
-    if (orderStep === 0) {
+    //const { screenSize } = useScreenSize();
+    const { mobileOrderStep } = useOrderWorkflowStore();
+
+    if (mobileOrderStep === 0) {
       return <HomePage />;
-    } else if (orderStep === 1) {
+    } else if (mobileOrderStep === 1) {
       return <UploadDocumentForm />;
-    } else if (orderStep === 2) {
+    } else if (mobileOrderStep === 2) {
       return <OrderListForm />;
-    } else if (orderStep === 3) {
+    } else if (mobileOrderStep === 3) {
       return <ConfirmOrderForm />;
-    } else if (orderStep === 4) {
+    } else if (mobileOrderStep === 4) {
       return <TopupWalletForm />;
-    } else if (orderStep === 5) {
+    } else if (mobileOrderStep === 5) {
       return <OrderSuccessForm />;
-    } else if (orderStep === 6) {
+    } else if (mobileOrderStep === 6) {
       return <PreviewDocument />;
     }
   };

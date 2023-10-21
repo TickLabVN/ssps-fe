@@ -1,8 +1,12 @@
 import { create } from 'zustand';
 
 export const useOrderWorkflowStore = create<OrderWorkflowStore>()((set) => ({
-  orderStep: 1,
-  setOrderStep: (orderStep) => {
-    set({ orderStep: orderStep });
+  mobileOrderStep: 0,
+  desktopOrderStep: 0,
+  setMobileOrderStep: (mobileOrderStep) => {
+    set({ mobileOrderStep: mobileOrderStep });
+  },
+  setDesktopOrderStep: (desktopOrderStep) => {
+    set({ desktopOrderStep: desktopOrderStep });
   }
 }));

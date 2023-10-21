@@ -3,13 +3,13 @@ import { useOrderWorkflowStore } from '@states/order';
 
 // Tue's second-task in here.
 export function OrderSuccessForm() {
-  const { setOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
 
   return (
     <>
       <div>OrderSuccessForm</div>
-      <Button onClick={() => setOrderStep(5)}>Track this order</Button>
-      <Button onClick={() => setOrderStep(3)}>Back</Button>
+      <Button onClick={() => setMobileOrderStep(5)}>Track this order</Button>
+      <Button onClick={() => setMobileOrderStep(3)}>Back</Button>
     </>
   );
 }

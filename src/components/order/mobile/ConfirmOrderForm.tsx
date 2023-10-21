@@ -11,13 +11,13 @@ import {
 } from '@heroicons/react/24/solid';
 import { Typography, Select, Option, Alert, Button } from '@material-tailwind/react';
 import { useUserInfoStore } from '@states/home';
-import { ConfirmOrderItem, FormFooter } from '@components/order';
-import coin from '../../assets/coin.png';
+import { ConfirmOrderItem, FormFooter } from '@components/order/mobile';
+import coin from '@assets/coin.png';
 
 // Tan's third-task in here.
 export function ConfirmOrderForm() {
   const { totalCost, orderPrintList } = useOrderPrintStore();
-  const { setOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
   const { userInfoData } = useUserInfoStore();
   const { extraFeeData } = useOrderExtraStore();
   function IconSolid() {
@@ -40,7 +40,11 @@ export function ConfirmOrderForm() {
     <div className='text-gray-4'>
       <div className='flex justify-between px-6 py-3  shadow-md font-semibold bg-white mb-6'>
         <div className='flex items-center'>
-          <ChevronLeftIcon width={28} onClick={() => setOrderStep(2)} className='cursor-pointer' />
+          <ChevronLeftIcon
+            width={28}
+            onClick={() => setMobileOrderStep(2)}
+            className='cursor-pointer'
+          />
           <Typography className='ml-4 font-bold text-gray/4'>Confirm order</Typography>
         </div>
         <XMarkIcon width={28} className='cursor-pointer' />
@@ -131,7 +135,7 @@ export function ConfirmOrderForm() {
         <Button
           color={orderPrintList.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
-          onClick={() => setOrderStep(4)}
+          onClick={() => setMobileOrderStep(4)}
           disabled={orderPrintList.length === 0}
         >
           Confirm

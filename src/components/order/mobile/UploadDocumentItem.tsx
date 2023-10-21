@@ -9,7 +9,7 @@ export const UploadDocumentItem: Component<{
   coins: number;
   numberItem: number;
 }> = ({ fileName, size, coins, numberItem }) => {
-  const { setOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
   const [currentNumber, setCurrentNumber] = useState<number>(numberItem);
 
   const handleDecrease = () => {
@@ -25,7 +25,7 @@ export const UploadDocumentItem: Component<{
     <div className='flex gap-4 px-4 py-2 bg-white '>
       <div
         className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
-        onClick={() => setOrderStep(6)}
+        onClick={() => setMobileOrderStep(6)}
       >
         <EyeIcon width={20} />
         <span className='text-xs'>Preview</span>

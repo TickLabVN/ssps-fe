@@ -2,7 +2,8 @@
   "directory": [
     "./src/components/common",
     "./src/components/home",
-    "./src/components/order",
+    "./src/components/order/mobile",
+    "./src/components/order/desktop",
     "./src/constants",
     "./src/hooks",
     "./src/interfaces",

@@ -12,7 +12,7 @@ import {
   IconButton
 } from '@material-tailwind/react';
 import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
-import { UploadDocumentItem, FormFooter, DialogForm } from '@components/order';
+import { UploadDocumentItem, FormFooter, DialogForm } from '@components/order/mobile';
 import { useOrderStore } from '@states/home';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 
@@ -28,7 +28,7 @@ export function UploadDocumentForm() {
     setOpenXDialog(!openXDialog);
   };
   const { orderData } = useOrderStore();
-  const { setOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
 
   const { totalCost } = useOrderPrintStore();
   const [selectedLayout, setSelectedLayout] = useState<string>('Portrait');
@@ -49,7 +49,7 @@ export function UploadDocumentForm() {
     // };
     //const newOrderPrintList = [...orderPrintList, newOrderPrintItem];
     //setOrderPrintList(newOrderPrintList);
-    setOrderStep(2);
+    setMobileOrderStep(2);
   };
   return (
     <>
@@ -80,7 +80,7 @@ export function UploadDocumentForm() {
               <Button className='bg-green-200' onClick={handleSave}>
                 Save changes
               </Button>
-              <Button onClick={() => setOrderStep(2)}>Don't save</Button>
+              <Button onClick={() => setMobileOrderStep(2)}>Don't save</Button>
             </div>
           </DialogBody>
         </Dialog>

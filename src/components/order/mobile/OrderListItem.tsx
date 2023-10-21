@@ -1,5 +1,5 @@
 import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
-import coin from '../../assets/coin.png';
+import coin from '@assets/coin.png';
 import { useState } from 'react';
 import {
   Dialog,

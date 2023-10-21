@@ -9,13 +9,13 @@ import {
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useOrderStore } from '@states/home';
-import { OrderList, FormFooter, FileBox } from '@components/order';
+import { OrderList, FormFooter, FileBox } from '@components/order/mobile';
 import { useState } from 'react';
 
 // Tan's second-task in here.
 export function OrderListForm() {
   const [totalCost, setTotalCost] = useState<number>(0);
-  const { orderPrintList, setOrderList, setCost } = useOrderPrintStore();
+  const { orderPrintList, setOrderPrintList /*setTotal*/ } = useOrderPrintStore();
   const handleTotalCostChange = (newTotalCost: number) => {
     setTotalCost(newTotalCost); // Cập nhật state với giá trị từ OrderListItem
   };
@@ -23,11 +23,11 @@ export function OrderListForm() {
   const handleOpenDialogBackToHome = () => {
     setOpenDiaLogBackToHome(!openDialogBackToHome);
   };
-  const { setOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
   const { totalSize } = useOrderStore();
   const handleBackToHome = () => {
-    setOrderList([]);
-    setOrderStep(0);
+    setOrderPrintList([]);
+    setMobileOrderStep(0);
     window.location.reload();
   };
   return (
@@ -96,9 +96,9 @@ export function OrderListForm() {
           color={orderPrintList.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
           onClick={() => {
-            setOrderList(orderPrintList);
-            setCost(totalCost);
-            setOrderStep(3);
+            setOrderPrintList(orderPrintList);
+            setTotalCost(totalCost);
+            setMobileOrderStep(3);
           }}
           disabled={orderPrintList.length === 0}
         >

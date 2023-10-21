@@ -2,13 +2,13 @@ import { OrderListItem } from './OrderListItem';
 import { useEffect, useState } from 'react';
 import { useOrderPrintStore } from '@states/order';
 export const OrderList: Component<{
-  orders: OrderPrintData[];
+  orders: OrderData[];
   updateTotalCost: (newTotalCost: number) => void;
 }> = ({ orders, updateTotalCost }) => {
   const [currentNumbers, setCurrentNumbers] = useState<number[]>(
     orders.map((order) => order.number)
   );
-  const { orderPrintList, setOrderList } = useOrderPrintStore();
+  const { orderPrintList, setOrderPrintList } = useOrderPrintStore();
   const updateCurrentNumber = (newNumber: number, index: number) => {
     setCurrentNumbers((prevNumbers) => {
       const updatedNumbers = [...prevNumbers];
@@ -25,7 +25,7 @@ export const OrderList: Component<{
   }, [orders, updateTotalCost, currentNumbers]);
   const handleRemove = (id: string) => {
     const newOrderPrintList = orderPrintList.filter((orderPrintItem) => orderPrintItem.id !== id);
-    setOrderList(newOrderPrintList);
+    setOrderPrintList(newOrderPrintList);
   };
   return (
     <div className='mt-4 bg-white'>
