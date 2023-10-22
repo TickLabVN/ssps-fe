@@ -41,9 +41,11 @@ const getListFiles = (req, res) => {
     let fileInfos = [];
 
     files.forEach((file) => {
+      const stats = fs.statSync(directoryPath + file);
       fileInfos.push({
         name: file,
-        url: baseUrl + file
+        url: baseUrl + file,
+        size: stats.size
       });
     });
 

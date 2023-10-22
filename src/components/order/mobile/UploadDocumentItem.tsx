@@ -32,7 +32,7 @@ export const UploadDocumentItem: Component<{
       </div>
       <div className='w-full'>
         <div className='flex flex-col text-gray/4'>
-          <div>
+          <div className='font-medium'>
             <span className='text-gray/4'>{fileName}</span>
             <span className='text-gray/3'>{` (${size} MB)`}</span>
           </div>

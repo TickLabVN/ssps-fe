@@ -1,6 +1,7 @@
 type FileData = {
   name: string;
   url: string;
+  size: number;
 };
 
 type FileStore = {

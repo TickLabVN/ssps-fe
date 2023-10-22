@@ -1,27 +1,39 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { useUploadAndPreviewDocBox } from '@components/order/desktop';
 import { useOrderWorkflowBox } from '@components/order/mobile';
+import { ScreenSize } from '@constants';
+import { useScreenSize } from '@hooks';
 import { useFileStore } from '@states/home';
 import { useOrderWorkflowStore } from '@states/order';
 
 export function useChooseFileBox() {
+  const { openUploadAndPreviewDocBox, UploadAndPreviewDocBox } = useUploadAndPreviewDocBox();
   const { openOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
   const [openBox, setOpenBox] = useState<boolean>(false);
 
   const ChooseFileBox = () => {
+    const { screenSize } = useScreenSize();
     const { setMobileOrderStep } = useOrderWorkflowStore();
     const { uploadFile } = useFileStore();
 
     const handleOpenBox = () => setOpenBox(!openBox);
-    const handleUploadDocument = async (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        await uploadFile(event.target.files[0]);
-        setOpenBox(false);
-        openOrderWorkflowBox();
-        setMobileOrderStep(1);
-      }
-    };
+    const handleUploadDocument = useMemo(
+      () => async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+          await uploadFile(event.target.files[0]);
+          setOpenBox(false);
+          if (screenSize <= ScreenSize.MD) {
+            openOrderWorkflowBox();
+          } else {
+            openUploadAndPreviewDocBox();
+          }
+          setMobileOrderStep(1);
+        }
+      },
+      [screenSize, setMobileOrderStep, uploadFile]
+    );
 
     return (
       <>
@@ -62,7 +74,7 @@ export function useChooseFileBox() {
             </label>
           </DialogBody>
         </Dialog>
-        {<OrderWorkflowBox />}
+        {screenSize <= ScreenSize.MD ? <OrderWorkflowBox /> : <UploadAndPreviewDocBox />}
       </>
     );
   };

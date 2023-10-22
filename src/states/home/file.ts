@@ -7,7 +7,8 @@ export const useFileStore = create<FileStore>()((set, get) => ({
   fileAll: [],
   fileTarget: {
     name: '',
-    url: ''
+    url: '',
+    size: 0
   },
   uploadFile: async (file) => {
     set(() => ({ fileStatus: 'PENDING' }));
