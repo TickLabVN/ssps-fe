@@ -22,6 +22,7 @@
       "@assets/*": ["src/assets/*"],
       "@components/common": ["src/components/common"],
       "@components/home": ["src/components/home"],
+      "@components/order/common": ["src/components/order/common"],
       "@components/order/mobile": ["src/components/order/mobile"],
       "@components/order/desktop": ["src/components/order/desktop"],
       "@constants": ["src/constants"],

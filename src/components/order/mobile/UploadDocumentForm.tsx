@@ -12,18 +12,17 @@ import {
   IconButton
 } from '@material-tailwind/react';
 import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
-import { UploadDocumentItem, FormFooter, DialogForm } from '@components/order/mobile';
+import { useLayoutSide } from '@components/order/common';
+import { UploadDocumentItem, FormFooter } from '@components/order/mobile';
 import { useOrderStore } from '@states/home';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 
 // Tan's first-task in here.
 export function UploadDocumentForm() {
-  const [open, setOpen] = useState<boolean>(false);
+  const { openLayoutSide, LayoutSide } = useLayoutSide();
+
   const [openXDialog, setOpenXDialog] = useState<boolean>(false);
   //const { orderPrintList, setOrderPrintList } = useOrderPrintStore();
-  const handleOpen = () => {
-    setOpen(!open);
-  };
   const handleOpenX = () => {
     setOpenXDialog(!openXDialog);
   };
@@ -166,9 +165,9 @@ export function UploadDocumentForm() {
               <ExclamationCircleIcon
                 width={24}
                 className='ml-6 cursor-pointer text-gray-300 hover:text-black'
-                onClick={handleOpen}
+                onClick={openLayoutSide}
               />
-              <DialogForm layout={selectedLayout} open={open} handleOpen={handleOpen} />
+              <LayoutSide layout={selectedLayout} />
             </div>
           </div>
         </div>

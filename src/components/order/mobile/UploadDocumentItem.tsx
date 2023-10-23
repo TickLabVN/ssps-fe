@@ -46,7 +46,7 @@ export const UploadDocumentItem: Component<{
           </div>
         </div>
         <div className='flex justify-between items-center '>
-          <div className='flex  border-2 '>
+          <div className='flex border-2 '>
             <span
               className='p-0.5 border-r-2 flex items-center cursor-pointer'
               onClick={handleDecrease}
