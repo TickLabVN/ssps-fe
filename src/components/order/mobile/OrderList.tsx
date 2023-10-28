@@ -1,6 +1,6 @@
 import { OrderListItem } from './OrderListItem';
 import { useEffect, useState } from 'react';
-import { useOrderPrintStore } from '@states/order';
+// import { useOrderPrintStore } from '@states/order';
 export const OrderList: Component<{
   orders: OrderData[];
   updateTotalCost: (newTotalCost: number) => void;
@@ -8,7 +8,7 @@ export const OrderList: Component<{
   const [currentNumbers, setCurrentNumbers] = useState<number[]>(
     orders.map((order) => order.number)
   );
-  const { orderPrintList, setOrderPrintList } = useOrderPrintStore();
+  // const { orderPrintList, setOrderPrintList } = useOrderPrintStore();
   const updateCurrentNumber = (newNumber: number, index: number) => {
     setCurrentNumbers((prevNumbers) => {
       const updatedNumbers = [...prevNumbers];
@@ -23,10 +23,10 @@ export const OrderList: Component<{
     );
     updateTotalCost(totalCost);
   }, [orders, updateTotalCost, currentNumbers]);
-  const handleRemove = (id: string) => {
-    const newOrderPrintList = orderPrintList.filter((orderPrintItem) => orderPrintItem.id !== id);
-    setOrderPrintList(newOrderPrintList);
-  };
+  // const handleRemove = (id: string) => {
+  //   const newOrderPrintList = orderPrintList.filter((orderPrintItem) => orderPrintItem.id !== id);
+  //   setOrderPrintList(newOrderPrintList);
+  // };
   return (
     <div className='mt-4 bg-white'>
       {orders.map((order, index) => (
@@ -38,7 +38,8 @@ export const OrderList: Component<{
             coins={order.coins}
             number={currentNumbers[index]}
             updateCurrentNumber={(newNumber) => updateCurrentNumber(newNumber, index)}
-            handleRemove={() => handleRemove(order.id)}
+            //handleRemove={() => handleRemove(order.id)}
+            handleRemove={() => null}
           />
         </div>
       ))}

@@ -3,7 +3,7 @@ import { Card, CardBody } from '@material-tailwind/react';
 import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { MapPinIcon } from '@heroicons/react/24/solid';
 import coin from '@assets/coin.png';
-import { ORDER_STATUS } from '@constants';
+import { ORDER_STATUS_COLOR } from '@constants';
 
 export const Orders: Component<{ orders: OrderData[] }> = ({ orders }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -36,7 +36,7 @@ export const Orders: Component<{ orders: OrderData[] }> = ({ orders }) => {
             <CardBody className='p-2 lg:p-4'>
               <div className='flex items-center justify-between font-semibold text-xs lg:text-base mb-2 lg:mb-4'>
                 <span>{order.id}</span>
-                <span className={`capitalize text-${ORDER_STATUS[order.status]}-500`}>
+                <span className={`capitalize text-${ORDER_STATUS_COLOR[order.status]}-500`}>
                   {order.status}
                 </span>
               </div>

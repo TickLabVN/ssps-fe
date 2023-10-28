@@ -9,16 +9,17 @@ import {
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useOrderStore } from '@states/home';
-import { OrderList, FormFooter, FileBox } from '@components/order/mobile';
+import { FormFooter } from '@components/order/common';
+import { /*OrderList,*/ FileBox } from '@components/order/mobile';
 import { useState } from 'react';
 
 // Tan's second-task in here.
 export function OrderListForm() {
   const [totalCost, setTotalCost] = useState<number>(0);
-  const { orderPrintList, setOrderPrintList /*setTotal*/ } = useOrderPrintStore();
-  const handleTotalCostChange = (newTotalCost: number) => {
-    setTotalCost(newTotalCost); // Cập nhật state với giá trị từ OrderListItem
-  };
+  const { orderPrintList /*setOrderPrintList*/ /*setTotal*/ } = useOrderPrintStore();
+  // const handleTotalCostChange = (newTotalCost: number) => {
+  //   setTotalCost(newTotalCost); // Cập nhật state với giá trị từ OrderListItem
+  // };
   const [openDialogBackToHome, setOpenDiaLogBackToHome] = useState<boolean>(false);
   const handleOpenDialogBackToHome = () => {
     setOpenDiaLogBackToHome(!openDialogBackToHome);
@@ -26,7 +27,7 @@ export function OrderListForm() {
   const { setMobileOrderStep } = useOrderWorkflowStore();
   const { totalSize } = useOrderStore();
   const handleBackToHome = () => {
-    setOrderPrintList([]);
+    // setOrderPrintList([]);
     setMobileOrderStep(0);
     window.location.reload();
   };
@@ -84,7 +85,7 @@ export function OrderListForm() {
           <div className='p-4 bg-white'>
             <FileBox />
           </div>
-          <OrderList orders={orderPrintList} updateTotalCost={handleTotalCostChange} />
+          {/* <OrderList orders={orderPrintList} updateTotalCost={handleTotalCostChange} /> */}
         </div>
       ) : (
         <div className='pt-12 px-4 pb-4'>
@@ -96,7 +97,7 @@ export function OrderListForm() {
           color={orderPrintList.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
           onClick={() => {
-            setOrderPrintList(orderPrintList);
+            // setOrderPrintList(orderPrintList[0]);
             setTotalCost(totalCost);
             setMobileOrderStep(3);
           }}

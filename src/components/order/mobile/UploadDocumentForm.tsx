@@ -12,8 +12,8 @@ import {
   IconButton
 } from '@material-tailwind/react';
 import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
-import { useLayoutSide } from '@components/order/common';
-import { UploadDocumentItem, FormFooter } from '@components/order/mobile';
+import { useLayoutSide, FormFooter } from '@components/order/common';
+import { UploadDocumentItem } from '@components/order/mobile';
 import { useOrderStore } from '@states/home';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 

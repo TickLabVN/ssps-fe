@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
 import { useOrderStore, useSlideStore, useUserInfoStore } from '@states/home';
-import { useOrderExtraStore, useOrderPrintStore, useOrderWorkflowStore } from '@states/order';
+import { useOrderExtraStore, /*useOrderPrintStore,*/ useOrderWorkflowStore } from '@states/order';
 
 export function HomePage() {
   const { orderData, getOrderData } = useOrderStore();
   const { slideData, getSlideData } = useSlideStore();
-  const { setOrderPrintList } = useOrderPrintStore();
+  // const { setOrderPrintList } = useOrderPrintStore();
   const { getUserInfoData } = useUserInfoStore();
   const { getOrderExtraData } = useOrderExtraStore();
 
@@ -21,9 +21,9 @@ export function HomePage() {
     getOrderExtraData();
   }, [getOrderData, getSlideData, getUserInfoData, getOrderExtraData]);
 
-  useEffect(() => {
-    setOrderPrintList(orderData);
-  }, [orderData, setOrderPrintList]);
+  // useEffect(() => {
+  //   setOrderPrintList(orderData);
+  // }, [orderData, setOrderPrintList]);
 
   if (desktopOrderStep === 0) {
     return (

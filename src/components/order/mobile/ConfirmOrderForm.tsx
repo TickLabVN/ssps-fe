@@ -11,7 +11,8 @@ import {
 } from '@heroicons/react/24/solid';
 import { Typography, Select, Option, Alert, Button } from '@material-tailwind/react';
 import { useUserInfoStore } from '@states/home';
-import { ConfirmOrderItem, FormFooter } from '@components/order/mobile';
+import { FormFooter } from '@components/order/common';
+import { ConfirmOrderItem } from '@components/order/mobile';
 import coin from '@assets/coin.png';
 
 // Tan's third-task in here.
