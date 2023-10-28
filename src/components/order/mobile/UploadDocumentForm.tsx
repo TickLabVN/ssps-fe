@@ -1,91 +1,114 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { Button, Radio, Typography, Input, Select, Option } from '@material-tailwind/react';
 import {
-  Button,
-  Radio,
-  Typography,
-  Input,
-  Select,
-  Option,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  IconButton
-} from '@material-tailwind/react';
-import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
-import { useLayoutSide, FormFooter } from '@components/order/common';
-import { UploadDocumentItem } from '@components/order/mobile';
-import { useOrderStore } from '@states/home';
+  ExclamationCircleIcon,
+  EyeIcon,
+  MinusIcon,
+  PlusIcon,
+  XMarkIcon
+} from '@heroicons/react/24/solid';
+import coinImage from '@assets/coin.png';
+import { useCloseForm, useLayoutSide, FormFooter } from '@components/order/common';
+import { ORDER_STATUS, LAYOUT_SIDE } from '@constants';
+import { useOrderStore, useFileStore } from '@states/home';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
+import { formatFileSize } from '@utils';
 
-// Tan's first-task in here.
 export function UploadDocumentForm() {
+  const COINS_PER_DOC = 200;
+
+  const [selectedLayout, setSelectedLayout] = useState<string>(LAYOUT_SIDE.portrait);
+  const [numOfCopy, setNumOfCopy] = useState<number>(1);
+
+  const { setMobileOrderStep, setOpenMobileOrderWorkflow } = useOrderWorkflowStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
-
-  const [openXDialog, setOpenXDialog] = useState<boolean>(false);
-  //const { orderPrintList, setOrderPrintList } = useOrderPrintStore();
-  const handleOpenX = () => {
-    setOpenXDialog(!openXDialog);
-  };
+  const { totalCost, setOrderPrintList, setTotalCost } = useOrderPrintStore();
   const { orderData } = useOrderStore();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const { fileTarget } = useFileStore();
+  const { openCloseForm, CloseForm } = useCloseForm();
 
-  const { totalCost } = useOrderPrintStore();
-  const [selectedLayout, setSelectedLayout] = useState<string>('Portrait');
+  const handleDecrease = () => {
+    if (numOfCopy > 1) {
+      setNumOfCopy(numOfCopy - 1);
+    }
+  };
+  const handleIncrease = () => {
+    setNumOfCopy(numOfCopy + 1);
+  };
   const handleLayoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedLayout(e.target.value);
   };
-  const handleSave = () => {
-    // const newOrderPrintItem = {
-    //   id: '1278-cfdb',
-    //   status: 'ready',
-    //   location: 'aaa',
-    //   fileName: 'showMaker.txt',
-    //   coins: 50,
-    //   size: 50,
-    //   number: 50,
-    //   pageNumber: 20,
-    //   paid: 'Not paid'
-    // };
-    //const newOrderPrintList = [...orderPrintList, newOrderPrintItem];
-    //setOrderPrintList(newOrderPrintList);
-    setMobileOrderStep(2);
-  };
+  const handleExistOrderWorkflow = useCallback(() => {
+    setOpenMobileOrderWorkflow(false);
+  }, [setOpenMobileOrderWorkflow]);
+
+  const handleSaveOrderPrintList = useCallback(() => {
+    setOrderPrintList({
+      status: ORDER_STATUS.ready,
+      location: 'BK-B6',
+      fileName: fileTarget.name,
+      coins: COINS_PER_DOC * numOfCopy,
+      size: fileTarget.size,
+      number: numOfCopy,
+      pageNumber: 20,
+      paid: 'Not paid'
+    });
+    setTotalCost(totalCost + COINS_PER_DOC * numOfCopy);
+  }, [fileTarget.name, fileTarget.size, numOfCopy, totalCost, setOrderPrintList, setTotalCost]);
+
   return (
     <>
       <div className='flex justify-between shadow-md px-6 py-3 bg-white mb-6'>
         <span className='text-gray/4 font-bold'>Upload document</span>
-        <XMarkIcon width={28} onClick={handleOpenX} />
-        <Dialog open={openXDialog} handler={handleOpenX}>
-          <DialogHeader className='justify-end py-2'>
-            <IconButton color='blue-gray' size='sm' variant='text' onClick={handleOpenX}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                strokeWidth={2}
-                className='h-5 w-5'
-              >
-                <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-              </svg>
-            </IconButton>
-          </DialogHeader>
-          <DialogBody className='px-[50px] py-2'>
-            <Typography variant='h4' color='black'>
-              Do you want to save your changes?
-            </Typography>
-            <Typography variant='h6'>Your changes will be lost if you don't save them</Typography>
-            <div className='flex gap-5 mt-4'>
-              <Button className='bg-green-200' onClick={handleSave}>
-                Save changes
-              </Button>
-              <Button onClick={() => setMobileOrderStep(2)}>Don't save</Button>
-            </div>
-          </DialogBody>
-        </Dialog>
+        <XMarkIcon width={28} onClick={openCloseForm} />
+        <CloseForm handleSave={handleSaveOrderPrintList} handleExist={handleExistOrderWorkflow} />
       </div>
-      {/* {<FileBox />} */}
-      <UploadDocumentItem fileName='showMaker.txt' coins={50} size={50} numberItem={50} />
+      <div className='flex gap-4 px-4 py-2 bg-white '>
+        <div
+          className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
+          onClick={() => setMobileOrderStep(6)}
+        >
+          <EyeIcon width={20} />
+          <span className='text-xs'>Preview</span>
+        </div>
+        <div className='w-full'>
+          <div className='flex flex-col text-gray/4'>
+            <div className='font-medium'>
+              <span className='text-gray/4'>{fileTarget.name}</span>
+              <span className='text-gray/3'>{`(${formatFileSize(fileTarget.size)})`}</span>
+            </div>
+            <div className='text-xs mb-5'>
+              <div className='flex'>
+                <img src={coinImage} alt='coin' className='grayscale w-6 h-6' />
+                <span className='text-gray/4 font-normal'>
+                  {COINS_PER_DOC} x {numOfCopy} copies ={' '}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className='flex justify-between items-center '>
+            <div className='flex border-2 '>
+              <span
+                className='p-0.5 border-r-2 flex items-center cursor-pointer'
+                onClick={handleDecrease}
+              >
+                <MinusIcon width={20} />
+              </span>
+              {numOfCopy > 0 && <span className='py-0.5 px-6'>{numOfCopy}</span>}
+              <span
+                className='p-0.5 border-l-2 flex items-center cursor-pointer'
+                onClick={handleIncrease}
+              >
+                <PlusIcon width={20} />
+              </span>
+            </div>
+            <div className='flex gap-1'>
+              <img src={coinImage} alt='coin' className='w-6 h-6' />
+              <span className='text-yellow/1 font-bold'>{COINS_PER_DOC * numOfCopy}</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className='p-6 text-gray/4 bg-white mt-4'>
         <div className='mb-8'>
           <Typography className='font-bold'>Layout</Typography>
@@ -176,9 +199,7 @@ export function UploadDocumentForm() {
         <Button
           color={orderData.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
-          onClick={() => {
-            handleSave();
-          }}
+          onClick={handleSaveOrderPrintList}
           disabled={orderData.length === 0}
         >
           Save

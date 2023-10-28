@@ -13,4 +13,3 @@ export * from './OrderWorkflowBox';
 export * from './PreviewDocument';
 export * from './TopupWalletForm';
 export * from './UploadDocumentForm';
-export * from './UploadDocumentItem';

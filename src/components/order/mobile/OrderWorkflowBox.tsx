@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import {
   UploadDocumentForm,
@@ -8,16 +7,13 @@ import {
   OrderSuccessForm,
   PreviewDocument
 } from '@components/order/mobile';
-//import { ScreenSize } from '@constants';
-//import { useScreenSize } from '@hooks';
 import { HomePage } from '@pages';
 import { useOrderWorkflowStore } from '@states/order';
 
-export function useOrderWorkflowBox() {
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
+export function OrderWorkflowBox() {
+  const { openMobileOrderWorkflow, setOpenMobileOrderWorkflow } = useOrderWorkflowStore();
 
   const DialogBodyWorkflow = () => {
-    //const { screenSize } = useScreenSize();
     const { mobileOrderStep } = useOrderWorkflowStore();
 
     if (mobileOrderStep === 0) {
@@ -37,19 +33,15 @@ export function useOrderWorkflowBox() {
     }
   };
 
-  const OrderWorkflow = () => {
-    const handleOpenDialog = () => setOpenDialog(!openDialog);
-    return (
-      <Dialog open={openDialog} handler={handleOpenDialog} size='xxl'>
-        <DialogBody className='p-0 bg-gray/1'>
-          <DialogBodyWorkflow />
-        </DialogBody>
-      </Dialog>
-    );
-  };
-
-  return {
-    openOrderWorkflowBox: () => setOpenDialog(true),
-    OrderWorkflowBox: OrderWorkflow
-  };
+  return (
+    <Dialog
+      open={openMobileOrderWorkflow}
+      handler={() => setOpenMobileOrderWorkflow(!openMobileOrderWorkflow)}
+      size='xxl'
+    >
+      <DialogBody className='p-0 bg-gray/1'>
+        <DialogBodyWorkflow />
+      </DialogBody>
+    </Dialog>
+  );
 }
