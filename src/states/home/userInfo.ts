@@ -3,9 +3,7 @@ import { userInfoService } from '@services/home';
 
 export const useUserInfoStore = create<UserInfoStore>()((set) => ({
   userInfoStatus: 'UNINIT',
-  userInfoData: {
-    coins: 0
-  },
+  userInfoData: 0,
   getUserInfoData: async () => {
     set(() => ({ userInfoStatus: 'PENDING' }));
     try {

@@ -1,5 +1,5 @@
-import { mockServer, invoke } from '@services/common';
+import { invoke, server } from '@services/common';
 
 export const slideService = {
-  getSlide: () => invoke<SlideData[]>(mockServer.get('/slides'))
+  getSlide: () => invoke<SlideData[]>(server.get('/api/home/slides'))
 };

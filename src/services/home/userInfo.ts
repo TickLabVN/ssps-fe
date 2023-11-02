@@ -1,5 +1,5 @@
-import { mockServer, invoke } from '@services/common';
+import { server, invoke } from '@services/common';
 
 export const userInfoService = {
-  getUserInfo: () => invoke<UserInfoData>(mockServer.get('/user'))
+  getUserInfo: () => invoke<number>(server.get('/api/user/remain-coins'))
 };

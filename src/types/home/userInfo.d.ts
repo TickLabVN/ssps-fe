@@ -1,9 +1,5 @@
-type UserInfoData = {
-  coins: number;
-};
-
 type UserInfoStore = {
   userInfoStatus: StoreStatus;
-  userInfoData: UserInfoData;
+  userInfoData: number;
   getUserInfoData: () => Promise<void>;
 };
