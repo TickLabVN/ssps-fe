@@ -41,7 +41,7 @@ export const Orders: Component<{ orders: OrderData[] }> = ({ orders }) => {
                 <span>{order.id.slice(8, order.id.length)}</span>
               </div>
               <div>
-                <span className='text-blue/1 mr-1'>{order.fileName}</span>
+                <span className='text-blue/1 mr-1'>{order.filesName[0]}</span>
                 <span className='text-gray/4 opacity-40'>+{order.number}</span>
               </div>
               <div className='flex items-center text-gray/3 mb-4'>

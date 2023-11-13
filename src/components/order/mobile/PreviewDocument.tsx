@@ -16,7 +16,7 @@ export function PreviewDocument() {
         }
       >
         <span className='text-gray/4 font-bold'>Preview document</span>
-        <IconButton variant='text' onClick={() => setMobileOrderStep(1)}>
+        <IconButton variant='text' onClick={() => setMobileOrderStep(0)}>
           <XMarkIcon className='w-6 h-6' />
         </IconButton>
       </div>

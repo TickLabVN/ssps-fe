@@ -4,7 +4,7 @@ import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
-import { useUserStore } from '@states/common';
+import { useUserStore } from '@states';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();

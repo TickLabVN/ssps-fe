@@ -33,7 +33,7 @@ export const OrderList: Component<{
         <div key={index} className='p-4 flex gap-4 border-b-4'>
           <OrderListItem
             id={order.id}
-            fileName={order.fileName}
+            fileName={order.filesName[0]}
             size={order.size}
             coins={order.coins}
             number={currentNumbers[index]}

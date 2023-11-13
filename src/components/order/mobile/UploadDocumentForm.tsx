@@ -54,7 +54,7 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
     setOrderPrintList({
       status: ORDER_STATUS.ready,
       location: 'BK-B6',
-      fileName: fileTarget.name,
+      filesName: [fileTarget.name],
       coins: COINS_PER_DOC * numOfCopy,
       size: fileTarget.size,
       number: numOfCopy,
@@ -62,7 +62,16 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
       paid: 'Not paid'
     });
     setTotalCost(totalCost);
-  }, [fileTarget.name, fileTarget.size, numOfCopy, totalCost, setOrderPrintList, setTotalCost]);
+    setMobileOrderStep(2);
+  }, [
+    fileTarget.name,
+    fileTarget.size,
+    numOfCopy,
+    totalCost,
+    setOrderPrintList,
+    setTotalCost,
+    setMobileOrderStep
+  ]);
 
   return (
     <>
@@ -76,7 +85,7 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
       <div className='flex gap-4 px-4 py-2 bg-white '>
         <div
           className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
-          onClick={() => setMobileOrderStep(6)}
+          onClick={() => setMobileOrderStep(1)}
         >
           <EyeIcon width={20} />
           <span className='text-xs'>Preview</span>

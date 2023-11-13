@@ -3,5 +3,6 @@
  */
 
 export * from './CloseForm';
+export * from './FileBox';
 export * from './FormFooter';
 export * from './LayoutSide';

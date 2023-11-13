@@ -1,4 +1,4 @@
-import { mockFileServer, invoke } from '@services/common';
+import { mockFileServer, invoke } from './common';
 
 export const fileService = {
   upload: (file: File) => {

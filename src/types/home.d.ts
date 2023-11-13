@@ -10,7 +10,7 @@ type OrderData = {
   status: OrderStatus;
   location: string;
   number: number;
-  fileName: string;
+  filesName: string[];
   pageNumber: number;
   coins: number;
   paid: string;

@@ -59,7 +59,7 @@ export function ConfirmOrderForm() {
           {orderPrintList.map((orderItem, index) => (
             <ConfirmOrderItem
               key={index}
-              fileName={orderItem.fileName}
+              fileName={orderItem.filesName[0]}
               coins={orderItem.coins}
               size={orderItem.size}
               number={orderItem.number}

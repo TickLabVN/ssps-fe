@@ -9,7 +9,8 @@ import {
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { FormFooter } from '@components/order/common';
-import { /*OrderList,*/ FileBox } from '@components/order/mobile';
+import { FileBox } from '@components/order/common';
+import /*OrderList,*/ '@components/order/mobile';
 import { useState } from 'react';
 
 // Tan's second-task in here.

@@ -19,8 +19,10 @@ export function useOrderWorkflowBox() {
       setOpenDialog(false);
     }, []);
 
-    if (mobileOrderStep === 1) {
+    if (mobileOrderStep === 0) {
       return <UploadDocumentForm handleExistOrderForm={handleExistOrderForm} />;
+    } else if (mobileOrderStep === 1) {
+      return <PreviewDocument />;
     } else if (mobileOrderStep === 2) {
       return <OrderListForm />;
     } else if (mobileOrderStep === 3) {
@@ -29,15 +31,12 @@ export function useOrderWorkflowBox() {
       return <TopupWalletForm />;
     } else if (mobileOrderStep === 5) {
       return <OrderSuccessForm />;
-    } else if (mobileOrderStep === 6) {
-      return <PreviewDocument />;
     }
   };
 
   const OrderWorkflowBox = () => {
-    const handleOpenDialog = () => setOpenDialog(!openDialog);
     return (
-      <Dialog open={openDialog} handler={handleOpenDialog} size='xxl'>
+      <Dialog open={openDialog} handler={() => setOpenDialog(false)} size='xxl'>
         <DialogBody className='p-0 bg-gray/1'>
           <DialogBodyWorkflow />
         </DialogBody>

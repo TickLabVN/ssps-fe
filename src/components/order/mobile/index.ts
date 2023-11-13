@@ -4,7 +4,6 @@
 
 export * from './ConfirmOrderForm';
 export * from './ConfirmOrderItem';
-export * from './FileBox';
 export * from './OrderList';
 export * from './OrderListForm';
 export * from './OrderListItem';

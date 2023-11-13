@@ -17,7 +17,6 @@ export function useChooseFileBox() {
     const { setMobileOrderStep } = useOrderWorkflowStore();
     const { uploadFile } = useFileStore();
 
-    const handleOpenBox = () => setOpenBox(!openBox);
     const handleUploadDocument = useMemo(
       () => async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -28,7 +27,7 @@ export function useChooseFileBox() {
           } else {
             openUploadAndPreviewDocBox();
           }
-          setMobileOrderStep(1);
+          setMobileOrderStep(0);
         }
       },
       [screenSize, setMobileOrderStep, uploadFile]
@@ -39,7 +38,10 @@ export function useChooseFileBox() {
         <Dialog
           className='2xl:max-w-fit 2xl:w-fit 2xl:min-w-fit lg:max-w-fit lg:w-fit lg:min-w-fit max-w-fit w-fit min-w-fit'
           open={openBox}
-          handler={handleOpenBox}
+          handler={() => setOpenBox(false)}
+          dismiss={{
+            outsidePress: true
+          }}
         >
           <DialogBody>
             <label
@@ -56,10 +58,10 @@ export function useChooseFileBox() {
                 </span>
               </div>
 
-              <div className='text-sm lg:text-base'>
-                <span className='font-semibold h-[32px]'>Allowed formats:</span> .doc, .docx, .xls,
+              <div className='text-sm lg:text-md w-54 h-13 gap-1'>
+                <span className='font-semibold h-8'>Allowed formats:</span> .doc, .docx, .xls,
                 .xlsx, .ppt, .jpg, .png, .pdf
-                <div className='text-sm lg:text-base'>
+                <div className='text-sm lg:text-md h-4'>
                   <span className='font-semibold'>Maximum size:</span> 100MB
                 </div>
               </div>
