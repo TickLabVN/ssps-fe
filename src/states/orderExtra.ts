@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { orderExtraService } from '@services/order';
+import { orderExtraService } from '@services';
 
 export const useOrderExtraStore = create<OrderExtraStore>()(
   devtools((set) => ({

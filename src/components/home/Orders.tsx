@@ -7,9 +7,6 @@ import { ORDER_STATUS_COLOR } from '@constants';
 
 export const Orders: Component<{ orders: OrderData[] }> = ({ orders }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
-  /* Initialize sliderRef with useRef<HTMLDivElement>(null) instead of 
-  document.createElement('div'). We don't need to create a div element using 
-  document.createElement because we want to use a reference to an existing DOM element.*/
 
   const scrollLeft = () => {
     if (sliderRef.current) {
@@ -32,13 +29,16 @@ export const Orders: Component<{ orders: OrderData[] }> = ({ orders }) => {
       </div>
       <div className='flex gap-2 lg:gap-6 slider-container' ref={sliderRef}>
         {orders.map((order, index) => (
-          <Card key={index} className='grow shrink-0 flex flex-col rounded-lg shadow-md'>
+          <Card
+            key={index}
+            className='grow shrink-0 flex flex-col rounded-lg shadow-md lg:min-w-[240px] sm:min-w-[184px]'
+          >
             <CardBody className='p-2 lg:p-4'>
-              <div className='flex items-center justify-between font-semibold text-xs lg:text-base mb-2 lg:mb-4'>
-                <span>{order.id}</span>
+              <div className='flex flex-col items-start justify-between font-semibold text-xs lg:text-base mb-2 lg:mb-4'>
                 <span className={`capitalize text-${ORDER_STATUS_COLOR[order.status]}-500`}>
                   {order.status}
                 </span>
+                <span>{order.id.slice(8, order.id.length)}</span>
               </div>
               <div>
                 <span className='text-blue/1 mr-1'>{order.fileName}</span>

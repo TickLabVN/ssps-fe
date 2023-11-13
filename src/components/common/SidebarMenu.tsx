@@ -4,7 +4,7 @@ import { List, ListItem } from '@material-tailwind/react';
 import logo from '@assets/logobk.png';
 import ticklab from '@assets/ticklab.png';
 import { ToggleSidebarBtn } from '@components/common';
-import { useMenuBarStore } from '@states/common';
+import { useMenuBarStore } from '@states';
 
 export function useSidebarMenu() {
   const { selectedMenu, setSelectedMenu } = useMenuBarStore();

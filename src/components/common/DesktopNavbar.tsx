@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { List, ListItem } from '@material-tailwind/react';
 import logo from '@assets/logobk.png';
 import ticklab from '@assets/ticklab.png';
-import { useMenuBarStore } from '@states/common';
+import { useMenuBarStore } from '@states';
 
 export const DesktopNavbar: Component<{ mainMenu: RouteMenu }> = ({ mainMenu }) => {
   const { selectedMenu, setSelectedMenu } = useMenuBarStore();

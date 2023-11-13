@@ -6,9 +6,8 @@ import {
   IconButton,
   Typography
 } from '@material-tailwind/react';
-import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
+import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
-import { useOrderStore } from '@states/home';
 import { FormFooter } from '@components/order/common';
 import { /*OrderList,*/ FileBox } from '@components/order/mobile';
 import { useState } from 'react';
@@ -25,7 +24,7 @@ export function OrderListForm() {
     setOpenDiaLogBackToHome(!openDialogBackToHome);
   };
   const { setMobileOrderStep } = useOrderWorkflowStore();
-  const { totalSize } = useOrderStore();
+  // const { totalSize } = useOrderStore();
   const handleBackToHome = () => {
     // setOrderPrintList([]);
     setMobileOrderStep(0);
@@ -75,7 +74,7 @@ export function OrderListForm() {
         <div className='text-xs flex flex-col'>
           <span className='font-medium'>Size limit:</span>
           <div>
-            {orderPrintList.length > 0 ? `${totalSize}MB /` : `0MB`}{' '}
+            {/* {orderPrintList.length > 0 ? `${totalSize}MB /` : `0MB`}{' '} */}
             <span className='text-gray/3 font-medium'>1GB</span>
           </div>
         </div>

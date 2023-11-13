@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { FILE_NOT_FOUND } from '@constants';
-import { fileService } from '@services/home';
+import { fileService } from '@services';
 
 export const useFileStore = create<FileStore>()(
   devtools((set, get) => ({

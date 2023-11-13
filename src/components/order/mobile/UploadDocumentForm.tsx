@@ -15,11 +15,11 @@ import {
   PlusIcon,
   XMarkIcon
 } from '@heroicons/react/24/solid';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import coinImage from '@assets/coin.png';
 import { useCloseForm, useLayoutSide, FormFooter } from '@components/order/common';
 import { ORDER_STATUS, LAYOUT_SIDE } from '@constants';
-import { useOrderStore, useFileStore } from '@states/home';
-import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
+import { useOrderWorkflowStore, useOrderPrintStore, useFileStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }> = ({
@@ -33,17 +33,18 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
   const { setMobileOrderStep } = useOrderWorkflowStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { totalCost, setOrderPrintList, setTotalCost } = useOrderPrintStore();
-  const { orderData } = useOrderStore();
   const { fileTarget } = useFileStore();
   const { openCloseForm, CloseForm } = useCloseForm();
 
   const handleDecrease = () => {
     if (numOfCopy > 1) {
       setNumOfCopy(numOfCopy - 1);
+      setTotalCost(totalCost - COINS_PER_DOC);
     }
   };
   const handleIncrease = () => {
     setNumOfCopy(numOfCopy + 1);
+    setTotalCost(totalCost + COINS_PER_DOC);
   };
   const handleLayoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedLayout(e.target.value);
@@ -60,7 +61,7 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
       pageNumber: 20,
       paid: 'Not paid'
     });
-    setTotalCost(totalCost + COINS_PER_DOC * numOfCopy);
+    setTotalCost(totalCost);
   }, [fileTarget.name, fileTarget.size, numOfCopy, totalCost, setOrderPrintList, setTotalCost]);
 
   return (
@@ -82,18 +83,18 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
         </div>
         <div className='w-full'>
           <div className='flex flex-col text-gray/4'>
-            <div className='font-medium'>
-              <span className='text-gray/4'>{fileTarget.name}</span>
-              <span className='text-gray/3'>{`(${formatFileSize(fileTarget.size)})`}</span>
+            <div className='flex items-center font-medium'>
+              <p className='text-gray/4 w-64 truncate'>{fileTarget.name}</p>
+              <p className='text-gray/3'>{`(${formatFileSize(fileTarget.size)})`}</p>
             </div>
-            <div className='text-xs mb-5'>
-              <div className='flex'>
-                <img src={coinImage} alt='coin' className='grayscale w-6 h-6' />
-                <span className='text-gray/4 font-normal'>
-                  {COINS_PER_DOC} x {numOfCopy} copies ={' '}
-                </span>
-              </div>
-            </div>
+            <p className='flex items-center gap-1 text-sm mb-5'>
+              <img src={coinImage} className='grayscale w-6 h-6' />
+              <span className='text-gray/4 font-normal'>
+                {COINS_PER_DOC} x {numOfCopy} copies ={' '}
+              </span>
+              <img src={coinImage} className='w-6 h-6' />
+              <span className='text-yellow/1 font-bold'>{COINS_PER_DOC * numOfCopy}</span>
+            </p>
           </div>
           <div className='flex justify-between items-center '>
             <div className='flex border-2 '>
@@ -111,10 +112,7 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
                 <PlusIcon width={20} />
               </span>
             </div>
-            <div className='flex gap-1'>
-              <img src={coinImage} alt='coin' className='w-6 h-6' />
-              <span className='text-yellow/1 font-bold'>{COINS_PER_DOC * numOfCopy}</span>
-            </div>
+            <TrashIcon className='w-7 h-7' />
           </div>
         </div>
       </div>
@@ -124,20 +122,19 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
           <div className='flex flex-col -ml-3'>
             <Radio
               name='layout'
-              label='Portrait'
-              value='Portrait'
+              label={LAYOUT_SIDE.portrait}
+              value={LAYOUT_SIDE.portrait}
               onChange={handleLayoutChange}
-              checked={selectedLayout === 'Portrait'}
+              checked={selectedLayout === LAYOUT_SIDE.portrait}
               crossOrigin=''
-              defaultChecked
             />
             <Radio
               name='layout'
-              label='Landscape'
-              value='Landscape'
-              crossOrigin=''
+              label={LAYOUT_SIDE.landscape}
+              value={LAYOUT_SIDE.landscape}
               onChange={handleLayoutChange}
-              checked={selectedLayout === 'Landscape'}
+              checked={selectedLayout === LAYOUT_SIDE.landscape}
+              crossOrigin=''
             />
           </div>
         </div>
@@ -170,7 +167,7 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
           <Typography className='font-bold'>Page Side</Typography>
           <div className='-ml-3'>
             <Radio name='side' label='One side' crossOrigin='' />
-            <div className='flex'>
+            <div className='flex items-center gap-4'>
               <Radio
                 name='side'
                 crossOrigin=''
@@ -193,10 +190,8 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
                   )
                 }
               />
-              ''
               <ExclamationCircleIcon
-                width={24}
-                className='ml-6 cursor-pointer text-gray-300 hover:text-black'
+                className='w-6 h-6 cursor-pointer text-gray-500 hover:text-black'
                 onClick={openLayoutSide}
               />
               <LayoutSide layout={selectedLayout} />
@@ -204,14 +199,14 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
           </div>
         </div>
       </div>
-      <FormFooter totalCost={totalCost}>
+      <FormFooter totalCost={totalCost + COINS_PER_DOC}>
         <Button
-          color={orderData.length > 0 ? 'blue' : 'gray'}
+          color={fileTarget.size > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
           onClick={handleSaveOrderPrintList}
-          disabled={orderData.length === 0}
+          disabled={fileTarget.size === 0}
         >
-          Save
+          <span className='text-base'>Save</span>
         </Button>
       </FormFooter>
     </>

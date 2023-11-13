@@ -8,7 +8,7 @@ import {
   OrderSuccessForm,
   PreviewDocument
 } from '@components/order/mobile';
-import { useOrderWorkflowStore } from '@states/order';
+import { useOrderWorkflowStore } from '@states';
 
 export function useOrderWorkflowBox() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -34,7 +34,7 @@ export function useOrderWorkflowBox() {
     }
   };
 
-  const OrderWorkflow = () => {
+  const OrderWorkflowBox = () => {
     const handleOpenDialog = () => setOpenDialog(!openDialog);
     return (
       <Dialog open={openDialog} handler={handleOpenDialog} size='xxl'>
@@ -47,6 +47,6 @@ export function useOrderWorkflowBox() {
 
   return {
     openOrderWorkflowBox: () => setOpenDialog(true),
-    OrderWorkflowBox: OrderWorkflow
+    OrderWorkflowBox: OrderWorkflowBox
   };
 }

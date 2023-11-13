@@ -21,7 +21,7 @@ export function useCloseForm() {
       };
 
       return (
-        <Dialog open={openDialog} handler={handleOpenDialog}>
+        <Dialog open={openDialog} handler={handleOpenDialog} size='xs'>
           <DialogHeader className='justify-end py-2'>
             <IconButton color='blue-gray' size='sm' variant='text' onClick={handleOpenDialog}>
               <svg
@@ -36,12 +36,12 @@ export function useCloseForm() {
               </svg>
             </IconButton>
           </DialogHeader>
-          <DialogBody className='px-[50px] py-2'>
+          <DialogBody className='px-[50px] py-2 text-center'>
             <Typography variant='h4' color='black'>
               Do you want to save your changes?
             </Typography>
             <Typography variant='h6'>Your changes will be lost if you don't save them</Typography>
-            <div className='flex gap-5 mt-4'>
+            <div className='flex items-center justify-center gap-5 mt-4'>
               <Button className='bg-green-500' onClick={handleSave}>
                 Save changes
               </Button>

@@ -1,5 +1,10 @@
 type OrderStatus = 'progressing' | 'ready' | 'done' | 'canceled';
 
+type SlideData = {
+  src: string;
+  alt: string;
+};
+
 type OrderData = {
   id: string;
   status: OrderStatus;
@@ -12,9 +17,12 @@ type OrderData = {
   size: number;
 };
 
-type OrderStore = {
-  orderStatus: StoreStatus;
+type HomeStore = {
+  homeStatus: StoreStatus;
+  userRemainCoins: number;
+  slideData: SlideData[];
   orderData: OrderData[];
-  totalSize: number;
+  getUserRemainCoins: () => Promise<void>;
+  getSlideData: () => Promise<void>;
   getOrderData: () => Promise<void>;
 };

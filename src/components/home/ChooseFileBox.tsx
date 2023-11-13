@@ -5,8 +5,7 @@ import { useUploadAndPreviewDocBox } from '@components/order/desktop';
 import { useOrderWorkflowBox } from '@components/order/mobile';
 import { ScreenSize } from '@constants';
 import { useScreenSize } from '@hooks';
-import { useFileStore } from '@states/home';
-import { useOrderWorkflowStore } from '@states/order';
+import { useFileStore, useOrderWorkflowStore } from '@states';
 
 export function useChooseFileBox() {
   const { openUploadAndPreviewDocBox, UploadAndPreviewDocBox } = useUploadAndPreviewDocBox();

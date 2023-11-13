@@ -1,8 +1,7 @@
 import DocViewer, { DocViewerRenderers, IHeaderOverride } from '@cyntler/react-doc-viewer';
 import { IconButton } from '@material-tailwind/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { useFileStore } from '@states/home';
-import { useOrderWorkflowStore } from '@states/order';
+import { useFileStore, useOrderWorkflowStore } from '@states';
 
 export function PreviewDocument() {
   const { fileTarget } = useFileStore();

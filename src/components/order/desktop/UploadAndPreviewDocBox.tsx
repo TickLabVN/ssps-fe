@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import {
   Button,
@@ -14,10 +14,9 @@ import {
 import { MinusIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
-import { useLayoutSide, FormFooter } from '@components/order/common';
+import { useLayoutSide, FormFooter, useCloseForm } from '@components/order/common';
 import { LAYOUT_SIDE, ORDER_STATUS } from '@constants';
-import { useFileStore } from '@states/home';
-import { useOrderPrintStore } from '@states/order';
+import { useFileStore, useOrderPrintStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export function useUploadAndPreviewDocBox() {
@@ -49,20 +48,23 @@ export function useUploadAndPreviewDocBox() {
     const [selectedLayout, setSelectedLayout] = useState<string>(LAYOUT_SIDE.portrait);
     const { openLayoutSide, LayoutSide } = useLayoutSide();
     const { totalCost, setTotalCost, setOrderPrintList } = useOrderPrintStore();
+    const { openCloseForm, CloseForm } = useCloseForm();
 
-    const handleOpenDialog = () => setOpenDialog(!openDialog);
+    const handleOpenDialog = useCallback(() => setOpenDialog(!openDialog), []);
     const handleDecrease = () => {
       if (numOfCopy > 1) {
         setNumOfCopy(numOfCopy - 1);
+        setTotalCost(totalCost - COINS_PER_DOC);
       }
     };
     const handleIncrease = () => {
       setNumOfCopy(numOfCopy + 1);
+      setTotalCost(totalCost + COINS_PER_DOC);
     };
     const handleLayoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setSelectedLayout(e.target.value);
     };
-    const handleSaveOrderPrintList = () => {
+    const handleSaveOrderPrintList = useCallback(() => {
       setOrderPrintList({
         status: ORDER_STATUS.ready,
         location: 'BK-B6',
@@ -73,15 +75,16 @@ export function useUploadAndPreviewDocBox() {
         pageNumber: 20,
         paid: 'Not paid'
       });
-      setTotalCost(totalCost + COINS_PER_DOC * numOfCopy);
-    };
+      setTotalCost(totalCost);
+    }, [numOfCopy, totalCost, setOrderPrintList, setTotalCost]);
 
     return (
       <Dialog size='xl' open={openDialog} handler={handleOpenDialog}>
         <DialogHeader className='justify-end p-0 bg-gray-200 rounded-t-md'>
-          <IconButton variant='text' onClick={() => setOpenDialog(false)}>
+          <IconButton variant='text' onClick={openCloseForm}>
             <XMarkIcon className='w-6 h-6' />
           </IconButton>
+          <CloseForm handleSave={handleSaveOrderPrintList} handleExist={handleOpenDialog} />
         </DialogHeader>
         <DialogBody className='grid grid-cols-3 gap-4 bg-gray-200 p-0'>
           <div className='flex flex-col bg-white'>
@@ -89,10 +92,10 @@ export function useUploadAndPreviewDocBox() {
               <div className='flex flex-col gap-4 p-4 border-b-2'>
                 <div>
                   <span className='text-gray/4 text-xl font-bold'>Upload document</span>
-                  <p className='flex items-center gap-2 font-medium text-lg'>
-                    <span className='text-gray/4'>{fileTarget.name}</span>
-                    <span className='text-gray/3'>{`(${formatFileSize(fileTarget.size)})`}</span>
-                  </p>
+                  <div className='flex items-center font-medium'>
+                    <p className='text-gray/4 w-52 truncate'>{fileTarget.name}</p>
+                    <p className='text-gray/3'>{`(${formatFileSize(fileTarget.size)})`}</p>
+                  </div>
                   <p className='flex items-center gap-1 text-base'>
                     <img src={coinImage} className='grayscale w-6 h-6' />
                     <span className='text-gray/4 font-normal'>
@@ -205,7 +208,7 @@ export function useUploadAndPreviewDocBox() {
                 </div>
               </div>
             </div>
-            <FormFooter totalCost={totalCost + COINS_PER_DOC * numOfCopy}>
+            <FormFooter totalCost={totalCost + COINS_PER_DOC}>
               <Button
                 color={fileTarget.size > 0 ? 'blue' : 'gray'}
                 className='rounded-none w-[30%]'

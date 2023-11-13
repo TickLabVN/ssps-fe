@@ -1,4 +1,4 @@
-import { useOrderWorkflowStore, useOrderExtraStore, useOrderPrintStore } from '@states/order';
+import { useOrderWorkflowStore, useOrderExtraStore, useOrderPrintStore } from '@states';
 import {
   PrinterIcon,
   ChevronLeftIcon,
@@ -10,7 +10,7 @@ import {
   ClipboardDocumentListIcon
 } from '@heroicons/react/24/solid';
 import { Typography, Select, Option, Alert, Button } from '@material-tailwind/react';
-import { useUserInfoStore } from '@states/home';
+import { useHomeStore } from '@states';
 import { FormFooter } from '@components/order/common';
 import { ConfirmOrderItem } from '@components/order/mobile';
 import coin from '@assets/coin.png';
@@ -19,7 +19,7 @@ import coin from '@assets/coin.png';
 export function ConfirmOrderForm() {
   const { totalCost, orderPrintList } = useOrderPrintStore();
   const { setMobileOrderStep } = useOrderWorkflowStore();
-  const { userInfoData } = useUserInfoStore();
+  const { userRemainCoins } = useHomeStore();
   const { extraFeeData } = useOrderExtraStore();
   function IconSolid() {
     return (
@@ -91,11 +91,11 @@ export function ConfirmOrderForm() {
           <div className='flex items-center mb-4'>
             <Typography className='mr-2 text-xs'>Current balance:</Typography>
             <div className='flex items-center'>
-              <Typography className='text-xs'>{userInfoData.coins}</Typography>
+              <Typography className='text-xs'>{userRemainCoins}</Typography>
               <img src={coin} width={16} />
             </div>
           </div>
-          {userInfoData.coins < totalCost && (
+          {userRemainCoins < totalCost && (
             <Alert className='bg-red-50 text-red-600 mb-4' icon={<IconSolid />}>
               <Typography className='text-xs font-bold'>Amout exceed balance</Typography>
               <Typography className='-ml-7 text-xs'>Top up your account to proceed</Typography>

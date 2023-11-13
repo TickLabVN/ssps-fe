@@ -1,5 +1,5 @@
 import { Button } from '@material-tailwind/react';
-import { useOrderWorkflowStore } from '@states/order';
+import { useOrderWorkflowStore } from '@states';
 
 // Tue's second-task in here.
 export function OrderSuccessForm() {
