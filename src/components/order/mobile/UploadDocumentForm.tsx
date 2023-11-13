@@ -1,5 +1,13 @@
 import React, { useCallback, useState } from 'react';
-import { Button, Radio, Typography, Input, Select, Option } from '@material-tailwind/react';
+import {
+  Button,
+  IconButton,
+  Input,
+  Option,
+  Radio,
+  Select,
+  Typography
+} from '@material-tailwind/react';
 import {
   ExclamationCircleIcon,
   EyeIcon,
@@ -14,13 +22,15 @@ import { useOrderStore, useFileStore } from '@states/home';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states/order';
 import { formatFileSize } from '@utils';
 
-export function UploadDocumentForm() {
+export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }> = ({
+  handleExistOrderForm
+}) => {
   const COINS_PER_DOC = 200;
 
   const [selectedLayout, setSelectedLayout] = useState<string>(LAYOUT_SIDE.portrait);
   const [numOfCopy, setNumOfCopy] = useState<number>(1);
 
-  const { setMobileOrderStep, setOpenMobileOrderWorkflow } = useOrderWorkflowStore();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { totalCost, setOrderPrintList, setTotalCost } = useOrderPrintStore();
   const { orderData } = useOrderStore();
@@ -38,9 +48,6 @@ export function UploadDocumentForm() {
   const handleLayoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedLayout(e.target.value);
   };
-  const handleExistOrderWorkflow = useCallback(() => {
-    setOpenMobileOrderWorkflow(false);
-  }, [setOpenMobileOrderWorkflow]);
 
   const handleSaveOrderPrintList = useCallback(() => {
     setOrderPrintList({
@@ -58,10 +65,12 @@ export function UploadDocumentForm() {
 
   return (
     <>
-      <div className='flex justify-between shadow-md px-6 py-3 bg-white mb-6'>
+      <div className='flex justify-between items-center shadow-md px-6 py-3 bg-white mb-6'>
         <span className='text-gray/4 font-bold'>Upload document</span>
-        <XMarkIcon width={28} onClick={openCloseForm} />
-        <CloseForm handleSave={handleSaveOrderPrintList} handleExist={handleExistOrderWorkflow} />
+        <IconButton variant='text' onClick={openCloseForm}>
+          <XMarkIcon className='w-6 h-6' />
+        </IconButton>
+        <CloseForm handleSave={handleSaveOrderPrintList} handleExist={handleExistOrderForm} />
       </div>
       <div className='flex gap-4 px-4 py-2 bg-white '>
         <div
@@ -207,4 +216,4 @@ export function UploadDocumentForm() {
       </FormFooter>
     </>
   );
-}
+};

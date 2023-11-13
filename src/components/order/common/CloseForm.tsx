@@ -42,7 +42,7 @@ export function useCloseForm() {
             </Typography>
             <Typography variant='h6'>Your changes will be lost if you don't save them</Typography>
             <div className='flex gap-5 mt-4'>
-              <Button className='bg-green-200' onClick={handleSave}>
+              <Button className='bg-green-500' onClick={handleSave}>
                 Save changes
               </Button>
               <Button onClick={handleExist}>Don't save</Button>

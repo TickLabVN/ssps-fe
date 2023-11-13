@@ -1,20 +1,15 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
-export const useOrderWorkflowStore = create<OrderWorkflowStore>()((set) => ({
-  openMobileOrderWorkflow: false,
-  openDesktopOrderWorkflow: false,
-  mobileOrderStep: 0,
-  desktopOrderStep: 0,
-  setOpenMobileOrderWorkflow: (payload) => {
-    set({ openMobileOrderWorkflow: payload });
-  },
-  setOpenDesktopOrderWorkflow: (payload) => {
-    set({ openDesktopOrderWorkflow: payload });
-  },
-  setMobileOrderStep: (mobileOrderStep) => {
-    set({ mobileOrderStep: mobileOrderStep });
-  },
-  setDesktopOrderStep: (desktopOrderStep) => {
-    set({ desktopOrderStep: desktopOrderStep });
-  }
-}));
+export const useOrderWorkflowStore = create<OrderWorkflowStore>()(
+  devtools((set) => ({
+    mobileOrderStep: 0,
+    desktopOrderStep: 0,
+    setMobileOrderStep: (mobileOrderStep) => {
+      set({ mobileOrderStep: mobileOrderStep });
+    },
+    setDesktopOrderStep: (desktopOrderStep) => {
+      set({ desktopOrderStep: desktopOrderStep });
+    }
+  }))
+);

@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import {
   UploadDocumentForm,
@@ -7,19 +8,19 @@ import {
   OrderSuccessForm,
   PreviewDocument
 } from '@components/order/mobile';
-import { HomePage } from '@pages';
 import { useOrderWorkflowStore } from '@states/order';
 
-export function OrderWorkflowBox() {
-  const { openMobileOrderWorkflow, setOpenMobileOrderWorkflow } = useOrderWorkflowStore();
+export function useOrderWorkflowBox() {
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const DialogBodyWorkflow = () => {
     const { mobileOrderStep } = useOrderWorkflowStore();
+    const handleExistOrderForm = useCallback(() => {
+      setOpenDialog(false);
+    }, []);
 
-    if (mobileOrderStep === 0) {
-      return <HomePage />;
-    } else if (mobileOrderStep === 1) {
-      return <UploadDocumentForm />;
+    if (mobileOrderStep === 1) {
+      return <UploadDocumentForm handleExistOrderForm={handleExistOrderForm} />;
     } else if (mobileOrderStep === 2) {
       return <OrderListForm />;
     } else if (mobileOrderStep === 3) {
@@ -33,15 +34,19 @@ export function OrderWorkflowBox() {
     }
   };
 
-  return (
-    <Dialog
-      open={openMobileOrderWorkflow}
-      handler={() => setOpenMobileOrderWorkflow(!openMobileOrderWorkflow)}
-      size='xxl'
-    >
-      <DialogBody className='p-0 bg-gray/1'>
-        <DialogBodyWorkflow />
-      </DialogBody>
-    </Dialog>
-  );
+  const OrderWorkflow = () => {
+    const handleOpenDialog = () => setOpenDialog(!openDialog);
+    return (
+      <Dialog open={openDialog} handler={handleOpenDialog} size='xxl'>
+        <DialogBody className='p-0 bg-gray/1'>
+          <DialogBodyWorkflow />
+        </DialogBody>
+      </Dialog>
+    );
+  };
+
+  return {
+    openOrderWorkflowBox: () => setOpenDialog(true),
+    OrderWorkflowBox: OrderWorkflow
+  };
 }
