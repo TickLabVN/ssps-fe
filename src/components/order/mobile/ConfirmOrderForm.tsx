@@ -9,15 +9,15 @@ import {
   ChevronRightIcon,
   ClipboardDocumentListIcon
 } from '@heroicons/react/24/solid';
-import { Typography, Select, Option, Alert, Button } from '@material-tailwind/react';
+import { Typography, Select, Option, Alert } from '@material-tailwind/react';
 import { useHomeStore } from '@states';
 import { FormFooter } from '@components/order/common';
-import { ConfirmOrderItem } from '@components/order/mobile';
+//import { ConfirmOrderItem } from '@components/order/mobile';
 import coin from '@assets/coin.png';
 
 // Tan's third-task in here.
 export function ConfirmOrderForm() {
-  const { totalCost, orderPrintList } = useOrderPrintStore();
+  const { totalCost } = useOrderPrintStore();
   const { setMobileOrderStep } = useOrderWorkflowStore();
   const { userRemainCoins } = useHomeStore();
   const { extraFeeData } = useOrderExtraStore();
@@ -56,7 +56,7 @@ export function ConfirmOrderForm() {
           <Typography>Document</Typography>
         </div>
         <div className='mb-4'>
-          {orderPrintList.map((orderItem, index) => (
+          {/* {orderPrintList.map((orderItem, index) => (
             <ConfirmOrderItem
               key={index}
               fileName={orderItem.filesName[0]}
@@ -64,7 +64,7 @@ export function ConfirmOrderForm() {
               size={orderItem.size}
               number={orderItem.number}
             />
-          ))}
+          ))} */}
         </div>
         <div className='bg-white mb-4 px-6 py-4'>
           <div className='flex mb-4'>
@@ -133,14 +133,14 @@ export function ConfirmOrderForm() {
         </div>
       </div>
       <FormFooter totalCost={totalCost + extraFeeData.extraFee}>
-        <Button
+        {/* <Button
           color={orderPrintList.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
           onClick={() => setMobileOrderStep(4)}
           disabled={orderPrintList.length === 0}
         >
           Confirm
-        </Button>
+        </Button> */}
       </FormFooter>
     </div>
   );

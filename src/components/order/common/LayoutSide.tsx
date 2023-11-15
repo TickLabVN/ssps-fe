@@ -6,17 +6,20 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemPrefix,
-  Typography
+  ListItemPrefix
 } from '@material-tailwind/react';
-import { LAYOUT_INFO, LAYOUT_SIDE, LAYOUT_SIZE } from '@constants';
+import { LAYOUT_INFO, LAYOUT_SIDE } from '@constants';
 
 export const useLayoutSide = () => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
-  const LayoutSide: Component<{ layout: string }> = useMemo(
+  const LayoutSide: Component<{
+    layout: string;
+    pageSide: string;
+    handlePageBothSide: (event: string) => void;
+  }> = useMemo(
     () =>
-      ({ layout }) => {
+      ({ layout, pageSide, handlePageBothSide }) => {
         const handleOpen = () => {
           setOpenDialog(!openDialog);
         };
@@ -47,8 +50,18 @@ export const useLayoutSide = () => {
                 {LAYOUT_INFO.map((item, index) => (
                   <ListItem
                     key={index}
-                    className='hover:bg-gray-900 hover:text-white'
-                    onClick={handleOpen}
+                    className={
+                      `hover:bg-gray-300 ` + (pageSide.includes(item.pos) ? 'bg-gray-300' : '')
+                    }
+                    onClick={() => {
+                      handlePageBothSide(
+                        (layout === LAYOUT_SIDE.portrait ? item.portraitSize : item.landscapeSize) +
+                          ' (' +
+                          item.pos +
+                          ')'
+                      );
+                      handleOpen();
+                    }}
                   >
                     <ListItemPrefix
                       className={
@@ -61,11 +74,11 @@ export const useLayoutSide = () => {
                         }
                       />
                     </ListItemPrefix>
-                    <div>
-                      <Typography>
-                        {layout === LAYOUT_SIDE.portrait ? LAYOUT_SIZE.long : LAYOUT_SIZE.short}
-                      </Typography>
-                      <Typography>{item.pos}</Typography>
+                    <div className='text-gray/4'>
+                      <p className='text-base md:text-lg font-medium'>
+                        {layout === LAYOUT_SIDE.portrait ? item.portraitSize : item.landscapeSize}
+                      </p>
+                      <p className='text-xs md:text-sm font-bold uppercase'>{item.pos}</p>
                     </div>
                   </ListItem>
                 ))}

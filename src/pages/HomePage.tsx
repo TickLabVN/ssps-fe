@@ -4,12 +4,13 @@ import { Orders, Slides, useChooseFileBox } from '@components/home';
 import {
   useHomeStore,
   useOrderExtraStore,
-  /*useOrderPrintStore,*/ useOrderWorkflowStore
+  useOrderPrintStore,
+  useOrderWorkflowStore
 } from '@states';
 
 export function HomePage() {
   const { slideData, orderData, getOrderData, getSlideData, getUserRemainCoins } = useHomeStore();
-  // const { setOrderPrintList } = useOrderPrintStore();
+
   const { getOrderExtraData } = useOrderExtraStore();
   const { openChooseFileBox, ChooseFileBox } = useChooseFileBox();
 
@@ -20,12 +21,20 @@ export function HomePage() {
     getOrderExtraData();
   }, [getOrderData, getSlideData, getUserRemainCoins, getOrderExtraData]);
 
-  // useEffect(() => {
-  //   setOrderPrintList(orderData);
-  // }, [orderData, setOrderPrintList]);
-
   const HomePageContent = () => {
     const { desktopOrderStep } = useOrderWorkflowStore();
+    const { createPrintingRequest, clearFileConfig, setTotalCost } = useOrderPrintStore();
+
+    useEffect(() => {
+      setTotalCost(0);
+    }, [setTotalCost]);
+
+    const handleOrderPrinting = async () => {
+      await createPrintingRequest();
+      clearFileConfig();
+      openChooseFileBox();
+    };
+
     if (desktopOrderStep === 0) {
       return (
         <>
@@ -41,7 +50,7 @@ export function HomePage() {
             </div>
             <div
               className='flex items-center justify-between bg-blue/1 rounded-lg p-4 mb-16 lg:mb-24 lg:h-[120px] lg:px-6 cursor-pointer'
-              onClick={openChooseFileBox}
+              onClick={handleOrderPrinting}
             >
               <div className='flex items-center gap-4'>
                 <PrinterIcon

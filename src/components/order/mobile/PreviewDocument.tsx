@@ -1,10 +1,10 @@
 import DocViewer, { DocViewerRenderers, IHeaderOverride } from '@cyntler/react-doc-viewer';
 import { IconButton } from '@material-tailwind/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { useFileStore, useOrderWorkflowStore } from '@states';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function PreviewDocument() {
-  const { fileTarget } = useFileStore();
+  const { fileMetadata } = useOrderPrintStore();
   const { setMobileOrderStep } = useOrderWorkflowStore();
 
   const MyHeader: IHeaderOverride = (state) => {
@@ -25,7 +25,7 @@ export function PreviewDocument() {
 
   return (
     <div className='h-screen overscroll-y-auto'>
-      {fileTarget && (
+      {fileMetadata && (
         <DocViewer
           config={{
             header: {
@@ -35,7 +35,7 @@ export function PreviewDocument() {
             pdfVerticalScrollByDefault: true
           }}
           pluginRenderers={DocViewerRenderers}
-          documents={[{ uri: fileTarget.url }]}
+          documents={[{ uri: fileMetadata.fileURL, fileType: 'application/pdf' }]}
         />
       )}
     </div>

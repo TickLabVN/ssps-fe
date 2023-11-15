@@ -11,7 +11,7 @@ import {
 export function useCloseForm() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
-  const CloseForm: Component<{ handleSave: () => void; handleExist: () => void }> = ({
+  const CloseForm: Component<{ handleSave: () => Promise<void>; handleExist: () => void }> = ({
     handleSave,
     handleExist
   }) =>

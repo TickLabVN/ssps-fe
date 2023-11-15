@@ -14,7 +14,6 @@ type OrderData = {
   pageNumber: number;
   coins: number;
   paid: string;
-  size: number;
 };
 
 type HomeStore = {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -6,17 +7,15 @@ import {
   IconButton,
   Typography
 } from '@material-tailwind/react';
-import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
+import { useOrderWorkflowStore } from '@states';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { FormFooter } from '@components/order/common';
 import { FileBox } from '@components/order/common';
-import /*OrderList,*/ '@components/order/mobile';
-import { useState } from 'react';
+//import /*OrderList,*/ '@components/order/mobile';
 
-// Tan's second-task in here.
 export function OrderListForm() {
-  const [totalCost, setTotalCost] = useState<number>(0);
-  const { orderPrintList /*setOrderPrintList*/ /*setTotal*/ } = useOrderPrintStore();
+  const [totalCost /*setTotalCost*/] = useState<number>(0);
+  //const { orderPrintList /*setOrderPrintList*/ /*setTotal*/ } = useOrderPrintStore();
   // const handleTotalCostChange = (newTotalCost: number) => {
   //   setTotalCost(newTotalCost); // Cập nhật state với giá trị từ OrderListItem
   // };
@@ -80,20 +79,20 @@ export function OrderListForm() {
           </div>
         </div>
       </div>
-      {orderPrintList.length > 0 ? (
-        <div className='py-6'>
-          <div className='p-4 bg-white'>
-            <FileBox />
-          </div>
-          {/* <OrderList orders={orderPrintList} updateTotalCost={handleTotalCostChange} /> */}
-        </div>
-      ) : (
-        <div className='pt-12 px-4 pb-4'>
+      {/* {orderPrintList.length > 0 ? ( */}
+      <div className='py-6'>
+        <div className='p-4 bg-white'>
           <FileBox />
         </div>
-      )}
+        {/* <OrderList orders={orderPrintList} updateTotalCost={handleTotalCostChange} /> */}
+      </div>
+      {/* ) : ( */}
+      <div className='pt-12 px-4 pb-4'>
+        <FileBox />
+      </div>
+      {/* )} */}
       <FormFooter totalCost={totalCost}>
-        <Button
+        {/* <Button
           color={orderPrintList.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
           onClick={() => {
@@ -104,7 +103,7 @@ export function OrderListForm() {
           disabled={orderPrintList.length === 0}
         >
           Order
-        </Button>
+        </Button> */}
       </FormFooter>
     </div>
   );

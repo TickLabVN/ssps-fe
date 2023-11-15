@@ -2,17 +2,17 @@ import { useMemo } from 'react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
 import { ScreenSize } from '@constants';
 import { useScreenSize } from '@hooks';
-import { useFileStore, useOrderWorkflowStore } from '@states';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function FileBox() {
   const { screenSize } = useScreenSize();
-  const { uploadFile } = useFileStore();
+  const { printingRequestId, uploadFile } = useOrderPrintStore();
   const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
 
   const handleUploadDocument = useMemo(
     () => async (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
-        await uploadFile(event.target.files[0]);
+        await uploadFile(printingRequestId.id, event.target.files[0]);
         if (screenSize <= ScreenSize.MD) {
           setMobileOrderStep(0);
         } else {
@@ -20,7 +20,7 @@ export function FileBox() {
         }
       }
     },
-    [screenSize, setMobileOrderStep, setDesktopOrderStep, uploadFile]
+    [screenSize, printingRequestId.id, setMobileOrderStep, setDesktopOrderStep, uploadFile]
   );
 
   return (

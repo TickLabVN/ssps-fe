@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useUploadAndPreviewDocBox } from '@components/order/desktop';
 import { useOrderWorkflowBox } from '@components/order/mobile';
 import { ScreenSize } from '@constants';
 import { useScreenSize } from '@hooks';
-import { useFileStore, useOrderWorkflowStore } from '@states';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function useChooseFileBox() {
   const { openUploadAndPreviewDocBox, UploadAndPreviewDocBox } = useUploadAndPreviewDocBox();
@@ -14,13 +14,30 @@ export function useChooseFileBox() {
 
   const ChooseFileBox = () => {
     const { screenSize } = useScreenSize();
-    const { setMobileOrderStep } = useOrderWorkflowStore();
-    const { uploadFile } = useFileStore();
+    const { desktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
+    const { orderStatus, fileMetadata, printingRequestId, uploadFile, setTotalCost } =
+      useOrderPrintStore();
 
-    const handleUploadDocument = useMemo(
-      () => async (event: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+      setTotalCost(fileMetadata.fileCoin);
+    }, [fileMetadata.fileCoin, setTotalCost]);
+
+    useEffect(() => {
+      if (orderStatus === 'SUCCESS') {
+        if (screenSize <= ScreenSize.MD) {
+          openOrderWorkflowBox();
+        } else {
+          if (desktopOrderStep === 0) {
+            openUploadAndPreviewDocBox();
+          }
+        }
+      }
+    }, [screenSize, orderStatus, desktopOrderStep]);
+
+    const handleUploadDocument = useCallback(
+      async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-          await uploadFile(event.target.files[0]);
+          await uploadFile(printingRequestId.id, event.target.files[0]);
           setOpenBox(false);
           if (screenSize <= ScreenSize.MD) {
             openOrderWorkflowBox();
@@ -30,7 +47,7 @@ export function useChooseFileBox() {
           setMobileOrderStep(0);
         }
       },
-      [screenSize, setMobileOrderStep, uploadFile]
+      [screenSize, printingRequestId.id, setMobileOrderStep, uploadFile]
     );
 
     return (
