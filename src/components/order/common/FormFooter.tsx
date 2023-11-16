@@ -1,12 +1,14 @@
 import { ReactNode } from 'react';
 import coin from '@assets/coin.png';
-import { useUserCoinsQuery } from '@hooks';
+import { useUserQuery } from '@hooks';
 
 export const FormFooter: Component<{ children: ReactNode; totalCost: number }> = ({
   children,
   totalCost
 }) => {
-  const { data: remainCoins } = useUserCoinsQuery();
+  const {
+    remainCoins: { data }
+  } = useUserQuery();
 
   return (
     <div className='flex w-full h-16'>
@@ -17,7 +19,7 @@ export const FormFooter: Component<{ children: ReactNode; totalCost: number }> =
             <div className='w-6 h-6'>
               <img src={coin} alt='Ballance Coin' />
             </div>
-            <span>{remainCoins}</span>
+            <span>{data}</span>
           </div>
         </div>
         <div>

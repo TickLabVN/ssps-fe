@@ -15,14 +15,16 @@ type FileConfig = {
   pageSide: string;
 };
 
+type PrintingRequestId = {
+  id: string;
+};
+
 type OrderPrintStore = {
-  orderStatus: StoreStatus;
-  printingRequestId: { id: string };
+  printingRequestId: PrintingRequestId | null;
+  updatePrintingRequestId: (id: PrintingRequestId) => void;
   fileMetadata: FileMetadata;
   fileConfig: FileConfig;
   totalCost: number;
-  resetOrderStatus: () => void;
-  createPrintingRequest: () => Promise<void>;
   uploadFile: (printingRequestId: string, file: File) => Promise<void>;
   uploadConfigFile: (fileId: string, fileConfig: FileConfig) => Promise<void>;
   setFileConfig: (key: string, value: string) => void;

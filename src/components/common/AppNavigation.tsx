@@ -2,7 +2,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 import coin from '@assets/coin.png';
 import { AppDrawer, DesktopNavbar, ToggleSidebarBtn, useSidebarMenu } from '@components/common';
 import { ScreenSize } from '@constants';
-import { useScreenSize, useUserCoinsQuery } from '@hooks';
+import { useScreenSize, useUserQuery } from '@hooks';
 import { useMenuBarStore } from '@states';
 
 export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu }> = ({
@@ -12,7 +12,9 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
   const { screenSize } = useScreenSize();
   const { openSidebar, handleOpenSidebar, SidebarMenu } = useSidebarMenu();
   const { selectedMenu } = useMenuBarStore();
-  const { data: remainCoins } = useUserCoinsQuery();
+  const {
+    remainCoins: { data }
+  } = useUserQuery();
 
   return (
     <div className='w-full max-h-[768px] px-6 lg:px-9 py-3 lg:py-3 shadow-md lg:sticky my-3 lg:my-0'>
@@ -34,9 +36,9 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           <DesktopNavbar mainMenu={mainMenu} />
         )}
         <div className='flex items-center'>
-          {remainCoins !== undefined && (
+          {data && (
             <div className='flex items-center w-18.25 lg:w-26 h-6 lg:h-9 bg-[#FEECDC] pl-4 pr-6 lg:pl-6 lg:pr-9 rounded-lg -mr-5 font-bold text-[#9F580A] lg:font-semibold lg:text-2xl select-none text-base'>
-              {remainCoins}
+              {data}
             </div>
           )}
           <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin}></img>

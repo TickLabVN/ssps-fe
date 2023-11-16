@@ -51,8 +51,7 @@ export function useUploadAndPreviewDocBox() {
       setFileConfig,
       resetFileConfig,
       setTotalCost,
-      uploadConfigFile,
-      resetOrderStatus
+      uploadConfigFile
     } = useOrderPrintStore();
     const { openLayoutSide, LayoutSide } = useLayoutSide();
     const { openCloseForm, CloseForm } = useCloseForm();
@@ -120,9 +119,9 @@ export function useUploadAndPreviewDocBox() {
     const handleExistCloseForm = useCallback(() => {
       resetFileConfig(initialFileConfig.current);
       setTotalCost(0);
-      resetOrderStatus();
+      //resetOrderStatus();
       handleOpenDialog();
-    }, [handleOpenDialog, resetFileConfig, setTotalCost, resetOrderStatus]);
+    }, [handleOpenDialog, resetFileConfig, setTotalCost /*resetOrderStatus*/]);
 
     return (
       <Dialog size='xl' open={openDialog} handler={handleOpenDialog}>

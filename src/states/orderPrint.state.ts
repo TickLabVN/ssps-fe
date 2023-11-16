@@ -5,10 +5,7 @@ import { orderPrintService } from '@services';
 
 export const useOrderPrintStore = create<OrderPrintStore>()(
   devtools((set) => ({
-    orderStatus: 'UNINIT',
-    printingRequestId: {
-      id: ''
-    },
+    printingRequestId: null,
     fileMetadata: {
       fileId: '',
       fileName: '',
@@ -25,33 +22,30 @@ export const useOrderPrintStore = create<OrderPrintStore>()(
       pageSide: PAGE_SIDE.one
     },
     totalCost: 0,
-    resetOrderStatus: () => {
-      set(() => ({ orderStatus: 'UNINIT' }));
+    updatePrintingRequestId: (id) => {
+      set({ printingRequestId: id });
     },
     createPrintingRequest: async () => {
       try {
         const printingRequestId = await orderPrintService.createPrintingRequest();
-        set(() => ({ printingRequestId: printingRequestId }));
+        set({ printingRequestId: printingRequestId });
       } catch (err) {
         throw err;
       }
     },
     uploadFile: async (printingRequestId, file) => {
-      set(() => ({ orderStatus: 'PENDING' }));
       try {
         const fileMetatdata = await orderPrintService.uploadFile(printingRequestId, file);
-        set(() => ({ fileMetadata: fileMetatdata, orderStatus: 'SUCCESS' }));
+        set({ fileMetadata: fileMetatdata });
       } catch (err) {
-        set(() => ({ orderStatus: 'REJECT' }));
+        throw err;
       }
     },
     uploadConfigFile: async (fileId, fileConfig) => {
-      set(() => ({ orderStatus: 'PENDING' }));
       try {
         await orderPrintService.uploadConfigFile(fileId, fileConfig);
-        set(() => ({ orderStatus: 'SUCCESS' }));
       } catch (err) {
-        set(() => ({ orderStatus: 'REJECT' }));
+        throw err;
       }
     },
     setFileConfig: (key, value) => {
@@ -61,7 +55,7 @@ export const useOrderPrintStore = create<OrderPrintStore>()(
       set(() => ({ fileConfig: fileConfig }));
     },
     clearFileConfig: () => {
-      set(() => ({
+      set({
         fileConfig: {
           numOfCopy: '1',
           layout: LAYOUT_SIDE.portrait,
@@ -69,10 +63,10 @@ export const useOrderPrintStore = create<OrderPrintStore>()(
           pagesPerSheet: PAGES_PER_SHEET[0],
           pageSide: PAGE_SIDE.one
         }
-      }));
+      });
     },
     setTotalCost: (totalCost) => {
-      set(() => ({ totalCost: totalCost }));
+      set({ totalCost: totalCost });
     }
   }))
 );

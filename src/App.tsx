@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { NavigateFunction, useNavigate, useLocation } from 'react-router-dom';
 import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
-import { useUserInfoQuery } from '@hooks';
+import { useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
 import { useUserStore } from '@states';
@@ -11,7 +11,9 @@ import { useUserStore } from '@states';
 export default function App() {
   const navigate: NavigateFunction = useNavigate();
   const { updateUserInfo } = useUserStore();
-  const { isFetching, isError, isSuccess, data, refetch } = useUserInfoQuery();
+  const {
+    info: { isFetching, isError, isSuccess, data, refetch }
+  } = useUserQuery();
   const { pathname } = useLocation();
 
   useEffect(() => {

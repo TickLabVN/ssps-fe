@@ -14,32 +14,31 @@ export function useChooseFileBox() {
 
   const ChooseFileBox = () => {
     const { screenSize } = useScreenSize();
-    const { desktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
-    const { orderStatus, fileMetadata, printingRequestId, uploadFile, setTotalCost } =
-      useOrderPrintStore();
+    const { /*desktopOrderStep,*/ setMobileOrderStep } = useOrderWorkflowStore();
+    const { fileMetadata, printingRequestId, uploadFile, setTotalCost } = useOrderPrintStore();
 
     useEffect(() => {
       setTotalCost(fileMetadata.fileCoin);
     }, [fileMetadata.fileCoin, setTotalCost]);
 
-    useEffect(() => {
-      if (orderStatus === 'SUCCESS') {
-        if (screenSize <= ScreenSize.MD) {
-          openOrderWorkflowBox();
-        } else {
-          if (desktopOrderStep === 0) {
-            openUploadAndPreviewDocBox();
-          }
-        }
-      }
-    }, [screenSize, orderStatus, desktopOrderStep]);
+    // useEffect(() => {
+    //   if (orderStatus === 'SUCCESS') {
+    //     if (screenSize <= ScreenSize.MD) {
+    //       openOrderWorkflowBox();
+    //     } else {
+    //       if (desktopOrderStep === 0) {
+    //         openUploadAndPreviewDocBox();
+    //       }
+    //     }
+    //   }
+    // }, [screenSize, orderStatus, desktopOrderStep]);
 
     const handleUploadDocument = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files && files.length > 0) {
           const target = files[0];
-          if (!target) return;
+          if (!target || !printingRequestId) return;
           await uploadFile(printingRequestId.id, target);
           setOpenBox(false);
           if (screenSize <= ScreenSize.MD) {
@@ -50,7 +49,7 @@ export function useChooseFileBox() {
           setMobileOrderStep(0);
         }
       },
-      [screenSize, printingRequestId.id, setMobileOrderStep, uploadFile]
+      [screenSize, printingRequestId, setMobileOrderStep, uploadFile]
     );
 
     return (

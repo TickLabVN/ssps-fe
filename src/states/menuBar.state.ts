@@ -6,7 +6,7 @@ export const useMenuBarStore = create<MenuBarStore>()(
   devtools((set) => ({
     selectedMenu: MAIN_MENU.home,
     setSelectedMenu: (selectedMenu) => {
-      set(() => ({ selectedMenu: selectedMenu }));
+      set({ selectedMenu: selectedMenu });
     }
   }))
 );

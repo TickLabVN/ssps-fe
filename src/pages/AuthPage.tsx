@@ -7,13 +7,15 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Card, Input, Button, Typography } from '@material-tailwind/react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { useUserInfoQuery } from '@hooks';
+import { useUserQuery } from '@hooks';
 import { authService } from '@services';
 
 export const AuthPage = () => {
   const navigate: NavigateFunction = useNavigate();
   const [showPassword, setShowPassword] = useState<string>('password');
-  const { refetch } = useUserInfoQuery();
+  const {
+    info: { refetch }
+  } = useUserQuery();
 
   const validateSchema = Yup.object().shape({
     email: Yup.string()
@@ -33,7 +35,7 @@ export const AuthPage = () => {
   });
 
   const { mutateAsync } = useMutation({
-    mutationKey: ['/auth/login'],
+    mutationKey: ['login'],
     mutationFn: (data: LoginFormData) => authService.login(data)
   });
 
