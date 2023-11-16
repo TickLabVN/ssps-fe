@@ -9,6 +9,9 @@ import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import './index.css';
 import App from './App';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <BrowserRouter>
@@ -21,8 +24,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       }}
     >
       <ThemeProvider>
-        <ToastContainer limit={1} />
-        <App />
+        <QueryClientProvider client={queryClient}>
+          <ToastContainer limit={1} />
+          <App />
+        </QueryClientProvider>
       </ThemeProvider>
     </StyleSheetManager>
   </BrowserRouter>

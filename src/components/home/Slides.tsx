@@ -1,7 +1,16 @@
-import { Carousel } from '@material-tailwind/react';
+import { useQuery } from '@tanstack/react-query';
+import { Carousel, Spinner } from '@material-tailwind/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { homeService } from '@services';
+import { retryQueryFn } from '@utils';
 
-export const Slides: Component<{ slides: SlideData[] }> = ({ slides }) => {
+export function Slides() {
+  const { data: slides } = useQuery({
+    queryKey: ['/api/home/slides'],
+    queryFn: () => homeService.getSlides(),
+    retry: retryQueryFn
+  });
+
   return (
     <Carousel
       className='rounded-lg'
@@ -19,14 +28,20 @@ export const Slides: Component<{ slides: SlideData[] }> = ({ slides }) => {
       autoplay={true}
       autoplayDelay={3000}
     >
-      {slides.map((slide, index) => (
-        <img
-          key={index}
-          src={slide.src}
-          alt={slide.alt}
-          className='h-[200px] object-cover w-full lg:h-[400px]'
-        />
-      ))}
+      {slides ? (
+        slides.map((slide, index) => (
+          <img
+            key={index}
+            src={slide.src}
+            alt={slide.alt}
+            className='h-[200px] object-cover w-full lg:h-[400px]'
+          />
+        ))
+      ) : (
+        <div className='grid justify-items-center items-center'>
+          <Spinner color='green' className='h-12 w-12' />
+        </div>
+      )}
     </Carousel>
   );
-};
+}

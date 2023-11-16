@@ -1,25 +1,10 @@
 import { useEffect } from 'react';
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
-import {
-  useHomeStore,
-  useOrderExtraStore,
-  useOrderPrintStore,
-  useOrderWorkflowStore
-} from '@states';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function HomePage() {
-  const { slideData, orderData, getOrderData, getSlideData, getUserRemainCoins } = useHomeStore();
-
-  const { getOrderExtraData } = useOrderExtraStore();
   const { openChooseFileBox, ChooseFileBox } = useChooseFileBox();
-
-  useEffect(() => {
-    getOrderData();
-    getSlideData();
-    getUserRemainCoins();
-    getOrderExtraData();
-  }, [getOrderData, getSlideData, getUserRemainCoins, getOrderExtraData]);
 
   const HomePageContent = () => {
     const { desktopOrderStep } = useOrderWorkflowStore();
@@ -46,7 +31,7 @@ export function HomePage() {
               <h3 className='font-bold text-blue/2 text-xl lg:text-4xl'>Welcome Username!</h3>
             </div>
             <div className='mb-4 lg:mb-12'>
-              <Slides slides={slideData} />
+              <Slides />
             </div>
             <div
               className='flex items-center justify-between bg-blue/1 rounded-lg p-4 mb-16 lg:mb-24 lg:h-[120px] lg:px-6 cursor-pointer'
@@ -61,10 +46,9 @@ export function HomePage() {
               </div>
               <ArrowRightIcon strokeWidth={3} className='text-white w-4 h-4 lg:w-6 lg:h-6' />
             </div>
-            <Orders orders={orderData} />
+            <Orders />
           </div>
-
-          {<ChooseFileBox />}
+          <ChooseFileBox />
         </>
       );
     }

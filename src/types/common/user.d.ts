@@ -1,10 +1,9 @@
-type UserReturnValue = {
+type UserInfo = {
   id: string;
   userName: string;
 };
 
 type UserStore = {
-  userStatus: StoreStatus;
-  userData: UserReturnValue;
-  getUserData: () => Promise<void>;
+  userInfo: UserInfo | null;
+  updateUserInfo: (data: UserInfo) => void;
 };

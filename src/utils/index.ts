@@ -4,3 +4,4 @@
 
 export * from './escapeRegex';
 export * from './formatFileSize';
+export * from './retryQueryFn';

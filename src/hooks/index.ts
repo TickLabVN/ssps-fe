@@ -3,3 +3,5 @@
  */
 
 export * from './useScreenSize';
+export * from './useUserCoinsQuery.hook';
+export * from './useUserInfoQuery.hook';

@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Card, Input, Button, Typography } from '@material-tailwind/react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { useUserInfoQuery } from '@hooks';
 import { authService } from '@services';
-import { useUserStore } from '@states';
 
 export const AuthPage = () => {
   const navigate: NavigateFunction = useNavigate();
-  const { getUserData } = useUserStore();
+  const [showPassword, setShowPassword] = useState<string>('password');
+  const { refetch } = useUserInfoQuery();
 
   const validateSchema = Yup.object().shape({
     email: Yup.string()
@@ -29,12 +31,17 @@ export const AuthPage = () => {
   } = useForm<LoginFormData>({
     resolver: yupResolver(validateSchema)
   });
-  const [showPassword, setShowPassword] = useState<string>('password');
 
-  const submit = async (data: LoginFormData) => {
+  const { mutateAsync } = useMutation({
+    mutationKey: ['/auth/login'],
+    mutationFn: (data: LoginFormData) => authService.login(data)
+  });
+
+  const submit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      await authService.login(data);
-      await getUserData();
+      await mutateAsync(data);
+      await refetch();
+      toast.success('Login successfully!');
       navigate('/home');
     } catch (err) {
       const errorMessage = (err as ResponseError).message;

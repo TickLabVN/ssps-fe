@@ -1,4 +1,4 @@
-import { useOrderWorkflowStore, useOrderExtraStore, useOrderPrintStore } from '@states';
+import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import {
   PrinterIcon,
   ChevronLeftIcon,
@@ -9,8 +9,7 @@ import {
   ChevronRightIcon,
   ClipboardDocumentListIcon
 } from '@heroicons/react/24/solid';
-import { Typography, Select, Option, Alert } from '@material-tailwind/react';
-import { useHomeStore } from '@states';
+import { Typography, Select, Option } from '@material-tailwind/react';
 import { FormFooter } from '@components/order/common';
 //import { ConfirmOrderItem } from '@components/order/mobile';
 import coin from '@assets/coin.png';
@@ -19,24 +18,24 @@ import coin from '@assets/coin.png';
 export function ConfirmOrderForm() {
   const { totalCost } = useOrderPrintStore();
   const { setMobileOrderStep } = useOrderWorkflowStore();
-  const { userRemainCoins } = useHomeStore();
-  const { extraFeeData } = useOrderExtraStore();
-  function IconSolid() {
-    return (
-      <svg
-        xmlns='http://www.w3.org/2000/svg'
-        viewBox='0 0 24 24'
-        fill='currentColor'
-        className='h-4 w-4 text-red-600'
-      >
-        <path
-          fillRule='evenodd'
-          d='M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z'
-          clipRule='evenodd'
-        />
-      </svg>
-    );
-  }
+  //const { userRemainCoins } = useHomeStore();
+  //const { extraFeeData } = useOrderExtraStore();
+  // function IconSolid() {
+  //   return (
+  //     <svg
+  //       xmlns='http://www.w3.org/2000/svg'
+  //       viewBox='0 0 24 24'
+  //       fill='currentColor'
+  //       className='h-4 w-4 text-red-600'
+  //     >
+  //       <path
+  //         fillRule='evenodd'
+  //         d='M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z'
+  //         clipRule='evenodd'
+  //       />
+  //     </svg>
+  //   );
+  // }
   return (
     <div className='text-gray-4'>
       <div className='flex justify-between px-6 py-3  shadow-md font-semibold bg-white mb-6'>
@@ -91,16 +90,16 @@ export function ConfirmOrderForm() {
           <div className='flex items-center mb-4'>
             <Typography className='mr-2 text-xs'>Current balance:</Typography>
             <div className='flex items-center'>
-              <Typography className='text-xs'>{userRemainCoins}</Typography>
+              {/* <Typography className='text-xs'>{userRemainCoins}</Typography> */}
               <img src={coin} width={16} />
             </div>
           </div>
-          {userRemainCoins < totalCost && (
+          {/* {userRemainCoins < totalCost && (
             <Alert className='bg-red-50 text-red-600 mb-4' icon={<IconSolid />}>
               <Typography className='text-xs font-bold'>Amout exceed balance</Typography>
               <Typography className='-ml-7 text-xs'>Top up your account to proceed</Typography>
             </Alert>
-          )}
+          )} */}
         </div>
         <div className='px-6 py-4 bg-white mb-4'>
           <div className='flex mb-4'>
@@ -119,20 +118,20 @@ export function ConfirmOrderForm() {
               <span>Service fee</span>
               <div className='flex'>
                 <img className='grayscale' src={coin} width={16} />
-                <span>{extraFeeData.extraFee}</span>
+                {/* <span>{extraFeeData.extraFee}</span> */}
               </div>
             </li>
             <li className='flex justify-between'>
               <span>Total Cost</span>
               <div className='flex'>
                 <img src={coin} width={20} />
-                <span>{totalCost + extraFeeData.extraFee}</span>
+                {/* <span>{totalCost + extraFeeData.extraFee}</span> */}
               </div>
             </li>
           </ul>
         </div>
       </div>
-      <FormFooter totalCost={totalCost + extraFeeData.extraFee}>
+      <FormFooter totalCost={totalCost /* + extraFeeData.extraFee*/}>
         {/* <Button
           color={orderPrintList.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'

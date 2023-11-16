@@ -36,8 +36,11 @@ export function useChooseFileBox() {
 
     const handleUploadDocument = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-          await uploadFile(printingRequestId.id, event.target.files[0]);
+        const files = event.target.files;
+        if (files && files.length > 0) {
+          const target = files[0];
+          if (!target) return;
+          await uploadFile(printingRequestId.id, target);
           setOpenBox(false);
           if (screenSize <= ScreenSize.MD) {
             openOrderWorkflowBox();
