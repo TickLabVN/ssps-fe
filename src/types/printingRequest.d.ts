@@ -1,3 +1,7 @@
+type PrintingRequestId = {
+  id: string;
+};
+
 type FileMetadata = {
   fileId: string;
   fileName: string;
@@ -15,18 +19,9 @@ type FileConfig = {
   pageSide: string;
 };
 
-type PrintingRequestId = {
-  id: string;
-};
-
-type OrderPrintStore = {
-  printingRequestId: PrintingRequestId | null;
-  updatePrintingRequestId: (id: PrintingRequestId) => void;
-  fileMetadata: FileMetadata;
+type PrintingRequestStore = {
   fileConfig: FileConfig;
   totalCost: number;
-  uploadFile: (printingRequestId: string, file: File) => Promise<void>;
-  uploadConfigFile: (fileId: string, fileConfig: FileConfig) => Promise<void>;
   setFileConfig: (key: string, value: string) => void;
   resetFileConfig: (fileConfig: FileConfig) => void;
   clearFileConfig: () => void;

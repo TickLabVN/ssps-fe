@@ -1,4 +1,5 @@
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   IconButton,
@@ -19,23 +20,19 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import coinImage from '@assets/coin.png';
 import { useCloseForm, useLayoutSide, FormFooter } from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
+import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }> = ({
   handleExistOrderForm
 }) => {
+  const queryClient = useQueryClient();
+  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
+  const { uploadFileConfig } = usePrintingRequestMutation();
   const { setMobileOrderStep } = useOrderWorkflowStore();
-  const {
-    fileMetadata,
-    fileConfig,
-    totalCost,
-    setFileConfig,
-    resetFileConfig,
-    setTotalCost,
-    uploadConfigFile,
-    resetOrderStatus
-  } = useOrderPrintStore();
+  const { fileConfig, totalCost, setFileConfig, resetFileConfig, setTotalCost } =
+    useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
 
@@ -49,40 +46,9 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
   const [specificPage, setSpecificPage] = useState<string>('');
   const [pageBothSide, setPageBothSide] = useState<string>(
     fileConfig.layout === LAYOUT_SIDE.portrait
-      ? PAGE_SIDE.both.portrait[0]
-      : PAGE_SIDE.both.landscape[0]
+      ? PAGE_SIDE.both.portrait[0]!
+      : PAGE_SIDE.both.landscape[0]!
   );
-
-  const handleDecreaseCopies = () => {
-    if (parseInt(fileConfig.numOfCopy) > 1) {
-      setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) - 1}`);
-      setTotalCost(totalCost - fileMetadata.fileCoin);
-    }
-  };
-  const handleIncreaseCopies = () => {
-    setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) + 1}`);
-    setTotalCost(totalCost + fileMetadata.fileCoin);
-  };
-  const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPageBothSide(
-      e.target.value === LAYOUT_SIDE.portrait
-        ? PAGE_SIDE.both.portrait[0]
-        : PAGE_SIDE.both.landscape[0]
-    );
-    setFileConfig(
-      FILE_CONFIG.pageSide,
-      e.target.value === LAYOUT_SIDE.portrait
-        ? PAGE_SIDE.both.portrait[0]
-        : PAGE_SIDE.both.landscape[0]
-    );
-    setFileConfig(FILE_CONFIG.layout, e.target.value);
-  };
-  const handlePagesChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFileConfig(FILE_CONFIG.pages, e.target.value);
-  };
-  const handlePageSideChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFileConfig(FILE_CONFIG.pageSide, e.target.value);
-  };
 
   const handlePageBothSide = useCallback(
     (event: string) => {
@@ -93,16 +59,55 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
   );
 
   const handleSaveFileConfig = useCallback(async () => {
-    await uploadConfigFile(fileMetadata.fileId, fileConfig);
-    setMobileOrderStep(2);
-  }, [fileConfig, fileMetadata.fileId, setMobileOrderStep, uploadConfigFile]);
+    if (fileMetadata?.fileId) {
+      await uploadFileConfig.mutateAsync({
+        fileId: fileMetadata.fileId,
+        fileConfig: fileConfig
+      });
+      setMobileOrderStep(2);
+    }
+  }, [fileMetadata?.fileId, fileConfig, setMobileOrderStep, uploadFileConfig]);
 
   const handleExistCloseForm = useCallback(() => {
     resetFileConfig(initialFileConfig.current);
     setTotalCost(0);
-    resetOrderStatus();
     handleExistOrderForm();
-  }, [handleExistOrderForm, resetFileConfig, setTotalCost, resetOrderStatus]);
+  }, [handleExistOrderForm, resetFileConfig, setTotalCost]);
+
+  const handleDecreaseCopies = () => {
+    if (fileMetadata && parseInt(fileConfig.numOfCopy) > 1) {
+      setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) - 1}`);
+      setTotalCost(totalCost - fileMetadata.fileCoin);
+    }
+  };
+  const handleIncreaseCopies = () => {
+    if (fileMetadata) {
+      setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) + 1}`);
+      setTotalCost(totalCost + fileMetadata.fileCoin);
+    }
+  };
+  const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPageBothSide(
+      e.target.value === LAYOUT_SIDE.portrait
+        ? PAGE_SIDE.both.portrait[0]!
+        : PAGE_SIDE.both.landscape[0]!
+    );
+    setFileConfig(
+      FILE_CONFIG.pageSide,
+      e.target.value === LAYOUT_SIDE.portrait
+        ? PAGE_SIDE.both.portrait[0]!
+        : PAGE_SIDE.both.landscape[0]!
+    );
+    setFileConfig(FILE_CONFIG.layout, e.target.value);
+  };
+  const handlePagesChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFileConfig(FILE_CONFIG.pages, e.target.value);
+  };
+  const handlePageSideChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFileConfig(FILE_CONFIG.pageSide, e.target.value);
+  };
+
+  if (!fileMetadata) return null;
 
   return (
     <>

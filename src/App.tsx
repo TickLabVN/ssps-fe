@@ -6,13 +6,11 @@ import { MAIN_MENU, SUB_MENU } from '@constants';
 import { useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
-import { useUserStore } from '@states';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();
-  const { updateUserInfo } = useUserStore();
   const {
-    info: { isFetching, isError, isSuccess, data, refetch }
+    info: { isFetching, isError, isSuccess, refetch }
   } = useUserQuery();
   const { pathname } = useLocation();
 
@@ -21,12 +19,6 @@ export default function App() {
       if (err.statusCode !== 401) toast.error(err.message);
     });
   }, [refetch]);
-
-  useEffect(() => {
-    if (data) {
-      updateUserInfo(data);
-    }
-  }, [data, updateUserInfo]);
 
   useEffect(() => {
     if (pathname === '/' && isSuccess) {

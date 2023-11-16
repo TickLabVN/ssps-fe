@@ -1,25 +1,33 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useUploadAndPreviewDocBox } from '@components/order/desktop';
 import { useOrderWorkflowBox } from '@components/order/mobile';
 import { ScreenSize } from '@constants';
-import { useScreenSize } from '@hooks';
+import { useScreenSize, usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function useChooseFileBox() {
+  const queryClient = useQueryClient();
+  const { uploadFile } = usePrintingRequestMutation();
+
   const { openUploadAndPreviewDocBox, UploadAndPreviewDocBox } = useUploadAndPreviewDocBox();
   const { openOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
+
   const [openBox, setOpenBox] = useState<boolean>(false);
 
   const ChooseFileBox = () => {
     const { screenSize } = useScreenSize();
     const { /*desktopOrderStep,*/ setMobileOrderStep } = useOrderWorkflowStore();
-    const { fileMetadata, printingRequestId, uploadFile, setTotalCost } = useOrderPrintStore();
+    const { setTotalCost } = useOrderPrintStore();
+    const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
 
     useEffect(() => {
-      setTotalCost(fileMetadata.fileCoin);
-    }, [fileMetadata.fileCoin, setTotalCost]);
+      if (fileMetadata?.fileCoin) {
+        setTotalCost(fileMetadata?.fileCoin);
+      }
+    }, [fileMetadata?.fileCoin, setTotalCost]);
 
     // useEffect(() => {
     //   if (orderStatus === 'SUCCESS') {
@@ -35,11 +43,15 @@ export function useChooseFileBox() {
 
     const handleUploadDocument = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
-        if (files && files.length > 0) {
-          const target = files[0];
-          if (!target || !printingRequestId) return;
-          await uploadFile(printingRequestId.id, target);
+        if (event.target.files) {
+          const printingRequestId = queryClient.getQueryData<PrintingRequestId>([
+            'printingRequestId'
+          ]);
+          if (!event.target.files[0] || !printingRequestId) return;
+          await uploadFile.mutateAsync({
+            printingRequestId: printingRequestId.id,
+            file: event.target.files[0]
+          });
           setOpenBox(false);
           if (screenSize <= ScreenSize.MD) {
             openOrderWorkflowBox();
@@ -49,7 +61,7 @@ export function useChooseFileBox() {
           setMobileOrderStep(0);
         }
       },
-      [screenSize, printingRequestId, setMobileOrderStep, uploadFile]
+      [screenSize, setMobileOrderStep]
     );
 
     return (

@@ -5,5 +5,5 @@
 export * from './auth.service';
 export * from './common';
 export * from './home.service';
-export * from './orderPrint.service';
+export * from './printingRequest.service';
 export * from './user.service';

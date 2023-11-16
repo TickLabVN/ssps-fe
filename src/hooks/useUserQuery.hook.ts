@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { homeService, userService } from '@services';
+import { userService } from '@services';
 import { retryQueryFn } from '@utils';
 
 export function useUserQuery() {
   const remainCoins = useQuery({
     queryKey: ['/api/user/remain-coins'],
-    queryFn: () => homeService.getRemainCoins(),
+    queryFn: () => userService.getRemainCoins(),
     retry: retryQueryFn
   });
 

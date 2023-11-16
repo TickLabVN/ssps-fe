@@ -1,23 +1,23 @@
 import { useEffect } from 'react';
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
-import { usePrintMutation } from '@hooks';
+import { usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function HomePage() {
   const { openChooseFileBox, ChooseFileBox } = useChooseFileBox();
+  const { createPrintingRequest } = usePrintingRequestMutation();
 
   const HomePageContent = () => {
     const { desktopOrderStep } = useOrderWorkflowStore();
     const { clearFileConfig, setTotalCost } = useOrderPrintStore();
-    const { mutateAsync } = usePrintMutation();
 
     useEffect(() => {
       setTotalCost(0);
     }, [setTotalCost]);
 
     const handleOrderPrinting = async () => {
-      await mutateAsync();
+      await createPrintingRequest.mutateAsync();
       clearFileConfig();
       openChooseFileBox();
     };

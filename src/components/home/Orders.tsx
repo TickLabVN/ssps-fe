@@ -5,7 +5,7 @@ import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/re
 import { MapPinIcon } from '@heroicons/react/24/solid';
 import coin from '@assets/coin.png';
 import { ORDER_STATUS_COLOR } from '@constants';
-import { homeService } from '@services';
+import { printingRequestService } from '@services';
 import { retryQueryFn } from '@utils';
 
 export function Orders() {
@@ -24,7 +24,7 @@ export function Orders() {
 
   const { data: orders } = useQuery({
     queryKey: ['/api/printRequest'],
-    queryFn: () => homeService.getOrders(),
+    queryFn: () => printingRequestService.getPrintingRequest(),
     retry: retryQueryFn
   });
 

@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useState, useRef } from 'react';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Dialog,
@@ -16,16 +17,19 @@ import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { useLayoutSide, FormFooter, useCloseForm } from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
+import { usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export function useUploadAndPreviewDocBox() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const { uploadFileConfig } = usePrintingRequestMutation();
+  const queryClient = useQueryClient();
+  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
 
   const PreviewDocument = () => {
     const PreviewBody = () => {
-      const { fileMetadata } = useOrderPrintStore();
-      if (fileMetadata.fileURL) {
+      if (fileMetadata?.fileURL) {
         return (
           <DocViewer
             config={{
@@ -44,15 +48,8 @@ export function useUploadAndPreviewDocBox() {
   };
 
   const UploadAndPreviewDocBox = () => {
-    const {
-      fileMetadata,
-      fileConfig,
-      totalCost,
-      setFileConfig,
-      resetFileConfig,
-      setTotalCost,
-      uploadConfigFile
-    } = useOrderPrintStore();
+    const { fileConfig, totalCost, setFileConfig, resetFileConfig, setTotalCost } =
+      useOrderPrintStore();
     const { openLayoutSide, LayoutSide } = useLayoutSide();
     const { openCloseForm, CloseForm } = useCloseForm();
 
@@ -67,42 +64,11 @@ export function useUploadAndPreviewDocBox() {
     const [specificPage, setSpecificPage] = useState<string>('');
     const [pageBothSide, setPageBothSide] = useState<string>(
       fileConfig.layout === LAYOUT_SIDE.portrait
-        ? PAGE_SIDE.both.portrait[0]
-        : PAGE_SIDE.both.landscape[0]
+        ? PAGE_SIDE.both.portrait[0]!
+        : PAGE_SIDE.both.landscape[0]!
     );
 
     const handleOpenDialog = useCallback(() => setOpenDialog(!openDialog), []);
-
-    const handleDecreaseCopies = () => {
-      if (parseInt(fileConfig.numOfCopy) > 1) {
-        setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) - 1}`);
-        setTotalCost(totalCost - fileMetadata.fileCoin);
-      }
-    };
-    const handleIncreaseCopies = () => {
-      setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) + 1}`);
-      setTotalCost(totalCost + fileMetadata.fileCoin);
-    };
-    const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setPageBothSide(
-        e.target.value === LAYOUT_SIDE.portrait
-          ? PAGE_SIDE.both.portrait[0]
-          : PAGE_SIDE.both.landscape[0]
-      );
-      setFileConfig(
-        FILE_CONFIG.pageSide,
-        e.target.value === LAYOUT_SIDE.portrait
-          ? PAGE_SIDE.both.portrait[0]
-          : PAGE_SIDE.both.landscape[0]
-      );
-      setFileConfig(FILE_CONFIG.layout, e.target.value);
-    };
-    const handlePagesChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setFileConfig(FILE_CONFIG.pages, e.target.value);
-    };
-    const handlePageSideChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setFileConfig(FILE_CONFIG.pageSide, e.target.value);
-    };
 
     const handlePageBothSide = useCallback(
       (event: string) => {
@@ -113,15 +79,54 @@ export function useUploadAndPreviewDocBox() {
     );
 
     const handleSaveFileConfig = useCallback(async () => {
-      await uploadConfigFile(fileMetadata.fileId, fileConfig);
-    }, [fileConfig, fileMetadata.fileId, uploadConfigFile]);
+      if (fileMetadata) {
+        await uploadFileConfig.mutateAsync({
+          fileId: fileMetadata.fileId,
+          fileConfig: fileConfig
+        });
+      }
+    }, [fileConfig]);
 
     const handleExistCloseForm = useCallback(() => {
       resetFileConfig(initialFileConfig.current);
       setTotalCost(0);
-      //resetOrderStatus();
       handleOpenDialog();
-    }, [handleOpenDialog, resetFileConfig, setTotalCost /*resetOrderStatus*/]);
+    }, [handleOpenDialog, resetFileConfig, setTotalCost]);
+
+    const handleDecreaseCopies = () => {
+      if (fileMetadata && parseInt(fileConfig.numOfCopy) > 1) {
+        setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) - 1}`);
+        setTotalCost(totalCost - fileMetadata.fileCoin);
+      }
+    };
+    const handleIncreaseCopies = () => {
+      if (fileMetadata) {
+        setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) + 1}`);
+        setTotalCost(totalCost + fileMetadata.fileCoin);
+      }
+    };
+    const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setPageBothSide(
+        e.target.value === LAYOUT_SIDE.portrait
+          ? PAGE_SIDE.both.portrait[0]!
+          : PAGE_SIDE.both.landscape[0]!
+      );
+      setFileConfig(
+        FILE_CONFIG.pageSide,
+        e.target.value === LAYOUT_SIDE.portrait
+          ? PAGE_SIDE.both.portrait[0]!
+          : PAGE_SIDE.both.landscape[0]!
+      );
+      setFileConfig(FILE_CONFIG.layout, e.target.value);
+    };
+    const handlePagesChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setFileConfig(FILE_CONFIG.pages, e.target.value);
+    };
+    const handlePageSideChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setFileConfig(FILE_CONFIG.pageSide, e.target.value);
+    };
+
+    if (!fileMetadata) return null;
 
     return (
       <Dialog size='xl' open={openDialog} handler={handleOpenDialog}>

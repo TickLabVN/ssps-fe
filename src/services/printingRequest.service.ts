@@ -1,6 +1,7 @@
 import { invoke, apiClient } from './common';
 
-export const orderPrintService = {
+export const printingRequestService = {
+  getPrintingRequest: () => invoke(apiClient.GET('/api/printRequest')),
   createPrintingRequest: () =>
     invoke(apiClient.POST('/api/printRequest', { headers: { 'Content-Type': 'text/plain' } })),
   uploadFile: (printingRequestId: string, file: File) =>
@@ -17,7 +18,7 @@ export const orderPrintService = {
         }
       })
     ),
-  uploadConfigFile: (fileId: string, fileConfig: FileConfig) =>
+  uploadFileConfig: (fileId: string, fileConfig: FileConfig) =>
     invoke(
       apiClient.POST('/api/printRequest/upload-config/{fileId}', {
         params: { path: { fileId } },
