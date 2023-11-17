@@ -8,6 +8,9 @@ export const printingRequestService = {
     invoke(
       apiClient.POST('/api/printRequest/{printingRequestId}/upload-file', {
         params: { path: { printingRequestId } },
+        body: {
+          file: ''
+        },
         bodySerializer: () => {
           const formData = new FormData();
           formData.append('file', file);
