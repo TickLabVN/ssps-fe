@@ -4,6 +4,7 @@ import { LAYOUT_SIDE, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@consta
 
 export const useOrderPrintStore = create<PrintingRequestStore>()(
   devtools((set) => ({
+    isFileUploadSuccess: false,
     fileConfig: {
       numOfCopy: '1',
       layout: LAYOUT_SIDE.portrait,
@@ -12,11 +13,14 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
       pageSide: PAGE_SIDE.one
     },
     totalCost: 0,
+    setIsFileUploadSuccess: (data) => {
+      set({ isFileUploadSuccess: data });
+    },
     setFileConfig: (key, value) => {
       set((state) => ({ fileConfig: { ...state.fileConfig, [key]: value } }));
     },
     resetFileConfig: (fileConfig) => {
-      set(() => ({ fileConfig: fileConfig }));
+      set({ fileConfig: fileConfig });
     },
     clearFileConfig: () => {
       set({

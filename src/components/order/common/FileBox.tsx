@@ -1,18 +1,29 @@
 import { useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
 import { ScreenSize } from '@constants';
-import { useScreenSize } from '@hooks';
+import { useScreenSize, usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function FileBox() {
+  const queryClient = useQueryClient();
   const { screenSize } = useScreenSize();
-  const { printingRequestId, uploadFile } = useOrderPrintStore();
+  const { setIsFileUploadSuccess } = useOrderPrintStore();
   const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
+  const { uploadFile } = usePrintingRequestMutation();
 
   const handleUploadDocument = useMemo(
     () => async (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
-        await uploadFile(printingRequestId.id, event.target.files[0]);
+        const printingRequestId = queryClient.getQueryData<PrintingRequestId>([
+          'printingRequestId'
+        ]);
+        if (!event.target.files[0] || !printingRequestId) return;
+        await uploadFile.mutateAsync({
+          printingRequestId: printingRequestId.id,
+          file: event.target.files[0]
+        });
+        setIsFileUploadSuccess(true);
         if (screenSize <= ScreenSize.MD) {
           setMobileOrderStep(0);
         } else {
@@ -20,7 +31,14 @@ export function FileBox() {
         }
       }
     },
-    [screenSize, printingRequestId.id, setMobileOrderStep, setDesktopOrderStep, uploadFile]
+    [
+      screenSize,
+      uploadFile,
+      queryClient,
+      setMobileOrderStep,
+      setDesktopOrderStep,
+      setIsFileUploadSuccess
+    ]
   );
 
   return (

@@ -46,6 +46,7 @@ export function useOrderWorkflowBox() {
 
   return {
     openOrderWorkflowBox: () => setOpenDialog(true),
+    closeOrderWorkflowBox: () => setOpenDialog(false),
     OrderWorkflowBox: OrderWorkflowBox
   };
 }

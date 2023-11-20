@@ -30,9 +30,16 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
   const queryClient = useQueryClient();
   const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
   const { uploadFileConfig } = usePrintingRequestMutation();
+
   const { setMobileOrderStep } = useOrderWorkflowStore();
-  const { fileConfig, totalCost, setFileConfig, resetFileConfig, setTotalCost } =
-    useOrderPrintStore();
+  const {
+    fileConfig,
+    totalCost,
+    setFileConfig,
+    resetFileConfig,
+    setTotalCost,
+    setIsFileUploadSuccess
+  } = useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
 
@@ -71,8 +78,9 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
   const handleExistCloseForm = useCallback(() => {
     resetFileConfig(initialFileConfig.current);
     setTotalCost(0);
+    setIsFileUploadSuccess(false);
     handleExistOrderForm();
-  }, [handleExistOrderForm, resetFileConfig, setTotalCost]);
+  }, [handleExistOrderForm, resetFileConfig, setTotalCost, setIsFileUploadSuccess]);
 
   const handleDecreaseCopies = () => {
     if (fileMetadata && parseInt(fileConfig.numOfCopy) > 1) {

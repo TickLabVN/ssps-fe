@@ -20,8 +20,10 @@ type FileConfig = {
 };
 
 type PrintingRequestStore = {
+  isFileUploadSuccess: boolean;
   fileConfig: FileConfig;
   totalCost: number;
+  setIsFileUploadSuccess: (data: boolean) => void;
   setFileConfig: (key: string, value: string) => void;
   resetFileConfig: (fileConfig: FileConfig) => void;
   clearFileConfig: () => void;

@@ -1,14 +1,13 @@
 import { ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import coin from '@assets/coin.png';
-import { useUserQuery } from '@hooks';
 
 export const FormFooter: Component<{ children: ReactNode; totalCost: number }> = ({
   children,
   totalCost
 }) => {
-  const {
-    remainCoins: { data }
-  } = useUserQuery();
+  const queryClient = useQueryClient();
+  const remainCoins = queryClient.getQueryData<number>(['/api/user/remain-coins']);
 
   return (
     <div className='flex w-full h-16'>
@@ -19,7 +18,7 @@ export const FormFooter: Component<{ children: ReactNode; totalCost: number }> =
             <div className='w-6 h-6'>
               <img src={coin} alt='Ballance Coin' />
             </div>
-            <span>{data}</span>
+            <span>{remainCoins}</span>
           </div>
         </div>
         <div>

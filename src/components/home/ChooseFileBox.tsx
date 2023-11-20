@@ -10,18 +10,18 @@ import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function useChooseFileBox() {
   const queryClient = useQueryClient();
-  const { uploadFile } = usePrintingRequestMutation();
-
-  const { openUploadAndPreviewDocBox, UploadAndPreviewDocBox } = useUploadAndPreviewDocBox();
-  const { openOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
-
   const [openBox, setOpenBox] = useState<boolean>(false);
 
+  const { openUploadAndPreviewDocBox, closeUploadAndPreviewDocBox, UploadAndPreviewDocBox } =
+    useUploadAndPreviewDocBox();
+  const { openOrderWorkflowBox, closeOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
+
   const ChooseFileBox = () => {
-    const { screenSize } = useScreenSize();
-    const { /*desktopOrderStep,*/ setMobileOrderStep } = useOrderWorkflowStore();
-    const { setTotalCost } = useOrderPrintStore();
     const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
+    const { screenSize } = useScreenSize();
+    const { desktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
+    const { setTotalCost, isFileUploadSuccess, setIsFileUploadSuccess } = useOrderPrintStore();
+    const { uploadFile } = usePrintingRequestMutation();
 
     useEffect(() => {
       if (fileMetadata?.fileCoin) {
@@ -29,17 +29,20 @@ export function useChooseFileBox() {
       }
     }, [fileMetadata?.fileCoin, setTotalCost]);
 
-    // useEffect(() => {
-    //   if (orderStatus === 'SUCCESS') {
-    //     if (screenSize <= ScreenSize.MD) {
-    //       openOrderWorkflowBox();
-    //     } else {
-    //       if (desktopOrderStep === 0) {
-    //         openUploadAndPreviewDocBox();
-    //       }
-    //     }
-    //   }
-    // }, [screenSize, orderStatus, desktopOrderStep]);
+    useEffect(() => {
+      if (isFileUploadSuccess) {
+        if (screenSize <= ScreenSize.MD) {
+          openOrderWorkflowBox();
+        } else {
+          if (desktopOrderStep === 0) {
+            openUploadAndPreviewDocBox();
+          }
+        }
+      } else {
+        closeOrderWorkflowBox();
+        closeUploadAndPreviewDocBox();
+      }
+    }, [screenSize, uploadFile, desktopOrderStep, isFileUploadSuccess]);
 
     const handleUploadDocument = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +55,7 @@ export function useChooseFileBox() {
             printingRequestId: printingRequestId.id,
             file: event.target.files[0]
           });
+          setIsFileUploadSuccess(true);
           setOpenBox(false);
           if (screenSize <= ScreenSize.MD) {
             openOrderWorkflowBox();
@@ -61,7 +65,7 @@ export function useChooseFileBox() {
           setMobileOrderStep(0);
         }
       },
-      [screenSize, setMobileOrderStep]
+      [screenSize, uploadFile, setMobileOrderStep, setIsFileUploadSuccess]
     );
 
     return (

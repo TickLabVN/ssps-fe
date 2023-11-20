@@ -1,10 +1,12 @@
+import { useQueryClient } from '@tanstack/react-query';
 import DocViewer, { DocViewerRenderers, IHeaderOverride } from '@cyntler/react-doc-viewer';
 import { IconButton } from '@material-tailwind/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
+import { useOrderWorkflowStore } from '@states';
 
 export function PreviewDocument() {
-  const { fileMetadata } = useOrderPrintStore();
+  const queryClient = useQueryClient();
+  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
   const { setMobileOrderStep } = useOrderWorkflowStore();
 
   const MyHeader: IHeaderOverride = (state) => {

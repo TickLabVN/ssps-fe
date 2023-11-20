@@ -23,7 +23,6 @@ import { formatFileSize } from '@utils';
 
 export function useUploadAndPreviewDocBox() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const { uploadFileConfig } = usePrintingRequestMutation();
   const queryClient = useQueryClient();
   const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
 
@@ -48,8 +47,15 @@ export function useUploadAndPreviewDocBox() {
   };
 
   const UploadAndPreviewDocBox = () => {
-    const { fileConfig, totalCost, setFileConfig, resetFileConfig, setTotalCost } =
-      useOrderPrintStore();
+    const { uploadFileConfig } = usePrintingRequestMutation();
+    const {
+      fileConfig,
+      totalCost,
+      setFileConfig,
+      resetFileConfig,
+      setTotalCost,
+      setIsFileUploadSuccess
+    } = useOrderPrintStore();
     const { openLayoutSide, LayoutSide } = useLayoutSide();
     const { openCloseForm, CloseForm } = useCloseForm();
 
@@ -85,13 +91,14 @@ export function useUploadAndPreviewDocBox() {
           fileConfig: fileConfig
         });
       }
-    }, [fileConfig]);
+    }, [fileConfig, uploadFileConfig]);
 
     const handleExistCloseForm = useCallback(() => {
       resetFileConfig(initialFileConfig.current);
       setTotalCost(0);
+      setIsFileUploadSuccess(false);
       handleOpenDialog();
-    }, [handleOpenDialog, resetFileConfig, setTotalCost]);
+    }, [handleOpenDialog, resetFileConfig, setTotalCost, setIsFileUploadSuccess]);
 
     const handleDecreaseCopies = () => {
       if (fileMetadata && parseInt(fileConfig.numOfCopy) > 1) {
@@ -337,6 +344,7 @@ export function useUploadAndPreviewDocBox() {
 
   return {
     openUploadAndPreviewDocBox: () => setOpenDialog(true),
+    closeUploadAndPreviewDocBox: () => setOpenDialog(false),
     UploadAndPreviewDocBox: UploadAndPreviewDocBox
   };
 }

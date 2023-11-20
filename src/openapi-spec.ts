@@ -42,8 +42,6 @@ export interface paths {
           content: {
             'application/json': {
               id: string;
-              /** Format: userName */
-              userName: string;
             };
           };
         };
@@ -91,13 +89,45 @@ export interface paths {
           content: {
             'application/json': {
               id: string;
-              /** Format: userName */
-              userName: string;
             };
           };
         };
       };
     };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/google': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Redirect URL of google auth */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -128,8 +158,8 @@ export interface paths {
           content: {
             'application/json': {
               id: string;
-              /** Format: userName */
-              userName: string;
+              /** Format: email */
+              email: string;
             };
           };
         };
