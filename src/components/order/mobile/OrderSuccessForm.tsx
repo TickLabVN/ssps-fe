@@ -1,15 +1,12 @@
-import { Button } from '@material-tailwind/react';
-import { useOrderWorkflowStore } from '@states';
-
 // Tue's second-task in here.
 export function OrderSuccessForm() {
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  //const { setMobileOrderStep } = useOrderWorkflowStore();
 
   return (
     <>
       <div>OrderSuccessForm</div>
-      <Button onClick={() => setMobileOrderStep(5)}>Track this order</Button>
-      <Button onClick={() => setMobileOrderStep(3)}>Back</Button>
+      {/* <Button onClick={() => setMobileOrderStep(5)}>Track this order</Button>
+      <Button onClick={() => setMobileOrderStep(3)}>Back</Button> */}
     </>
   );
 }

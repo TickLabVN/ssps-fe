@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 import {
   Button,
   Dialog,
@@ -12,39 +12,60 @@ import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { FILE_CONFIG } from '@constants';
 import { usePrintingRequestMutation } from '@hooks';
-import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
+import { useOrderPrintStore /*useOrderWorkflowStore*/ } from '@states';
 import { formatFileSize } from '@utils';
 
 export const FileInfo: Component<{
   fileExtraMetadata: FileMetadata & { numOfCopies: number };
   isConfigStep: boolean;
   fileIndex?: number;
-}> = ({ fileExtraMetadata, isConfigStep, fileIndex }) => {
-  const { totalCost, listFileAmount, setFileConfig, setTotalCost, setListFileAmount } =
-    useOrderPrintStore();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  initialTotalCost?: MutableRefObject<number>;
+}> = ({ fileExtraMetadata, isConfigStep, fileIndex, initialTotalCost }) => {
+  const {
+    totalCost,
+    listFileAmount,
+    setFileConfig,
+    setTotalCost,
+    setListFileAmount,
+    clearFileConfig
+  } = useOrderPrintStore();
+  //const { setMobileOrderStep } = useOrderWorkflowStore();
   const { deleteFile } = usePrintingRequestMutation();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   useEffect(() => {
-    setListFileAmount({
-      fileId: fileExtraMetadata.fileId,
-      numOfCopies: fileExtraMetadata.numOfCopies
-    });
-  }, [fileExtraMetadata.fileId, fileExtraMetadata.numOfCopies, setListFileAmount]);
+    if (fileIndex !== undefined && listFileAmount[fileIndex] === undefined) {
+      setListFileAmount({
+        fileId: fileExtraMetadata.fileId,
+        numOfCopies: fileExtraMetadata.numOfCopies
+      });
+    }
+  }, [
+    fileExtraMetadata.fileId,
+    fileExtraMetadata.numOfCopies,
+    fileIndex,
+    listFileAmount,
+    setListFileAmount
+  ]);
 
   const handleOpenDialog = () => setOpenDialog(!openDialog);
   const handleDecreaseCopies = () => {
-    if (fileExtraMetadata.numOfCopies > 1) {
-      if (isConfigStep) {
+    if (isConfigStep) {
+      if (fileExtraMetadata.numOfCopies > 1) {
         setFileConfig(FILE_CONFIG.numOfCopies, fileExtraMetadata.numOfCopies - 1);
-      } else if (fileIndex !== undefined) {
+        setTotalCost(totalCost - fileExtraMetadata.fileCoin);
+      }
+    } else if (fileIndex !== undefined) {
+      if ((listFileAmount[fileIndex]?.numOfCopies ?? 0) > 1) {
         setListFileAmount({
           fileId: fileExtraMetadata.fileId,
           numOfCopies: (listFileAmount[fileIndex]?.numOfCopies ?? 0) - 1
         });
+        setTotalCost(totalCost - fileExtraMetadata.fileCoin);
+        if (initialTotalCost) {
+          initialTotalCost.current -= fileExtraMetadata.fileCoin;
+        }
       }
-      setTotalCost(totalCost - fileExtraMetadata.fileCoin);
     }
   };
   const handleIncreaseCopies = () => {
@@ -57,11 +78,18 @@ export const FileInfo: Component<{
       });
     }
     setTotalCost(totalCost + fileExtraMetadata.fileCoin);
+    if (initialTotalCost) {
+      initialTotalCost.current += fileExtraMetadata.fileCoin;
+    }
   };
 
   const handleDeleteFile = async () => {
     await deleteFile.mutateAsync(fileExtraMetadata.fileId);
     setTotalCost(totalCost - fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies);
+    if (initialTotalCost) {
+      initialTotalCost.current -= fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies;
+    }
+    clearFileConfig();
     handleOpenDialog();
   };
 
@@ -70,7 +98,7 @@ export const FileInfo: Component<{
       <div className='flex gap-4 px-4 py-2 bg-white '>
         <div
           className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
-          onClick={() => setMobileOrderStep(1)}
+          //onClick={() => setMobileOrderStep(1)}
         >
           <EyeIcon width={20} />
           <span className='text-xs'>Preview</span>

@@ -31,7 +31,6 @@ type PrintingRequestStore = {
   listFileAmount: FileAmount[];
   setIsFileUploadSuccess: (data: boolean) => void;
   setFileConfig: (key: string, value: string | number) => void;
-  resetFileConfig: (fileConfig: FileConfig) => void;
   clearFileConfig: () => void;
   setTotalCost: (totalCost: number) => void;
   setListFileAmount: (payload: FileAmount) => void;

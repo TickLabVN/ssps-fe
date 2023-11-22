@@ -1,4 +1,4 @@
-import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
+import { useOrderPrintStore } from '@states';
 import {
   PrinterIcon,
   ChevronLeftIcon,
@@ -17,7 +17,7 @@ import coin from '@assets/coin.png';
 // Tan's third-task in here.
 export function ConfirmOrderForm() {
   const { totalCost } = useOrderPrintStore();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  //const { setMobileOrderStep } = useOrderWorkflowStore();
   //const { userRemainCoins } = useHomeStore();
   //const { extraFeeData } = useOrderExtraStore();
   // function IconSolid() {
@@ -42,7 +42,7 @@ export function ConfirmOrderForm() {
         <div className='flex items-center'>
           <ChevronLeftIcon
             width={28}
-            onClick={() => setMobileOrderStep(2)}
+            // onClick={() => setMobileOrderStep(2)}
             className='cursor-pointer'
           />
           <Typography className='ml-4 font-bold text-gray/4'>Confirm order</Typography>

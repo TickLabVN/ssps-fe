@@ -1,6 +1,11 @@
+type OrderStep = {
+  current: number;
+  prev: number;
+};
+
 type OrderWorkflowStore = {
-  mobileOrderStep: number;
+  mobileOrderStep: OrderStep;
   desktopOrderStep: number;
-  setMobileOrderStep: (mobileOrderStep: number) => void;
+  setMobileOrderStep: (mobileOrderStep: OrderStep) => void;
   setDesktopOrderStep: (desktopOrderStep: number) => void;
 };

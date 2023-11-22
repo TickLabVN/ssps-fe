@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import {
   UploadDocumentForm,
@@ -8,28 +9,54 @@ import {
   OrderSuccessForm,
   PreviewDocument
 } from '@components/order/mobile';
-import { useOrderWorkflowStore } from '@states';
+import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 
 export function useOrderWorkflowBox() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const DialogBodyWorkflow = () => {
+    const queryClient = useQueryClient();
+    const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
+    const { data: fileMetadata } = useQuery({
+      queryKey: ['fileMetadata', fileIdCurrent],
+      queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
+    });
+
+    const { totalCost, setTotalCost } = useOrderPrintStore();
     const { mobileOrderStep } = useOrderWorkflowStore();
+    const initialTotalCost = useRef<number>(totalCost);
+
     const handleExistOrderForm = useCallback(() => {
       setOpenDialog(false);
     }, []);
 
-    if (mobileOrderStep === 0) {
-      return <UploadDocumentForm handleExistOrderForm={handleExistOrderForm} />;
-    } else if (mobileOrderStep === 1) {
+    useEffect(() => {
+      if (fileMetadata?.fileCoin) {
+        setTotalCost(initialTotalCost.current + fileMetadata?.fileCoin);
+      }
+    }, [fileMetadata?.fileCoin, setTotalCost]);
+
+    if (mobileOrderStep.current === 0) {
+      return (
+        <UploadDocumentForm
+          handleExistOrderForm={handleExistOrderForm}
+          initialTotalCost={initialTotalCost}
+        />
+      );
+    } else if (mobileOrderStep.current === 1) {
       return <PreviewDocument />;
-    } else if (mobileOrderStep === 2) {
-      return <OrderListForm handleExistOrderForm={handleExistOrderForm} />;
-    } else if (mobileOrderStep === 3) {
+    } else if (mobileOrderStep.current === 2) {
+      return (
+        <OrderListForm
+          handleExistOrderForm={handleExistOrderForm}
+          initialTotalCost={initialTotalCost}
+        />
+      );
+    } else if (mobileOrderStep.current === 3) {
       return <ConfirmOrderForm />;
-    } else if (mobileOrderStep === 4) {
+    } else if (mobileOrderStep.current === 4) {
       return <TopupWalletForm />;
-    } else if (mobileOrderStep === 5) {
+    } else if (mobileOrderStep.current === 5) {
       return <OrderSuccessForm />;
     }
   };

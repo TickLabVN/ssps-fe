@@ -20,9 +20,6 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
     setFileConfig: (key, value) => {
       set((state) => ({ fileConfig: { ...state.fileConfig, [key]: value } }));
     },
-    resetFileConfig: (fileConfig) => {
-      set({ fileConfig: fileConfig });
-    },
     clearFileConfig: () => {
       set({
         fileConfig: {

@@ -55,7 +55,10 @@ export function useChooseFileBox() {
           } else {
             openUploadAndPreviewDocBox();
           }
-          setMobileOrderStep(0);
+          setMobileOrderStep({
+            current: 0,
+            prev: -1
+          });
         }
       },
       [screenSize, uploadFile, setMobileOrderStep, setIsFileUploadSuccess]

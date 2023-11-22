@@ -25,7 +25,10 @@ export function FileBox() {
         });
         setIsFileUploadSuccess(true);
         if (screenSize <= ScreenSize.MD) {
-          setMobileOrderStep(0);
+          setMobileOrderStep({
+            current: 0,
+            prev: -1
+          });
         } else {
           setDesktopOrderStep(0);
         }

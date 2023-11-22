@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, MutableRefObject, useCallback, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -16,9 +16,10 @@ import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import { FileInfo } from './FileInfo';
 
-export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }> = ({
-  handleExistOrderForm
-}) => {
+export const UploadDocumentForm: Component<{
+  handleExistOrderForm: () => void;
+  initialTotalCost: MutableRefObject<number>;
+}> = ({ handleExistOrderForm, initialTotalCost }) => {
   const queryClient = useQueryClient();
   const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
   const { data: fileMetadata } = useQuery({
@@ -31,21 +32,12 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
     totalCost,
     fileConfig,
     setFileConfig,
-    resetFileConfig,
     setTotalCost,
-    setIsFileUploadSuccess
+    setIsFileUploadSuccess,
+    clearFileConfig
   } = useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
-
-  const initialFileConfig = useRef<FileConfig>({
-    numOfCopies: fileConfig.numOfCopies,
-    layout: fileConfig.layout,
-    pages: fileConfig.pages,
-    pagesPerSheet: fileConfig.pagesPerSheet,
-    pageSide: fileConfig.pageSide
-  });
-  const initialTotalCost = useRef<number>(totalCost);
 
   const [specificPage, setSpecificPage] = useState<string>('');
   const [pageBothSide, setPageBothSide] = useState<string>(
@@ -53,12 +45,6 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
       ? PAGE_SIDE.both.portrait[0]!
       : PAGE_SIDE.both.landscape[0]!
   );
-
-  useEffect(() => {
-    if (fileMetadata?.fileCoin) {
-      setTotalCost(initialTotalCost.current + fileMetadata?.fileCoin);
-    }
-  }, [fileMetadata?.fileCoin, setTotalCost]);
 
   const handlePageBothSide = useCallback(
     (event: string) => {
@@ -74,16 +60,36 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
         fileId: fileMetadata.fileId,
         fileConfig: fileConfig
       });
-      setMobileOrderStep(2);
+      initialTotalCost.current = totalCost;
+      clearFileConfig();
+      setMobileOrderStep({
+        current: 2,
+        prev: 1
+      });
     }
-  }, [fileMetadata?.fileId, fileConfig, setMobileOrderStep, uploadFileConfig]);
+  }, [
+    fileMetadata?.fileId,
+    fileConfig,
+    totalCost,
+    initialTotalCost,
+    setMobileOrderStep,
+    uploadFileConfig,
+    clearFileConfig
+  ]);
 
   const handleExistCloseForm = useCallback(() => {
-    resetFileConfig(initialFileConfig.current);
+    initialTotalCost.current = 0;
+    clearFileConfig();
     setTotalCost(0);
     setIsFileUploadSuccess(false);
     handleExistOrderForm();
-  }, [handleExistOrderForm, resetFileConfig, setTotalCost, setIsFileUploadSuccess]);
+  }, [
+    initialTotalCost,
+    handleExistOrderForm,
+    clearFileConfig,
+    setTotalCost,
+    setIsFileUploadSuccess
+  ]);
 
   const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPageBothSide(

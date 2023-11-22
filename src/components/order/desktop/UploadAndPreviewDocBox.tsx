@@ -53,22 +53,14 @@ export function useUploadAndPreviewDocBox() {
       fileConfig,
       totalCost,
       setFileConfig,
-      resetFileConfig,
       setTotalCost,
-      setIsFileUploadSuccess
+      setIsFileUploadSuccess,
+      clearFileConfig
     } = useOrderPrintStore();
     const { openLayoutSide, LayoutSide } = useLayoutSide();
     const { openCloseForm, CloseForm } = useCloseForm();
 
-    const initialFileConfig = useRef<FileConfig>({
-      numOfCopies: fileConfig.numOfCopies,
-      layout: fileConfig.layout,
-      pages: fileConfig.pages,
-      pagesPerSheet: fileConfig.pagesPerSheet,
-      pageSide: fileConfig.pageSide
-    });
     const initialTotalCost = useRef<number>(totalCost);
-
     const [specificPage, setSpecificPage] = useState<string>('');
     const [pageBothSide, setPageBothSide] = useState<string>(
       fileConfig.layout === LAYOUT_SIDE.portrait
@@ -98,15 +90,16 @@ export function useUploadAndPreviewDocBox() {
           fileId: fileMetadata.fileId,
           fileConfig: fileConfig
         });
+        clearFileConfig();
       }
-    }, [fileConfig, uploadFileConfig]);
+    }, [fileConfig, uploadFileConfig, clearFileConfig]);
 
     const handleExistCloseForm = useCallback(() => {
-      resetFileConfig(initialFileConfig.current);
+      clearFileConfig();
       setTotalCost(0);
       setIsFileUploadSuccess(false);
       handleOpenDialog();
-    }, [handleOpenDialog, resetFileConfig, setTotalCost, setIsFileUploadSuccess]);
+    }, [handleOpenDialog, clearFileConfig, setTotalCost, setIsFileUploadSuccess]);
 
     const handleDecreaseCopies = () => {
       if (fileMetadata && fileConfig.numOfCopies > 1) {

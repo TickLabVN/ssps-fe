@@ -3,7 +3,10 @@ import { devtools } from 'zustand/middleware';
 
 export const useOrderWorkflowStore = create<OrderWorkflowStore>()(
   devtools((set) => ({
-    mobileOrderStep: 0,
+    mobileOrderStep: {
+      current: 0,
+      prev: -1
+    },
     desktopOrderStep: 0,
     setMobileOrderStep: (mobileOrderStep) => {
       set({ mobileOrderStep: mobileOrderStep });

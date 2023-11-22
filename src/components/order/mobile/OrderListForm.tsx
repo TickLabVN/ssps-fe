@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { MutableRefObject, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@material-tailwind/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
@@ -8,7 +8,10 @@ import { useOrderPrintStore } from '@states';
 import { formatFileSize, retryQueryFn } from '@utils';
 import { FileInfo } from './FileInfo';
 
-export const OrderListForm: Component<{ handleExistOrderForm: () => void }> = ({}) => {
+export const OrderListForm: Component<{
+  handleExistOrderForm: () => void;
+  initialTotalCost: MutableRefObject<number>;
+}> = ({ initialTotalCost }) => {
   const queryClient = useQueryClient();
   const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
   const { data: listFiles } = useQuery({
@@ -55,9 +58,10 @@ export const OrderListForm: Component<{ handleExistOrderForm: () => void }> = ({
             {listFiles.map((file, index) => (
               <div key={index} className='p-4 flex gap-4 border-b-4'>
                 <FileInfo
-                  fileExtraMetadata={{ ...file, numOfCopies: file.numOfCopies }}
+                  fileExtraMetadata={file}
                   isConfigStep={false}
                   fileIndex={index}
+                  initialTotalCost={initialTotalCost}
                 />
               </div>
             ))}
