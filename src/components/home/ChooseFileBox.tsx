@@ -17,17 +17,10 @@ export function useChooseFileBox() {
   const { openOrderWorkflowBox, closeOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
 
   const ChooseFileBox = () => {
-    const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
     const { screenSize } = useScreenSize();
     const { desktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
-    const { setTotalCost, isFileUploadSuccess, setIsFileUploadSuccess } = useOrderPrintStore();
+    const { isFileUploadSuccess, setIsFileUploadSuccess } = useOrderPrintStore();
     const { uploadFile } = usePrintingRequestMutation();
-
-    useEffect(() => {
-      if (fileMetadata?.fileCoin) {
-        setTotalCost(fileMetadata?.fileCoin);
-      }
-    }, [fileMetadata?.fileCoin, setTotalCost]);
 
     useEffect(() => {
       if (isFileUploadSuccess) {

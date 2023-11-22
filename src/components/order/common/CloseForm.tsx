@@ -11,10 +11,10 @@ import {
 export function useCloseForm() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
-  const CloseForm: Component<{ handleSave: () => Promise<void>; handleExist: () => void }> = ({
-    handleSave,
-    handleExist
-  }) =>
+  const CloseForm: Component<{
+    handleSave: () => Promise<void> | void;
+    handleExist: () => void;
+  }> = ({ handleSave, handleExist }) =>
     useMemo(() => {
       const handleOpenDialog = () => {
         setOpenDialog(!openDialog);

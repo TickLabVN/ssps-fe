@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState, useRef } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState, useRef } from 'react';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -24,7 +24,8 @@ import { formatFileSize } from '@utils';
 export function useUploadAndPreviewDocBox() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
+  const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
+  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent]);
 
   const PreviewDocument = () => {
     const PreviewBody = () => {
@@ -60,12 +61,13 @@ export function useUploadAndPreviewDocBox() {
     const { openCloseForm, CloseForm } = useCloseForm();
 
     const initialFileConfig = useRef<FileConfig>({
-      numOfCopy: fileConfig.numOfCopy,
+      numOfCopies: fileConfig.numOfCopies,
       layout: fileConfig.layout,
       pages: fileConfig.pages,
       pagesPerSheet: fileConfig.pagesPerSheet,
       pageSide: fileConfig.pageSide
     });
+    const initialTotalCost = useRef<number>(totalCost);
 
     const [specificPage, setSpecificPage] = useState<string>('');
     const [pageBothSide, setPageBothSide] = useState<string>(
@@ -73,6 +75,12 @@ export function useUploadAndPreviewDocBox() {
         ? PAGE_SIDE.both.portrait[0]!
         : PAGE_SIDE.both.landscape[0]!
     );
+
+    useEffect(() => {
+      if (fileMetadata?.fileCoin) {
+        setTotalCost(initialTotalCost.current + fileMetadata?.fileCoin);
+      }
+    }, [setTotalCost]);
 
     const handleOpenDialog = useCallback(() => setOpenDialog(!openDialog), []);
 
@@ -101,14 +109,14 @@ export function useUploadAndPreviewDocBox() {
     }, [handleOpenDialog, resetFileConfig, setTotalCost, setIsFileUploadSuccess]);
 
     const handleDecreaseCopies = () => {
-      if (fileMetadata && parseInt(fileConfig.numOfCopy) > 1) {
-        setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) - 1}`);
+      if (fileMetadata && fileConfig.numOfCopies > 1) {
+        setFileConfig(FILE_CONFIG.numOfCopies, fileConfig.numOfCopies - 1);
         setTotalCost(totalCost - fileMetadata.fileCoin);
       }
     };
     const handleIncreaseCopies = () => {
       if (fileMetadata) {
-        setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) + 1}`);
+        setFileConfig(FILE_CONFIG.numOfCopies, fileConfig.numOfCopies + 1);
         setTotalCost(totalCost + fileMetadata.fileCoin);
       }
     };
@@ -156,11 +164,11 @@ export function useUploadAndPreviewDocBox() {
                   <p className='flex items-center gap-1 text-base'>
                     <img src={coinImage} className='grayscale w-6 h-6' />
                     <span className='text-gray/4 font-normal'>
-                      {fileMetadata.fileCoin} x {fileConfig.numOfCopy} copies ={' '}
+                      {fileMetadata.fileCoin} x {fileConfig.numOfCopies} copies ={' '}
                     </span>
                     <img src={coinImage} className='w-6 h-6' />
                     <span className='text-yellow/1 font-bold'>
-                      {fileMetadata.fileCoin * parseInt(fileConfig.numOfCopy)}
+                      {fileMetadata.fileCoin * fileConfig.numOfCopies}
                     </span>
                   </p>
                 </div>
@@ -172,8 +180,8 @@ export function useUploadAndPreviewDocBox() {
                     >
                       <MinusIcon className='w-5 h-5' />
                     </span>
-                    {parseInt(fileConfig.numOfCopy) > 0 && (
-                      <span className='py-0.5 px-6'>{fileConfig.numOfCopy}</span>
+                    {fileConfig.numOfCopies > 0 && (
+                      <span className='py-0.5 px-6'>{fileConfig.numOfCopies}</span>
                     )}
                     <span
                       className='p-0.5 border-l-2 flex items-center cursor-pointer'
@@ -325,7 +333,7 @@ export function useUploadAndPreviewDocBox() {
                 </div>
               </div>
             </div>
-            <FormFooter totalCost={fileMetadata.fileCoin * parseInt(fileConfig.numOfCopy)}>
+            <FormFooter totalCost={fileMetadata ? totalCost : 0}>
               <Button
                 color={fileMetadata.fileSize > 0 ? 'blue' : 'gray'}
                 className='rounded-none w-[30%]'

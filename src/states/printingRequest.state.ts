@@ -6,13 +6,14 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
   devtools((set) => ({
     isFileUploadSuccess: false,
     fileConfig: {
-      numOfCopy: '1',
+      numOfCopies: 1,
       layout: LAYOUT_SIDE.portrait,
       pages: PAGES_SPECIFIC.all,
       pagesPerSheet: PAGES_PER_SHEET[0]!,
       pageSide: PAGE_SIDE.one
     },
     totalCost: 0,
+    listFileAmount: [],
     setIsFileUploadSuccess: (data) => {
       set({ isFileUploadSuccess: data });
     },
@@ -25,7 +26,7 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
     clearFileConfig: () => {
       set({
         fileConfig: {
-          numOfCopy: '1',
+          numOfCopies: 1,
           layout: LAYOUT_SIDE.portrait,
           pages: PAGES_SPECIFIC.all,
           pagesPerSheet: PAGES_PER_SHEET[0]!,
@@ -35,6 +36,21 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
     },
     setTotalCost: (totalCost) => {
       set({ totalCost: totalCost });
+    },
+    setListFileAmount: (payload) => {
+      set((state) => {
+        const existingIndex = state.listFileAmount.findIndex(
+          (file) => file.fileId === payload.fileId
+        );
+        if (existingIndex !== -1) {
+          const updatedListFileAmount = { ...state.listFileAmount[existingIndex], ...payload };
+          const updatedListFileAmountArray = [...state.listFileAmount];
+          updatedListFileAmountArray[existingIndex] = updatedListFileAmount;
+
+          return { listFileAmount: updatedListFileAmountArray };
+        }
+        return { listFileAmount: [...state.listFileAmount, payload] };
+      });
     }
   }))
 );

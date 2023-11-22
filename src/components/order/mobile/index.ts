@@ -4,9 +4,8 @@
 
 export * from './ConfirmOrderForm';
 export * from './ConfirmOrderItem';
-export * from './OrderList';
+export * from './FileInfo';
 export * from './OrderListForm';
-export * from './OrderListItem';
 export * from './OrderSuccessForm';
 export * from './OrderWorkflowBox';
 export * from './PreviewDocument';

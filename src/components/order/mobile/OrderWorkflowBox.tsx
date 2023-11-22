@@ -24,7 +24,7 @@ export function useOrderWorkflowBox() {
     } else if (mobileOrderStep === 1) {
       return <PreviewDocument />;
     } else if (mobileOrderStep === 2) {
-      return <OrderListForm />;
+      return <OrderListForm handleExistOrderForm={handleExistOrderForm} />;
     } else if (mobileOrderStep === 3) {
       return <ConfirmOrderForm />;
     } else if (mobileOrderStep === 4) {

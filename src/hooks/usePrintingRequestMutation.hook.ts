@@ -17,7 +17,8 @@ export function usePrintingRequestMutation() {
     mutationFn: ({ printingRequestId, file }: { printingRequestId: string; file: File }) =>
       printingRequestService.uploadFile(printingRequestId, file),
     onSuccess: (data) => {
-      queryClient.setQueryData(['fileMetadata'], data);
+      queryClient.setQueryData(['fileIdCurrent'], data.fileId);
+      queryClient.setQueryData(['fileMetadata', data.fileId], data);
     }
   });
 
@@ -27,9 +28,24 @@ export function usePrintingRequestMutation() {
       printingRequestService.uploadFileConfig(fileId, fileConfig)
   });
 
+  const deleteFile = useMutation({
+    mutationKey: ['deleteFile'],
+    mutationFn: (fileId: string) => printingRequestService.deleteFile(fileId),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['fileMetadata', data.fileId], null);
+    }
+  });
+
+  const updateAmountFiles = useMutation({
+    mutationKey: ['updateAmountFile'],
+    mutationFn: (payload: FileAmount[]) => printingRequestService.updateAmountFiles(payload)
+  });
+
   return {
     createPrintingRequest: createPrintingRequest,
     uploadFile: uploadFile,
-    uploadFileConfig: uploadFileConfig
+    uploadFileConfig: uploadFileConfig,
+    deleteFile: deleteFile,
+    updateAmountFiles: updateAmountFiles
   };
 }

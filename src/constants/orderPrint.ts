@@ -44,7 +44,7 @@ export const LAYOUT_INFO = [
 ];
 
 export const FILE_CONFIG = {
-  numOfCopy: 'numOfCopy',
+  numOfCopies: 'numOfCopies',
   layout: 'layout',
   pages: 'pages',
   pagesPerSheet: 'pagesPerSheet',

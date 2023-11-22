@@ -6,7 +6,8 @@ import { useOrderWorkflowStore } from '@states';
 
 export function PreviewDocument() {
   const queryClient = useQueryClient();
-  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
+  const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
+  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent]);
   const { setMobileOrderStep } = useOrderWorkflowStore();
 
   const MyHeader: IHeaderOverride = (state) => {

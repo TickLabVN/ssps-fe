@@ -1,5 +1,5 @@
-import { ChangeEvent, useCallback, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   IconButton,
@@ -9,32 +9,27 @@ import {
   Select,
   Typography
 } from '@material-tailwind/react';
-import {
-  ExclamationCircleIcon,
-  EyeIcon,
-  MinusIcon,
-  PlusIcon,
-  XMarkIcon
-} from '@heroicons/react/24/solid';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import coinImage from '@assets/coin.png';
-import { useCloseForm, useLayoutSide, FormFooter } from '@components/order/common';
+import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { useCloseForm, useLayoutSide, FileBox, FormFooter } from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
 import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
-import { formatFileSize } from '@utils';
+import { FileInfo } from './FileInfo';
 
 export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }> = ({
   handleExistOrderForm
 }) => {
   const queryClient = useQueryClient();
-  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata']);
+  const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
+  const { data: fileMetadata } = useQuery({
+    queryKey: ['fileMetadata', fileIdCurrent],
+    queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
+  });
   const { uploadFileConfig } = usePrintingRequestMutation();
-
   const { setMobileOrderStep } = useOrderWorkflowStore();
   const {
-    fileConfig,
     totalCost,
+    fileConfig,
     setFileConfig,
     resetFileConfig,
     setTotalCost,
@@ -44,18 +39,26 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
   const { openCloseForm, CloseForm } = useCloseForm();
 
   const initialFileConfig = useRef<FileConfig>({
-    numOfCopy: fileConfig.numOfCopy,
+    numOfCopies: fileConfig.numOfCopies,
     layout: fileConfig.layout,
     pages: fileConfig.pages,
     pagesPerSheet: fileConfig.pagesPerSheet,
     pageSide: fileConfig.pageSide
   });
+  const initialTotalCost = useRef<number>(totalCost);
+
   const [specificPage, setSpecificPage] = useState<string>('');
   const [pageBothSide, setPageBothSide] = useState<string>(
     fileConfig.layout === LAYOUT_SIDE.portrait
       ? PAGE_SIDE.both.portrait[0]!
       : PAGE_SIDE.both.landscape[0]!
   );
+
+  useEffect(() => {
+    if (fileMetadata?.fileCoin) {
+      setTotalCost(initialTotalCost.current + fileMetadata?.fileCoin);
+    }
+  }, [fileMetadata?.fileCoin, setTotalCost]);
 
   const handlePageBothSide = useCallback(
     (event: string) => {
@@ -82,18 +85,6 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
     handleExistOrderForm();
   }, [handleExistOrderForm, resetFileConfig, setTotalCost, setIsFileUploadSuccess]);
 
-  const handleDecreaseCopies = () => {
-    if (fileMetadata && parseInt(fileConfig.numOfCopy) > 1) {
-      setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) - 1}`);
-      setTotalCost(totalCost - fileMetadata.fileCoin);
-    }
-  };
-  const handleIncreaseCopies = () => {
-    if (fileMetadata) {
-      setFileConfig(FILE_CONFIG.numOfCopy, `${parseInt(fileConfig.numOfCopy) + 1}`);
-      setTotalCost(totalCost + fileMetadata.fileCoin);
-    }
-  };
   const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPageBothSide(
       e.target.value === LAYOUT_SIDE.portrait
@@ -115,8 +106,6 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
     setFileConfig(FILE_CONFIG.pageSide, e.target.value);
   };
 
-  if (!fileMetadata) return null;
-
   return (
     <>
       <div className='flex justify-between items-center shadow-md px-6 py-3 bg-white mb-6'>
@@ -126,54 +115,20 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
         </IconButton>
         <CloseForm handleSave={handleSaveFileConfig} handleExist={handleExistCloseForm} />
       </div>
-      <div className='flex gap-4 px-4 py-2 bg-white '>
-        <div
-          className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
-          onClick={() => setMobileOrderStep(1)}
-        >
-          <EyeIcon width={20} />
-          <span className='text-xs'>Preview</span>
-        </div>
-        <div className='w-full'>
-          <div className='flex flex-col text-gray/4'>
-            <div className='flex items-center font-medium'>
-              <p className='text-gray/4 w-64 truncate'>{fileMetadata.fileName}</p>
-              <p className='text-gray/3'>{`(${formatFileSize(fileMetadata.fileSize)})`}</p>
-            </div>
-            <p className='flex items-center gap-1 text-sm mb-5'>
-              <img src={coinImage} className='grayscale w-6 h-6' />
-              <span className='text-gray/4 font-normal'>
-                {fileMetadata.fileCoin} x {fileConfig.numOfCopy} copies ={' '}
-              </span>
-              <img src={coinImage} className='w-6 h-6' />
-              <span className='text-yellow/1 font-bold'>
-                {fileMetadata.fileCoin * parseInt(fileConfig.numOfCopy)}
-              </span>
-            </p>
-          </div>
-          <div className='flex justify-between items-center '>
-            <div className='flex border-2 '>
-              <span
-                className='p-0.5 border-r-2 flex items-center cursor-pointer'
-                onClick={handleDecreaseCopies}
-              >
-                <MinusIcon width={20} />
-              </span>
-              {parseInt(fileConfig.numOfCopy) > 0 && (
-                <span className='py-0.5 px-6'>{fileConfig.numOfCopy}</span>
-              )}
-              <span
-                className='p-0.5 border-l-2 flex items-center cursor-pointer'
-                onClick={handleIncreaseCopies}
-              >
-                <PlusIcon width={20} />
-              </span>
-            </div>
-            <TrashIcon className='w-7 h-7' />
-          </div>
-        </div>
-      </div>
-      <div className='p-6 text-gray/4 bg-white mt-4'>
+      {fileMetadata ? (
+        <FileInfo
+          fileExtraMetadata={{ ...fileMetadata, numOfCopies: fileConfig.numOfCopies }}
+          isConfigStep={true}
+        />
+      ) : (
+        <FileBox />
+      )}
+      <div
+        className={
+          'p-6 text-gray/4 bg-white mt-4 blur-sm' +
+          (!fileMetadata && ' blur-sm pointer-events-none')
+        }
+      >
         <div className='mb-8'>
           <Typography className='font-bold'>Layout</Typography>
           <div className='flex flex-col -ml-3'>
@@ -310,12 +265,12 @@ export const UploadDocumentForm: Component<{ handleExistOrderForm: () => void }>
           </div>
         </div>
       </div>
-      <FormFooter totalCost={fileMetadata.fileCoin * parseInt(fileConfig.numOfCopy)}>
+      <FormFooter totalCost={fileMetadata ? totalCost : 0}>
         <Button
-          color={fileMetadata.fileSize > 0 ? 'blue' : 'gray'}
+          color={fileMetadata && fileMetadata.fileSize > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
           onClick={handleSaveFileConfig}
-          disabled={fileMetadata.fileSize === 0}
+          disabled={!fileMetadata || fileMetadata.fileSize === 0}
         >
           <span className='text-base'>Save</span>
         </Button>
