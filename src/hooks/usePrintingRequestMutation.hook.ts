@@ -18,6 +18,7 @@ export function usePrintingRequestMutation() {
       printingRequestService.uploadFile(printingRequestId, file),
     onSuccess: (data) => {
       queryClient.setQueryData(['fileIdCurrent'], data.fileId);
+      queryClient.setQueryData(['fileURL'], data.fileURL);
       queryClient.setQueryData(['fileMetadata', data.fileId], data);
     }
   });

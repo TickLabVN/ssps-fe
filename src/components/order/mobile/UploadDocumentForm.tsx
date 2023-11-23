@@ -64,7 +64,7 @@ export const UploadDocumentForm: Component<{
       clearFileConfig();
       setMobileOrderStep({
         current: 2,
-        prev: 1
+        prev: 0
       });
     }
   }, [

@@ -1,27 +1,19 @@
 import { MutableRefObject, useMemo } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@material-tailwind/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useCloseForm, FileBox, FormFooter } from '@components/order/common';
-import { printingRequestService } from '@services';
-import { useOrderPrintStore } from '@states';
-import { formatFileSize, retryQueryFn } from '@utils';
+import { usePrintingRequestQuery, useListenEvent } from '@hooks';
+import { useOrderPrintStore /*, useOrderWorkflowStore*/ } from '@states';
+import { formatFileSize } from '@utils';
 import { FileInfo } from './FileInfo';
 
 export const OrderListForm: Component<{
   handleExistOrderForm: () => void;
   initialTotalCost: MutableRefObject<number>;
-}> = ({ initialTotalCost }) => {
-  const queryClient = useQueryClient();
-  const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
-  const { data: listFiles } = useQuery({
-    queryKey: ['/api/printRequest/{printingRequestId}/files', printingRequestId],
-    queryFn: () =>
-      printingRequestId
-        ? printingRequestService.getListFilesByPrintingRequest(printingRequestId.id)
-        : undefined,
-    retry: retryQueryFn
-  });
+}> = ({ /*handleExistOrderForm,*/ initialTotalCost }) => {
+  const {
+    listFiles: { data: listFiles, refetch: refetchListFiles }
+  } = usePrintingRequestQuery();
 
   const { totalCost } = useOrderPrintStore();
   const { openCloseForm } = useCloseForm();
@@ -30,8 +22,9 @@ export const OrderListForm: Component<{
     () => listFiles?.reduce((totalSize, file) => totalSize + file.fileSize, 0),
     [listFiles]
   );
-
   //const { setMobileOrderStep } = useOrderWorkflowStore();
+
+  useListenEvent('listFiles:refetch', refetchListFiles);
 
   return (
     <div>

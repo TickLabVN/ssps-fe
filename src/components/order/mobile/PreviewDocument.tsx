@@ -6,9 +6,8 @@ import { useOrderWorkflowStore } from '@states';
 
 export function PreviewDocument() {
   const queryClient = useQueryClient();
-  const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
-  const fileMetadata = queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent]);
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const fileURL = queryClient.getQueryData<string>(['fileURL']);
+  const { mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
 
   const MyHeader: IHeaderOverride = (state) => {
     return (
@@ -19,7 +18,10 @@ export function PreviewDocument() {
         }
       >
         <span className='text-gray/4 font-bold'>Preview document</span>
-        <IconButton variant='text' onClick={() => setMobileOrderStep(0)}>
+        <IconButton
+          variant='text'
+          onClick={() => setMobileOrderStep({ current: mobileOrderStep.prev, prev: 1 })}
+        >
           <XMarkIcon className='w-6 h-6' />
         </IconButton>
       </div>
@@ -28,7 +30,7 @@ export function PreviewDocument() {
 
   return (
     <div className='h-screen overscroll-y-auto'>
-      {fileMetadata && (
+      {fileURL && (
         <DocViewer
           config={{
             header: {
@@ -38,7 +40,7 @@ export function PreviewDocument() {
             pdfVerticalScrollByDefault: true
           }}
           pluginRenderers={DocViewerRenderers}
-          documents={[{ uri: fileMetadata.fileURL, fileType: 'application/pdf' }]}
+          documents={[{ uri: fileURL, fileType: 'application/pdf' }]}
         />
       )}
     </div>

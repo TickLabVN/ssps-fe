@@ -18,7 +18,7 @@ export function useChooseFileBox() {
 
   const ChooseFileBox = () => {
     const { screenSize } = useScreenSize();
-    const { desktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
+    const { desktopOrderStep, mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
     const { isFileUploadSuccess, setIsFileUploadSuccess } = useOrderPrintStore();
     const { uploadFile } = usePrintingRequestMutation();
 
@@ -57,11 +57,11 @@ export function useChooseFileBox() {
           }
           setMobileOrderStep({
             current: 0,
-            prev: -1
+            prev: mobileOrderStep.current
           });
         }
       },
-      [screenSize, uploadFile, setMobileOrderStep, setIsFileUploadSuccess]
+      [screenSize, uploadFile, mobileOrderStep, setMobileOrderStep, setIsFileUploadSuccess]
     );
 
     return (

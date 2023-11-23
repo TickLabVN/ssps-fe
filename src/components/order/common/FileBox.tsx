@@ -9,7 +9,7 @@ export function FileBox() {
   const queryClient = useQueryClient();
   const { screenSize } = useScreenSize();
   const { setIsFileUploadSuccess } = useOrderPrintStore();
-  const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
+  const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const { uploadFile } = usePrintingRequestMutation();
 
   const handleUploadDocument = useMemo(
@@ -27,7 +27,7 @@ export function FileBox() {
         if (screenSize <= ScreenSize.MD) {
           setMobileOrderStep({
             current: 0,
-            prev: -1
+            prev: mobileOrderStep.current
           });
         } else {
           setDesktopOrderStep(0);
@@ -36,6 +36,7 @@ export function FileBox() {
     },
     [
       screenSize,
+      mobileOrderStep,
       uploadFile,
       queryClient,
       setMobileOrderStep,

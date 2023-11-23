@@ -1,4 +1,5 @@
 import { MutableRefObject, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Dialog,
@@ -11,8 +12,8 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { FILE_CONFIG } from '@constants';
-import { usePrintingRequestMutation } from '@hooks';
-import { useOrderPrintStore /*useOrderWorkflowStore*/ } from '@states';
+import { usePrintingRequestMutation, emitEvent } from '@hooks';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export const FileInfo: Component<{
@@ -21,6 +22,9 @@ export const FileInfo: Component<{
   fileIndex?: number;
   initialTotalCost?: MutableRefObject<number>;
 }> = ({ fileExtraMetadata, isConfigStep, fileIndex, initialTotalCost }) => {
+  const queryClient = useQueryClient();
+  const { deleteFile } = usePrintingRequestMutation();
+
   const {
     totalCost,
     listFileAmount,
@@ -29,8 +33,7 @@ export const FileInfo: Component<{
     setListFileAmount,
     clearFileConfig
   } = useOrderPrintStore();
-  //const { setMobileOrderStep } = useOrderWorkflowStore();
-  const { deleteFile } = usePrintingRequestMutation();
+  const { mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   useEffect(() => {
@@ -91,6 +94,9 @@ export const FileInfo: Component<{
     }
     clearFileConfig();
     handleOpenDialog();
+    if (!isConfigStep) {
+      emitEvent('listFiles:refetch');
+    }
   };
 
   return (
@@ -98,7 +104,15 @@ export const FileInfo: Component<{
       <div className='flex gap-4 px-4 py-2 bg-white '>
         <div
           className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
-          //onClick={() => setMobileOrderStep(1)}
+          onClick={() => {
+            if (!isConfigStep) {
+              queryClient.setQueryData(['fileURL'], fileExtraMetadata.fileURL);
+            }
+            setMobileOrderStep({
+              current: 1,
+              prev: mobileOrderStep.current
+            });
+          }}
         >
           <EyeIcon width={20} />
           <span className='text-xs'>Preview</span>
