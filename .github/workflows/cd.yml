@@ -1,24 +1,39 @@
-name: CD
+name: Staging
 
 on:
   push:
     branches: ['main']
     paths-ignore:
       - '*.md'
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ticklabvn/ssps-fe
   ORG_USERNAME: ${{ github.actor }}
-
+      
 permissions:
   contents: write
   pull-requests: write
   packages: write
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          pull-request-header: 'Bot (:robot:) requested to create a new release on ${{ github.ref_name }}'
+
   build:
     name: Build
+    needs: [release]
     runs-on: ubuntu-latest
+    if: ${{ needs.release.outputs.build == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -46,19 +61,26 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - uses: actions/checkout@v3
+      - name: Deploy
+        uses: appleboy/ssh-action@master
         with:
-          fetch-depth: 0
-      - name: start nginx
-        run: |
-          export CR_PAT=${{ secrets.GITHUB_TOKEN }}
-          echo $CR_PAT | docker login ${{ env.REGISTRY }} -u ${{ env.ORG_USERNAME }} --password-stdin
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+  
+          script: |
+            export CR_PAT=${{ secrets.GITHUB_TOKEN }}
+            echo $CR_PAT | docker login ${{ env.REGISTRY }} -u ${{ env.ORG_USERNAME }} --password-stdin
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-          docker compose stop ssps-fe
-          docker compose rm -f ssps-fe
-          docker compose up -d ssps-fe
-          docker logout ${{ env.REGISTRY }}
+            cd ssps-fe
+            export TOKEN=${{ secrets.CURL_TOKEN }}
+            curl -s https://$TOKEN@raw.githubusercontent.com/ticklabvn/ssps-fe/main/docker-compose.yml -o docker-compose.yml
+            docker compose stop ssps-fe
+            docker compose rm -f ssps-fe
+            docker compose up -d ssps-fe
+            docker logout ${{ env.REGISTRY }}

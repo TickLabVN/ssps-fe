@@ -1,6 +1,10 @@
 {
   "directory": [
-    "./src/components",
+    "./src/components/common",
+    "./src/components/home",
+    "./src/components/order/common",
+    "./src/components/order/mobile",
+    "./src/components/order/desktop",
     "./src/constants",
     "./src/hooks",
     "./src/interfaces",

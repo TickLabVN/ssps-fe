@@ -12,6 +12,7 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -20,7 +21,11 @@
     "strict": true,
     "paths": {
       "@assets/*": ["src/assets/*"],
-      "@components": ["src/components"],
+      "@components/common": ["src/components/common"],
+      "@components/home": ["src/components/home"],
+      "@components/order/common": ["src/components/order/common"],
+      "@components/order/mobile": ["src/components/order/mobile"],
+      "@components/order/desktop": ["src/components/order/desktop"],
       "@constants": ["src/constants"],
       "@hooks": ["src/hooks"],
       "@interfaces": ["src/interfaces"],
@@ -28,6 +33,7 @@
       "@pages": ["src/pages"],
       "@services": ["src/services"],
       "@states": ["src/states"],
+      "@api/spec": ["src/openapi-spec.ts"],
       "@utils": ["src/utils"]
     }
   },

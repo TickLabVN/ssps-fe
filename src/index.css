@@ -3,3 +3,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.slider-container {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+
+.slider-container::-webkit-scrollbar {
+  width: 0;
+}
+
+.prevButton,
+.nextButton {
+  cursor: pointer;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+}
+
+.grayscale { filter: grayscale(100%); }
+
+#react-doc-viewer #pdf-controls {
+  z-index: 5;
+  padding-top: 0;
+}

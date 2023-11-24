@@ -3,5 +3,4 @@
  */
 
 export * from './AuthPage';
-export * from './ProjectDetailPage';
-export * from './ProjectGeneralPage';
+export * from './HomePage';
