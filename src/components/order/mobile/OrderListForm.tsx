@@ -1,31 +1,72 @@
-import { MutableRefObject, useMemo } from 'react';
+import { MutableRefObject, useCallback, useMemo } from 'react';
 import { Button, Spinner, Typography } from '@material-tailwind/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useCloseForm, FileBox, FormFooter } from '@components/order/common';
-import { usePrintingRequestQuery, useListenEvent } from '@hooks';
-import { useOrderPrintStore /*, useOrderWorkflowStore*/ } from '@states';
+import { usePrintingRequestMutation, usePrintingRequestQuery, useListenEvent } from '@hooks';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 import { FileInfo } from './FileInfo';
 
 export const OrderListForm: Component<{
-  handleExistOrderForm: () => void;
+  handleExistOrderForm: () => Promise<void>;
   initialTotalCost: MutableRefObject<number>;
-}> = ({ /*handleExistOrderForm,*/ initialTotalCost }) => {
+}> = ({ handleExistOrderForm, initialTotalCost }) => {
+  const { updateAmountFiles } = usePrintingRequestMutation();
   const {
     listFiles: { data: listFiles, isFetching, isError, refetch: refetchListFiles }
   } = usePrintingRequestQuery();
 
-  const { totalCost, clearListFileAmount } = useOrderPrintStore();
-  const { openCloseForm } = useCloseForm();
+  const {
+    totalCost,
+    listFileAmount,
+    clearListFileAmount,
+    setTotalCost,
+    setIsFileUploadSuccess,
+    setIsOrderUpdate
+  } = useOrderPrintStore();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const { openCloseForm, CloseForm } = useCloseForm();
 
   const totalSize = useMemo(
     () => listFiles?.reduce((totalSize, file) => totalSize + file.fileSize, 0),
     [listFiles]
   );
-  //const { setMobileOrderStep } = useOrderWorkflowStore();
 
   useListenEvent('listFiles:refetch', clearListFileAmount);
   useListenEvent('listFiles:refetch', refetchListFiles);
+
+  const handleExistCloseForm = useCallback(async () => {
+    initialTotalCost.current = 0;
+    setTotalCost(0);
+    setIsFileUploadSuccess(false);
+    setIsOrderUpdate(false);
+    clearListFileAmount();
+    await handleExistOrderForm();
+  }, [
+    initialTotalCost,
+    setIsFileUploadSuccess,
+    setIsOrderUpdate,
+    setTotalCost,
+    clearListFileAmount,
+    handleExistOrderForm
+  ]);
+
+  const handleSaveOrderUpdate = useCallback(async () => {
+    await updateAmountFiles.mutateAsync(listFileAmount);
+    initialTotalCost.current = totalCost;
+    setIsOrderUpdate(false);
+    setMobileOrderStep({
+      current: 3,
+      prev: 2
+    });
+  }, [
+    totalCost,
+    listFileAmount,
+    initialTotalCost,
+    updateAmountFiles,
+    setMobileOrderStep,
+    setIsOrderUpdate
+  ]);
 
   return (
     <div>
@@ -34,7 +75,7 @@ export const OrderListForm: Component<{
           <ChevronLeftIcon className='cursor-pointer w-6 h-6' onClick={openCloseForm} />
           <span className='ml-4 font-bold'>Order list</span>
         </div>
-        {/* <CloseForm handleSave={handleSaveFileConfig} handleExist={handleExistCloseForm} /> */}
+        <CloseForm handleSave={handleSaveOrderUpdate} handleExist={handleExistCloseForm} />
         <div className='text-xs flex flex-col'>
           <span className='font-medium'>Size limit:</span>
           <div>
@@ -61,12 +102,15 @@ export const OrderListForm: Component<{
               </div>
             ) : (
               listFiles.map((file, index) => (
-                <div key={index} className='p-4 flex gap-4 border-b-4'>
+                <div key={index}>
                   <FileInfo
                     fileExtraMetadata={file}
                     isConfigStep={false}
                     fileIndex={index}
                     initialTotalCost={initialTotalCost}
+                    updateAmountFiles={(listFileAmount: FileAmount[]) =>
+                      updateAmountFiles.mutateAsync(listFileAmount)
+                    }
                   />
                 </div>
               ))
@@ -82,7 +126,7 @@ export const OrderListForm: Component<{
         <Button
           color={listFiles && listFiles.length > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'
-          // onClick={handleSaveFileConfig}
+          onClick={handleSaveOrderUpdate}
           disabled={!listFiles || listFiles.length === 0}
         >
           <span className='text-base'>Save</span>

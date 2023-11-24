@@ -45,5 +45,12 @@ export const printingRequestService = {
       apiClient.PATCH('/api/printRequest/printAmount', {
         body: payload
       })
+    ),
+  cancelPrintingRequest: (printingRequestId: string) =>
+    invoke(
+      apiClient.PATCH('/api/printRequest/{printingRequestId}', {
+        headers: { 'Content-Type': 'text/plain' },
+        params: { path: { printingRequestId } }
+      })
     )
 };

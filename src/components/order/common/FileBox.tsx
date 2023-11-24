@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
 import { ScreenSize } from '@constants';
@@ -12,8 +12,8 @@ export function FileBox() {
   const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const { uploadFile } = usePrintingRequestMutation();
 
-  const handleUploadDocument = useMemo(
-    () => async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadDocument = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
         const printingRequestId = queryClient.getQueryData<PrintingRequestId>([
           'printingRequestId'

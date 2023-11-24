@@ -42,11 +42,18 @@ export function usePrintingRequestMutation() {
     mutationFn: (payload: FileAmount[]) => printingRequestService.updateAmountFiles(payload)
   });
 
+  const cancelPrintingRequest = useMutation({
+    mutationKey: ['cancelPrintingRequest'],
+    mutationFn: (printingRequestId: string) =>
+      printingRequestService.cancelPrintingRequest(printingRequestId)
+  });
+
   return {
     createPrintingRequest: createPrintingRequest,
     uploadFile: uploadFile,
     uploadFileConfig: uploadFileConfig,
     deleteFile: deleteFile,
-    updateAmountFiles: updateAmountFiles
+    updateAmountFiles: updateAmountFiles,
+    cancelPrintingRequest: cancelPrintingRequest
   };
 }

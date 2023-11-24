@@ -9,6 +9,7 @@ import {
   OrderSuccessForm,
   PreviewDocument
 } from '@components/order/mobile';
+import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 
 export function useOrderWorkflowBox() {
@@ -16,25 +17,30 @@ export function useOrderWorkflowBox() {
 
   const DialogBodyWorkflow = () => {
     const queryClient = useQueryClient();
+    const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
     const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
+
     const { data: fileMetadata } = useQuery({
       queryKey: ['fileMetadata', fileIdCurrent],
       queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
     });
+    const { cancelPrintingRequest } = usePrintingRequestMutation();
 
     const { totalCost, setTotalCost } = useOrderPrintStore();
     const { mobileOrderStep } = useOrderWorkflowStore();
     const initialTotalCost = useRef<number>(totalCost);
-
-    const handleExistOrderForm = useCallback(() => {
-      setOpenDialog(false);
-    }, []);
 
     useEffect(() => {
       if (fileMetadata?.fileId) {
         setTotalCost(initialTotalCost.current + fileMetadata?.fileCoin);
       }
     }, [fileMetadata?.fileId, fileMetadata?.fileCoin, setTotalCost]);
+
+    const handleExistOrderForm = useCallback(async () => {
+      if (!printingRequestId) return;
+      await cancelPrintingRequest.mutateAsync(printingRequestId.id);
+      setOpenDialog(false);
+    }, [printingRequestId, cancelPrintingRequest]);
 
     if (mobileOrderStep.current === 0) {
       return (
@@ -63,7 +69,15 @@ export function useOrderWorkflowBox() {
 
   const OrderWorkflowBox = () => {
     return (
-      <Dialog open={openDialog} handler={() => setOpenDialog(false)} size='xxl'>
+      <Dialog
+        size='xxl'
+        open={openDialog}
+        handler={() => setOpenDialog(false)}
+        dismiss={{
+          escapeKey: false,
+          outsidePress: false
+        }}
+      >
         <DialogBody className='p-0 bg-gray/1'>
           <DialogBodyWorkflow />
         </DialogBody>

@@ -137,7 +137,15 @@ export function useUploadAndPreviewDocBox() {
     if (!fileMetadata) return null;
 
     return (
-      <Dialog size='xl' open={openDialog} handler={handleOpenDialog}>
+      <Dialog
+        size='xl'
+        open={openDialog}
+        handler={handleOpenDialog}
+        dismiss={{
+          escapeKey: false,
+          outsidePress: false
+        }}
+      >
         <DialogHeader className='justify-end p-0 bg-gray-200 rounded-t-md'>
           <IconButton variant='text' onClick={openCloseForm}>
             <XMarkIcon className='w-6 h-6' />

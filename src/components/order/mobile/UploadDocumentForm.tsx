@@ -17,7 +17,7 @@ import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import { FileInfo } from './FileInfo';
 
 export const UploadDocumentForm: Component<{
-  handleExistOrderForm: () => void;
+  handleExistOrderForm: () => Promise<void>;
   initialTotalCost: MutableRefObject<number>;
 }> = ({ handleExistOrderForm, initialTotalCost }) => {
   const queryClient = useQueryClient();
@@ -96,7 +96,7 @@ export const UploadDocumentForm: Component<{
       initialTotalCost.current = 0;
       setTotalCost(0);
       setIsFileUploadSuccess(false);
-      handleExistOrderForm();
+      await handleExistOrderForm();
     }
     clearFileConfig();
   }, [

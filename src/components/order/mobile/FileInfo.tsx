@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -21,13 +21,15 @@ export const FileInfo: Component<{
   isConfigStep: boolean;
   fileIndex?: number;
   initialTotalCost?: MutableRefObject<number>;
-}> = ({ fileExtraMetadata, isConfigStep, fileIndex, initialTotalCost }) => {
+  updateAmountFiles?: (listFileAmount: FileAmount[]) => Promise<unknown>;
+}> = ({ fileExtraMetadata, isConfigStep, fileIndex, initialTotalCost, updateAmountFiles }) => {
   const queryClient = useQueryClient();
   const { deleteFile } = usePrintingRequestMutation();
 
   const {
     totalCost,
     listFileAmount,
+    isOrderUpdate,
     setFileConfig,
     setTotalCost,
     setListFileAmount,
@@ -37,7 +39,7 @@ export const FileInfo: Component<{
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   useEffect(() => {
-    if (fileIndex !== undefined && listFileAmount[fileIndex] === undefined) {
+    if (fileIndex !== undefined && listFileAmount[fileIndex] === undefined && isOrderUpdate) {
       setListFileAmount({
         fileId: fileExtraMetadata.fileId,
         numOfCopies: fileExtraMetadata.numOfCopies
@@ -47,11 +49,12 @@ export const FileInfo: Component<{
     fileExtraMetadata.fileId,
     fileExtraMetadata.numOfCopies,
     fileIndex,
+    isOrderUpdate,
     listFileAmount,
     setListFileAmount
   ]);
 
-  const handleOpenDialog = () => setOpenDialog(!openDialog);
+  const handleOpenDialog = useCallback(() => setOpenDialog(!openDialog), [openDialog]);
   const handleDecreaseCopies = () => {
     if (isConfigStep) {
       if (fileExtraMetadata.numOfCopies > 1) {
@@ -86,18 +89,43 @@ export const FileInfo: Component<{
     }
   };
 
-  const handleDeleteFile = async () => {
-    await deleteFile.mutateAsync(fileExtraMetadata.fileId);
-    setTotalCost(totalCost - fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies);
-    if (initialTotalCost) {
-      initialTotalCost.current -= fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies;
-    }
-    clearFileConfig();
-    handleOpenDialog();
-    if (!isConfigStep) {
+  const handleDeleteFile = useCallback(async () => {
+    if (
+      !isConfigStep &&
+      fileIndex !== undefined &&
+      listFileAmount[fileIndex] !== undefined &&
+      initialTotalCost &&
+      updateAmountFiles
+    ) {
+      await updateAmountFiles(listFileAmount);
+      await deleteFile.mutateAsync(fileExtraMetadata.fileId);
+      setTotalCost(
+        totalCost - fileExtraMetadata.fileCoin * (listFileAmount[fileIndex]?.numOfCopies ?? 0)
+      );
+      initialTotalCost.current -=
+        fileExtraMetadata.fileCoin * (listFileAmount[fileIndex]?.numOfCopies ?? 0);
       emitEvent('listFiles:refetch');
+    } else {
+      await deleteFile.mutateAsync(fileExtraMetadata.fileId);
+      setTotalCost(totalCost - fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies);
+      clearFileConfig();
     }
-  };
+    handleOpenDialog();
+  }, [
+    fileExtraMetadata.fileCoin,
+    fileExtraMetadata.fileId,
+    fileExtraMetadata.numOfCopies,
+    fileIndex,
+    initialTotalCost,
+    isConfigStep,
+    listFileAmount,
+    totalCost,
+    deleteFile,
+    setTotalCost,
+    handleOpenDialog,
+    clearFileConfig,
+    updateAmountFiles
+  ]);
 
   return (
     <>
@@ -141,7 +169,7 @@ export const FileInfo: Component<{
               </span>
             </p>
           </div>
-          <div className='flex justify-between items-center '>
+          <div className='flex justify-between items-center'>
             <div className='flex border-2 '>
               <span
                 className='p-0.5 border-r-2 flex items-center cursor-pointer'

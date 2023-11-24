@@ -17,10 +17,11 @@ export function useChooseFileBox() {
   const { openOrderWorkflowBox, closeOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
 
   const ChooseFileBox = () => {
+    const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
     const { screenSize } = useScreenSize();
     const { desktopOrderStep, mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
     const { isFileUploadSuccess, setIsFileUploadSuccess } = useOrderPrintStore();
-    const { uploadFile } = usePrintingRequestMutation();
+    const { uploadFile, cancelPrintingRequest } = usePrintingRequestMutation();
 
     useEffect(() => {
       if (isFileUploadSuccess) {
@@ -40,9 +41,6 @@ export function useChooseFileBox() {
     const handleUploadDocument = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-          const printingRequestId = queryClient.getQueryData<PrintingRequestId>([
-            'printingRequestId'
-          ]);
           if (!event.target.files[0] || !printingRequestId) return;
           await uploadFile.mutateAsync({
             printingRequestId: printingRequestId.id,
@@ -61,18 +59,28 @@ export function useChooseFileBox() {
           });
         }
       },
-      [screenSize, uploadFile, mobileOrderStep, setMobileOrderStep, setIsFileUploadSuccess]
+      [
+        screenSize,
+        uploadFile,
+        mobileOrderStep,
+        printingRequestId,
+        setMobileOrderStep,
+        setIsFileUploadSuccess
+      ]
     );
+
+    const handleCloseDialog = async () => {
+      if (!printingRequestId) return;
+      await cancelPrintingRequest.mutateAsync(printingRequestId.id);
+      setOpenBox(false);
+    };
 
     return (
       <>
         <Dialog
           className='2xl:max-w-fit 2xl:w-fit 2xl:min-w-fit lg:max-w-fit lg:w-fit lg:min-w-fit max-w-fit w-fit min-w-fit'
           open={openBox}
-          handler={() => setOpenBox(false)}
-          dismiss={{
-            outsidePress: true
-          }}
+          handler={handleCloseDialog}
         >
           <DialogBody>
             <label
