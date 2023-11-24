@@ -5,6 +5,7 @@ import { LAYOUT_SIDE, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@consta
 export const useOrderPrintStore = create<PrintingRequestStore>()(
   devtools((set) => ({
     isFileUploadSuccess: false,
+    isOrderUpdate: false,
     fileConfig: {
       numOfCopies: 1,
       layout: LAYOUT_SIDE.portrait,
@@ -16,6 +17,9 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
     listFileAmount: [],
     setIsFileUploadSuccess: (data) => {
       set({ isFileUploadSuccess: data });
+    },
+    setIsOrderUpdate: (data) => {
+      set({ isOrderUpdate: data });
     },
     setFileConfig: (key, value) => {
       set((state) => ({ fileConfig: { ...state.fileConfig, [key]: value } }));
@@ -48,6 +52,9 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
         }
         return { listFileAmount: [...state.listFileAmount, payload] };
       });
+    },
+    clearListFileAmount: () => {
+      set({ listFileAmount: [] });
     }
   }))
 );

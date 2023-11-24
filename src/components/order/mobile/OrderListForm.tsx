@@ -1,5 +1,5 @@
 import { MutableRefObject, useMemo } from 'react';
-import { Button } from '@material-tailwind/react';
+import { Button, Spinner, Typography } from '@material-tailwind/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useCloseForm, FileBox, FormFooter } from '@components/order/common';
 import { usePrintingRequestQuery, useListenEvent } from '@hooks';
@@ -12,10 +12,10 @@ export const OrderListForm: Component<{
   initialTotalCost: MutableRefObject<number>;
 }> = ({ /*handleExistOrderForm,*/ initialTotalCost }) => {
   const {
-    listFiles: { data: listFiles, refetch: refetchListFiles }
+    listFiles: { data: listFiles, isFetching, isError, refetch: refetchListFiles }
   } = usePrintingRequestQuery();
 
-  const { totalCost } = useOrderPrintStore();
+  const { totalCost, clearListFileAmount } = useOrderPrintStore();
   const { openCloseForm } = useCloseForm();
 
   const totalSize = useMemo(
@@ -24,6 +24,7 @@ export const OrderListForm: Component<{
   );
   //const { setMobileOrderStep } = useOrderWorkflowStore();
 
+  useListenEvent('listFiles:refetch', clearListFileAmount);
   useListenEvent('listFiles:refetch', refetchListFiles);
 
   return (
@@ -48,16 +49,28 @@ export const OrderListForm: Component<{
             <FileBox />
           </div>
           <div className='mt-4 bg-white'>
-            {listFiles.map((file, index) => (
-              <div key={index} className='p-4 flex gap-4 border-b-4'>
-                <FileInfo
-                  fileExtraMetadata={file}
-                  isConfigStep={false}
-                  fileIndex={index}
-                  initialTotalCost={initialTotalCost}
-                />
+            {isFetching ? (
+              <div className='grid justify-items-center items-center bg-gray-100'>
+                <Spinner color='green' className='h-12 w-12' />
               </div>
-            ))}
+            ) : isError ? (
+              <div className='grid justify-items-center items-center bg-gray-100'>
+                <Typography variant='h6'>
+                  Không thể tải danh sách các files trong đơn hàng.
+                </Typography>
+              </div>
+            ) : (
+              listFiles.map((file, index) => (
+                <div key={index} className='p-4 flex gap-4 border-b-4'>
+                  <FileInfo
+                    fileExtraMetadata={file}
+                    isConfigStep={false}
+                    fileIndex={index}
+                    initialTotalCost={initialTotalCost}
+                  />
+                </div>
+              ))
+            )}
           </div>
         </div>
       ) : (

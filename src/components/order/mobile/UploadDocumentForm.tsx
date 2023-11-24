@@ -12,7 +12,7 @@ import {
 import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { useCloseForm, useLayoutSide, FileBox, FormFooter } from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
-import { usePrintingRequestMutation } from '@hooks';
+import { usePrintingRequestMutation, emitEvent } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import { FileInfo } from './FileInfo';
 
@@ -26,15 +26,17 @@ export const UploadDocumentForm: Component<{
     queryKey: ['fileMetadata', fileIdCurrent],
     queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
   });
-  const { uploadFileConfig } = usePrintingRequestMutation();
+  const { uploadFileConfig, deleteFile } = usePrintingRequestMutation();
   const { setMobileOrderStep } = useOrderWorkflowStore();
   const {
+    isOrderUpdate,
     totalCost,
     fileConfig,
     setFileConfig,
     setTotalCost,
     setIsFileUploadSuccess,
-    clearFileConfig
+    clearFileConfig,
+    setIsOrderUpdate
   } = useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
@@ -62,6 +64,7 @@ export const UploadDocumentForm: Component<{
       });
       initialTotalCost.current = totalCost;
       clearFileConfig();
+      setIsOrderUpdate(true);
       setMobileOrderStep({
         current: 2,
         prev: 0
@@ -71,24 +74,43 @@ export const UploadDocumentForm: Component<{
     fileMetadata?.fileId,
     fileConfig,
     totalCost,
+    uploadFileConfig,
     initialTotalCost,
     setMobileOrderStep,
-    uploadFileConfig,
-    clearFileConfig
+    clearFileConfig,
+    setIsOrderUpdate
   ]);
 
-  const handleExistCloseForm = useCallback(() => {
-    initialTotalCost.current = 0;
+  const handleExistCloseForm = useCallback(async () => {
+    if (isOrderUpdate) {
+      if (fileMetadata) {
+        await deleteFile.mutateAsync(fileMetadata.fileId);
+        setTotalCost(totalCost - fileMetadata.fileCoin * fileConfig.numOfCopies);
+        emitEvent('listFiles:refetch');
+      }
+      setMobileOrderStep({
+        current: 2,
+        prev: 0
+      });
+    } else {
+      initialTotalCost.current = 0;
+      setTotalCost(0);
+      setIsFileUploadSuccess(false);
+      handleExistOrderForm();
+    }
     clearFileConfig();
-    setTotalCost(0);
-    setIsFileUploadSuccess(false);
-    handleExistOrderForm();
   }, [
+    fileConfig.numOfCopies,
+    fileMetadata,
+    totalCost,
+    isOrderUpdate,
+    deleteFile,
     initialTotalCost,
     handleExistOrderForm,
     clearFileConfig,
     setTotalCost,
-    setIsFileUploadSuccess
+    setIsFileUploadSuccess,
+    setMobileOrderStep
   ]);
 
   const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -271,7 +293,7 @@ export const UploadDocumentForm: Component<{
           </div>
         </div>
       </div>
-      <FormFooter totalCost={fileMetadata ? totalCost : 0}>
+      <FormFooter totalCost={totalCost}>
         <Button
           color={fileMetadata && fileMetadata.fileSize > 0 ? 'blue' : 'gray'}
           className='rounded-none w-[30%]'

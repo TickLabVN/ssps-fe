@@ -53,7 +53,7 @@ export function Orders() {
                 </div>
                 <div>
                   <span className='text-blue/1 mr-1'>{order.filesName[0]}</span>
-                  <span className='text-gray/4 opacity-40'>+{order.number}</span>
+                  <span className='text-gray/4 opacity-40'>+{order.numFiles}</span>
                 </div>
                 <div className='flex items-center text-gray/3 mb-4'>
                   <MapPinIcon className='w-5 h-5 mr-1' />
@@ -62,7 +62,7 @@ export function Orders() {
                 <hr className='h-[1px] mb-4' />
                 <div className='flex items-center justify-between text-gray/4 text-base lg:text-lg'>
                   <p>
-                    <span className='font-medium'>{order.pageNumber} </span>
+                    <span className='font-medium'>{order.numPages} </span>
                     <span className='font-normal'>pages</span>
                   </p>
                   <div className='flex items-center text-base lg:text-lg'>

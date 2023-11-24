@@ -31,10 +31,10 @@ export function useOrderWorkflowBox() {
     }, []);
 
     useEffect(() => {
-      if (fileMetadata?.fileCoin) {
+      if (fileMetadata?.fileId) {
         setTotalCost(initialTotalCost.current + fileMetadata?.fileCoin);
       }
-    }, [fileMetadata?.fileCoin, setTotalCost]);
+    }, [fileMetadata?.fileId, fileMetadata?.fileCoin, setTotalCost]);
 
     if (mobileOrderStep.current === 0) {
       return (

@@ -9,6 +9,7 @@ export function usePrintingRequestQuery() {
   const listFiles = useQuery({
     queryKey: [
       '/api/printRequest/{printingRequestId}/files',
+      printingRequestId,
       printingRequestId && printingRequestId.id
     ],
     queryFn: () =>

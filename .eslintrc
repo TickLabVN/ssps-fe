@@ -3,10 +3,12 @@
     "extends": [
         "prettier",
         "plugin:@typescript-eslint/recommended",
-        "plugin:react-hooks/recommended"
+        "plugin:react-hooks/recommended",
+        "plugin:@tanstack/eslint-plugin-query/recommended"
     ],
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "@tanstack/query"
     ],
     "parserOptions": {
         "ecmaVersion": 2018,
@@ -21,6 +23,9 @@
         "@typescript-eslint/no-inferrable-types": 0,
         "@typescript-eslint/no-unused-vars": 2,
         "@typescript-eslint/no-var-requires": 0,
+        "@tanstack/query/exhaustive-deps": "error",
+        "@tanstack/query/no-rest-destructuring": "warn",
+        "@tanstack/query/stable-query-client": "error",
         "eqeqeq": "error",
         "no-console": "error"
     }

@@ -13,7 +13,7 @@ export function useCloseForm() {
 
   const CloseForm: Component<{
     handleSave: () => Promise<void> | void;
-    handleExist: () => void;
+    handleExist: () => Promise<void> | void;
   }> = ({ handleSave, handleExist }) =>
     useMemo(() => {
       const handleOpenDialog = () => {
