@@ -53,7 +53,7 @@ export function OrderSuccessForm() {
               </div>
             </CardBody>
             <CardBody className='py-4 relative'>
-              <hr className='absolute w-[328px] border border-gray/2  top-[94px]' />
+              <hr className='absolute w-[525px] border border-gray/2  top-[94px]' />
               <div className='flex flex-col items-stretch items-start gap-1'>
                 {detail_order.map((item, index) => (
                   <div className='flex justify-between' key={index}>
@@ -89,6 +89,7 @@ export function OrderSuccessForm() {
               >
                 Track this order
               </Button>
+
               <Button
                 className='px-4 py-2 rounded-lg h-[40px] text-gray/3 text-sm font-semibold mt-2 normal-case hover:border hover:border-blue/1 hover:bg-white'
                 variant='text'
