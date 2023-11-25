@@ -6,6 +6,7 @@ import { MAIN_MENU, SUB_MENU } from '@constants';
 import { useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
+import { ConfirmOrder } from './pages/ConfirmOrder';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();
@@ -68,6 +69,12 @@ export default function App() {
             path: '/location',
             name: MAIN_MENU.location,
             element: <></>
+          },
+          {
+            type: 'sub-item',
+            path: '/confirmOrder',
+            name: SUB_MENU.confirmOrder,
+            element: <ConfirmOrder />
           },
           {
             type: 'sub-item',
