@@ -1,9 +1,8 @@
-// import { useOrderWorkflowStore } from '@states/order';
 import { Button, Card, CardBody, Typography } from '@material-tailwind/react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { DocumentChartBarIcon } from '@heroicons/react/24/outline';
 import coin from '@assets/coin.png';
-// Tue's second-task in here.
+
 export function OrderSuccessForm() {
   //   const { setOrderStep } = useOrderWorkflowStore();
   const detail_order = [
