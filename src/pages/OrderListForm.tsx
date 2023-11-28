@@ -40,7 +40,7 @@ export function OrderListForm() {
   ]);
   const updateOrderAmount = (index: number, newAmount: number) => {
     const updatedOrders = [...orders];
-    updatedOrders[index].amount = newAmount;
+    updatedOrders[index]!.amount = newAmount;
     setOrders(updatedOrders);
   };
   const removeFile = (index: number) => {
