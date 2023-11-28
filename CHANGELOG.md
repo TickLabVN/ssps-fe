@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/TickLabVN/ssps-fe/compare/v1.0.0...v1.1.0) (2023-11-28)
+
+
+### Features
+
+* **oauth:** enable logging in by google account ([0b5ed7c](https://github.com/TickLabVN/ssps-fe/commit/0b5ed7c291bfa6ddfb2699a281bef6c765c64995))
+
 ## 1.0.0 (2023-11-24)
 
 
