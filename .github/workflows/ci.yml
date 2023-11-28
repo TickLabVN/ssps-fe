@@ -25,6 +25,8 @@ jobs:
       - name: Setup env file
         run: |
           echo VITE_BACKEND_URL=${{ vars.BACKEND_URL }} >> .env
+          echo VITE_GOOGLE_OAUTH_REDIRECT_URL=${{ vars.GOOGLE_OAUTH_REDIRECT_URL }} >> .env
+          echo VITE_GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }} >> .env
 
       - name: Install dependencies
         run: yarn
