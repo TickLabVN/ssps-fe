@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/TickLabVN/ssps-fe/compare/v1.1.0...v1.1.1) (2023-11-28)
+
+
+### Bug Fixes
+
+* **env:** add env into docker image on github container registry ([9153e8e](https://github.com/TickLabVN/ssps-fe/commit/9153e8e5dc2d7b720f24a41b9051e86b77665a5f))
+
 ## [1.1.0](https://github.com/TickLabVN/ssps-fe/compare/v1.0.0...v1.1.0) (2023-11-28)
 
 
