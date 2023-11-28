@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useMutation } from '@tanstack/react-query';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -34,14 +35,24 @@ export const AuthPage = () => {
     resolver: yupResolver(validateSchema)
   });
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ['login'],
+  const loginNormal = useMutation({
+    mutationKey: ['loginNormal'],
     mutationFn: (data: LoginFormData) => authService.login(data)
+  });
+
+  const loginByGoogle = useGoogleLogin({
+    flow: 'auth-code',
+    ux_mode: 'redirect',
+    redirect_uri: import.meta.env.VITE_GOOGLE_OAUTH_REDIRECT_URL,
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ].join(' ')
   });
 
   const submit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      await mutateAsync(data);
+      await loginNormal.mutateAsync(data);
       await refetch();
       toast.success('Login successfully!');
       navigate('/home');
@@ -60,7 +71,7 @@ export const AuthPage = () => {
         Student Smart Printing Service (SSPS)
       </Typography>
       <form className='mt-20 mb-2 w-72 md:w-80 max-w-screen-lg' onSubmit={handleSubmit(submit)}>
-        <div className='mb-16 flex flex-col gap-6'>
+        <div className='flex flex-col gap-4 mb-8'>
           <Input
             size='lg'
             label='Email'
@@ -108,10 +119,24 @@ export const AuthPage = () => {
           </div>
           <h4 className='text-[red] font-bold'>{errors.password?.message}</h4>
         </div>
-
-        <Button className='mt-6 bg-blue-500' fullWidth type='submit'>
-          Login
-        </Button>
+        <div className='grid gap-4'>
+          <Button size='lg' className='bg-blue-500 capitalize text-base' type='submit'>
+            Login
+          </Button>
+          <Button
+            variant='outlined'
+            color='blue-gray'
+            className='flex items-center gap-3 justify-center'
+            onClick={loginByGoogle}
+          >
+            <img
+              src='https://docs.material-tailwind.com/icons/google.svg'
+              alt='metamask'
+              className='h-6 w-6'
+            />
+            Log in with Google
+          </Button>
+        </div>
       </form>
     </Card>
   );
