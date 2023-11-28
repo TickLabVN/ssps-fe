@@ -5,7 +5,7 @@ import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
 import { useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
-import { AuthPage, HomePage } from '@pages';
+import { AuthPage, HomePage, OrderListForm } from '@pages';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();
@@ -80,6 +80,12 @@ export default function App() {
             path: '/settings',
             name: SUB_MENU.settings,
             element: <></>
+          },
+          {
+            type: 'sub-item',
+            path: '/orderList',
+            name: SUB_MENU.orderList,
+            element: <OrderListForm />
           },
           {
             type: 'logout-btn',
