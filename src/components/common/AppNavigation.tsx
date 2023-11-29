@@ -1,9 +1,11 @@
-import { UserCircleIcon } from '@heroicons/react/24/solid';
+import { useMemo } from 'react';
+import { ChevronLeftIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import coin from '@assets/coin.png';
 import { AppDrawer, DesktopNavbar, ToggleSidebarBtn, useSidebarMenu } from '@components/common';
 import { ScreenSize } from '@constants';
-import { useScreenSize, useUserQuery } from '@hooks';
-import { useMenuBarStore } from '@states';
+import { useScreenSize, useUserQuery, usePrintingRequestQuery } from '@hooks';
+import { useMenuBarStore, useOrderWorkflowStore } from '@states';
+import { formatFileSize } from '@utils';
 
 export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu }> = ({
   mainMenu,
@@ -12,13 +14,23 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
   const { screenSize } = useScreenSize();
   const { openSidebar, handleOpenSidebar, SidebarMenu } = useSidebarMenu();
   const { selectedMenu } = useMenuBarStore();
+  const { desktopOrderStep } = useOrderWorkflowStore();
+
   const {
     remainCoins: { data }
   } = useUserQuery();
+  const {
+    listFiles: { data: listFiles }
+  } = usePrintingRequestQuery();
+
+  const totalSize = useMemo(
+    () => listFiles?.reduce((totalSize, file) => totalSize + file.fileSize, 0),
+    [listFiles]
+  );
 
   return (
-    <div className='w-full max-h-[768px] px-6 lg:px-9 py-3 lg:py-3 shadow-md lg:sticky my-3 lg:my-0'>
-      <div className='flex items-center justify-between h-full'>
+    <div className='w-full max-h-[768px] py-3 shadow-md lg:sticky my-3 lg:my-0'>
+      <div className='flex items-center justify-between px-6 lg:px-9'>
         <div className='flex items-center lg:hidden'>
           <div
             className='cursor-pointer opacity-40 focus:opacity-100 active:opacity-100 mr-4'
@@ -45,6 +57,28 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           <UserCircleIcon className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer' />
         </div>
       </div>
+      {screenSize >= ScreenSize.MD && desktopOrderStep > 0 && (
+        <>
+          <hr className='my-1' />
+          {desktopOrderStep === 1 && (
+            <div className='flex items-center justify-between px-9'>
+              <div className='flex items-center gap-2'>
+                <ChevronLeftIcon className='w-5 h-5' />
+                <p className='text-gray/4 font-semibold text-xl'>Order list</p>
+              </div>
+              <div className='text-right text-sm'>
+                <p className='font-medium text-gray/4'>Size limit:</p>
+                <p>
+                  <span className='font-semibold'>{`${
+                    totalSize && formatFileSize(totalSize)
+                  } / `}</span>
+                  <span className='text-gray/3 font-medium'>1GB</span>
+                </p>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

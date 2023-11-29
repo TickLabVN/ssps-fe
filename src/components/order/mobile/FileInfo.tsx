@@ -17,7 +17,7 @@ import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export const FileInfo: Component<{
-  fileExtraMetadata: FileMetadata & { numOfCopies: number };
+  fileExtraMetadata: FileExtraMetadata;
   isConfigStep: boolean;
   fileIndex?: number;
   initialTotalCost?: MutableRefObject<number>;

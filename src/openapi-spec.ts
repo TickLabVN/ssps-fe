@@ -26,7 +26,11 @@ export interface paths {
           headers: {
             [name: string]: unknown;
           };
-          content?: never;
+          content: {
+            'application/json': {
+              id: string;
+            };
+          };
         };
       };
     };

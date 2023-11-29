@@ -1,5 +1,6 @@
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
+import { OrderListDesktop } from '@components/order/desktop';
 import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore } from '@states';
 
@@ -18,12 +19,12 @@ export function HomePage() {
     if (desktopOrderStep === 0) {
       return (
         <>
-          <div className='p-6 lg:py-5 lg:px-56'>
+          <div className='p-6 lg:py-4 lg:px-24'>
             <div className='mb-4 lg:mb-6'>
-              <h4 className='font-normal text-blue/1 text-base lg:text-2xl'>
+              <h4 className='font-normal text-blue/1 text-base lg:text-xl'>
                 Student Smart Printing Service (SSPS)
               </h4>
-              <h3 className='font-bold text-blue/2 text-xl lg:text-4xl'>Welcome Username!</h3>
+              <h3 className='font-bold text-blue/2 text-xl lg:text-3xl'>Welcome Username!</h3>
             </div>
             <div className='mb-4 lg:mb-12'>
               <Slides />
@@ -46,6 +47,8 @@ export function HomePage() {
           <ChooseFileBox />
         </>
       );
+    } else if (desktopOrderStep === 1) {
+      return <OrderListDesktop />;
     }
   };
 

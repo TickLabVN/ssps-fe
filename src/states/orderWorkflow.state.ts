@@ -7,7 +7,7 @@ export const useOrderWorkflowStore = create<OrderWorkflowStore>()(
       current: 0,
       prev: -1
     },
-    desktopOrderStep: 0,
+    desktopOrderStep: 1,
     setMobileOrderStep: (mobileOrderStep) => {
       set({ mobileOrderStep: mobileOrderStep });
     },

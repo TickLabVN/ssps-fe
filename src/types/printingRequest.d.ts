@@ -11,6 +11,8 @@ type FileMetadata = {
   fileCoin: number;
 };
 
+type FileExtraMetadata = FileMetadata & { numOfCopies: number };
+
 type FileConfig = {
   numOfCopies: number;
   layout: string;
