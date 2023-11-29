@@ -3,4 +3,5 @@
  */
 
 export * from './AuthPage';
+export * from './ConfirmOrder';
 export * from './HomePage';
