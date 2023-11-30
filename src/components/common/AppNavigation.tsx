@@ -77,6 +77,12 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
               </div>
             </div>
           )}
+          {desktopOrderStep === 2 && (
+            <div className='flex items-center gap-2 px-9'>
+              <ChevronLeftIcon className='w-5 h-5' />
+              <p className='text-gray/4 font-semibold text-lg'>Confirm order</p>
+            </div>
+          )}
         </>
       )}
     </div>

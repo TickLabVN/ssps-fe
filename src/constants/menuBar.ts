@@ -7,6 +7,5 @@ export const MAIN_MENU = {
 export const SUB_MENU = {
   help: 'Help Center',
   settings: 'Settings',
-  logout: 'Log out',
-  confirmOrder: 'Confirm oder'
+  logout: 'Log out'
 };

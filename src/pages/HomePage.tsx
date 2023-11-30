@@ -1,6 +1,6 @@
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
-import { OrderListDesktop } from '@components/order/desktop';
+import { OrderListDesktop, ConfirmOrderDektop } from '@components/order/desktop';
 import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore } from '@states';
 
@@ -49,6 +49,8 @@ export function HomePage() {
       );
     } else if (desktopOrderStep === 1) {
       return <OrderListDesktop />;
+    } else if (desktopOrderStep === 2) {
+      return <ConfirmOrderDektop />;
     }
   };
 
