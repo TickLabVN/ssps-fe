@@ -33,6 +33,8 @@ export function usePrintingRequestMutation() {
     mutationKey: ['deleteFile'],
     mutationFn: (fileId: string) => printingRequestService.deleteFile(fileId),
     onSuccess: (data) => {
+      queryClient.setQueryData(['fileIdCurrent'], null);
+      queryClient.setQueryData(['fileURL'], null);
       queryClient.setQueryData(['fileMetadata', data.fileId], null);
     }
   });

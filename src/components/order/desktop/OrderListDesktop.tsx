@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { MutableRefObject, useCallback, useMemo } from 'react';
 import {
   createColumnHelper,
   flexRender,
@@ -6,14 +6,43 @@ import {
   RowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { Button, Typography } from '@material-tailwind/react';
+import { Button, Spinner, Typography } from '@material-tailwind/react';
 import { TrashIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { FileBox } from '@components/order/common';
+import { usePrintingRequestMutation, usePrintingRequestQuery, useListenEvent } from '@hooks';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
-export function OrderListDesktop() {
+export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
+  initialTotalCost
+}) => {
+  const { updateAmountFiles } = usePrintingRequestMutation();
+  const {
+    listFiles: { data: listFiles, isFetching, isError, refetch: refetchListFiles }
+  } = usePrintingRequestQuery();
+
+  const { totalCost, listFileAmount, clearListFileAmount, setIsOrderUpdate } = useOrderPrintStore();
+  const { setDesktopOrderStep } = useOrderWorkflowStore();
+
+  useListenEvent('listFiles:refetch', clearListFileAmount);
+  useListenEvent('listFiles:refetch', refetchListFiles);
+
+  const handleSaveOrderUpdate = useCallback(async () => {
+    await updateAmountFiles.mutateAsync(listFileAmount);
+    initialTotalCost.current = totalCost;
+    setIsOrderUpdate(false);
+    setDesktopOrderStep(2);
+  }, [
+    initialTotalCost,
+    totalCost,
+    listFileAmount,
+    updateAmountFiles,
+    setDesktopOrderStep,
+    setIsOrderUpdate
+  ]);
+
   const columnHelper = createColumnHelper<FileExtraMetadata>();
 
   const columnDefs = useMemo(
@@ -84,60 +113,9 @@ export function OrderListDesktop() {
     [columnHelper]
   );
 
-  const defaultData = useMemo(
-    () => [
-      {
-        fileId: '0',
-        fileName: 'filename.csvfilename.csvfilename.csv',
-        numPage: 1,
-        fileURL: 'http://localhost:3000',
-        fileSize: 1024,
-        fileCoin: 200,
-        numOfCopies: 1
-      },
-      {
-        fileId: '1',
-        fileName: 'filename.csv',
-        numPage: 1,
-        fileURL: 'http://localhost:3000',
-        fileSize: 1024,
-        fileCoin: 200,
-        numOfCopies: 1
-      },
-      {
-        fileId: '2',
-        fileName: 'filename.csv',
-        numPage: 1,
-        fileURL: 'http://localhost:3000',
-        fileSize: 1024,
-        fileCoin: 200,
-        numOfCopies: 1
-      },
-      {
-        fileId: '3',
-        fileName: 'filename.csv',
-        numPage: 1,
-        fileURL: 'http://localhost:3000',
-        fileSize: 1024,
-        fileCoin: 200,
-        numOfCopies: 1
-      },
-      {
-        fileId: '4',
-        fileName: 'filename.csv',
-        numPage: 1,
-        fileURL: 'http://localhost:3000',
-        fileSize: 1024,
-        fileCoin: 200,
-        numOfCopies: 1
-      }
-    ],
-    []
-  );
-
   const fileTable = useReactTable<FileExtraMetadata>({
     columns: columnDefs,
-    data: defaultData,
+    data: listFiles ?? [],
     getCoreRowModel: getCoreRowModel<RowModel<FileExtraMetadata>>()
   });
 
@@ -175,13 +153,42 @@ export function OrderListDesktop() {
             ))}
           </thead>
           <tbody className='bg-white'>
-            {fileTable.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getAllCells().map((cell) => (
-                  <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                ))}
-              </tr>
-            ))}
+            {listFiles && listFiles.length > 0 ? (
+              isFetching ? (
+                <tr>
+                  <td colSpan={fileTable.getLeafHeaders().length}>
+                    <div className='grid justify-items-center items-center'>
+                      <Spinner color='green' className='h-12 w-12' />
+                      <span>Đang tải dữ liệu...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : isError ? (
+                <tr>
+                  <td colSpan={fileTable.getLeafHeaders().length}>
+                    <div className='grid justify-items-center items-center'>
+                      <Typography variant='h6' color='red'>
+                        Không thể tải danh sách các files trong đơn hàng.
+                      </Typography>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                fileTable.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getAllCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )
+            ) : (
+              <div className='pt-12 px-4 pb-4'>
+                <FileBox />
+              </div>
+            )}
           </tbody>
         </table>
       </div>
@@ -214,10 +221,13 @@ export function OrderListDesktop() {
             </div>
           </div>
         </div>
-        <Button className='uppercase font-bold text-white text-xl bg-blue/1 w-full rounded-t-none'>
+        <Button
+          className='uppercase font-bold text-white text-xl bg-blue/1 w-full rounded-t-none'
+          onClick={handleSaveOrderUpdate}
+        >
           order
         </Button>
       </div>
     </div>
   );
-}
+};

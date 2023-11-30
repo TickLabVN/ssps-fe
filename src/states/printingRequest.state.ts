@@ -13,6 +13,8 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
       pagesPerSheet: PAGES_PER_SHEET[0]!,
       pageSide: PAGE_SIDE.one
     },
+    specificPage: '',
+    pageBothSide: PAGE_SIDE.both.portrait[0]!,
     totalCost: 0,
     listFileAmount: [],
     setIsFileUploadSuccess: (data) => {
@@ -34,6 +36,15 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
           pageSide: PAGE_SIDE.one
         }
       });
+    },
+    setSpecificPage: (data) => {
+      set({ specificPage: data });
+    },
+    setPageBothSide: (data) => {
+      set({ pageBothSide: data });
+    },
+    clearSpecificPageAndPageBothSide: () => {
+      set({ specificPage: '', pageBothSide: PAGE_SIDE.both.portrait[0]! });
     },
     setTotalCost: (totalCost) => {
       set({ totalCost: totalCost });

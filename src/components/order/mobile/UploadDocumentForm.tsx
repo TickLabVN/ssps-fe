@@ -1,4 +1,4 @@
-import { ChangeEvent, MutableRefObject, useCallback, useState } from 'react';
+import { ChangeEvent, MutableRefObject, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -37,28 +37,26 @@ export const UploadDocumentForm: Component<{
     isOrderUpdate,
     totalCost,
     fileConfig,
+    specificPage,
+    pageBothSide,
     setFileConfig,
+    setSpecificPage,
+    setPageBothSide,
     setTotalCost,
     setIsFileUploadSuccess,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setIsOrderUpdate
   } = useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
-
-  const [specificPage, setSpecificPage] = useState<string>('');
-  const [pageBothSide, setPageBothSide] = useState<string>(
-    fileConfig.layout === LAYOUT_SIDE.portrait
-      ? PAGE_SIDE.both.portrait[0]!
-      : PAGE_SIDE.both.landscape[0]!
-  );
 
   const handlePageBothSide = useCallback(
     (event: string) => {
       setPageBothSide(event);
       setFileConfig(FILE_CONFIG.pageSide, event);
     },
-    [setFileConfig]
+    [setFileConfig, setPageBothSide]
   );
 
   const handleSaveFileConfig = useCallback(async () => {
@@ -69,6 +67,7 @@ export const UploadDocumentForm: Component<{
       });
       initialTotalCost.current = totalCost;
       clearFileConfig();
+      clearSpecificPageAndPageBothSide();
       setIsOrderUpdate(true);
       setMobileOrderStep({
         current: 2,
@@ -83,6 +82,7 @@ export const UploadDocumentForm: Component<{
     initialTotalCost,
     setMobileOrderStep,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setIsOrderUpdate
   ]);
 
@@ -104,6 +104,7 @@ export const UploadDocumentForm: Component<{
       await handleExistOrderForm();
     }
     clearFileConfig();
+    clearSpecificPageAndPageBothSide();
   }, [
     fileConfig.numOfCopies,
     fileMetadata,
@@ -113,6 +114,7 @@ export const UploadDocumentForm: Component<{
     initialTotalCost,
     handleExistOrderForm,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setTotalCost,
     setIsFileUploadSuccess,
     setMobileOrderStep

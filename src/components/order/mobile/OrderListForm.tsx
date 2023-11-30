@@ -95,7 +95,7 @@ export const OrderListForm: Component<{
               </div>
             ) : isError ? (
               <div className='grid justify-items-center items-center bg-gray-100'>
-                <Typography variant='h6'>
+                <Typography variant='h6' color='red'>
                   Không thể tải danh sách các files trong đơn hàng.
                 </Typography>
               </div>

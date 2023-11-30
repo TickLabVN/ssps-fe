@@ -30,12 +30,17 @@ type PrintingRequestStore = {
   isFileUploadSuccess: boolean;
   isOrderUpdate: boolean;
   fileConfig: FileConfig;
+  specificPage: string;
+  pageBothSide: string;
   totalCost: number;
   listFileAmount: FileAmount[];
   setIsFileUploadSuccess: (data: boolean) => void;
   setIsOrderUpdate: (data: boolean) => void;
   setFileConfig: (key: string, value: string | number) => void;
   clearFileConfig: () => void;
+  setSpecificPage: (data: string) => void;
+  setPageBothSide: (data: string) => void;
+  clearSpecificPageAndPageBothSide: () => void;
   setTotalCost: (totalCost: number) => void;
   setListFileAmount: (payload: FileAmount) => void;
   clearListFileAmount: () => void;

@@ -33,7 +33,8 @@ export const FileInfo: Component<{
     setFileConfig,
     setTotalCost,
     setListFileAmount,
-    clearFileConfig
+    clearFileConfig,
+    clearSpecificPageAndPageBothSide
   } = useOrderPrintStore();
   const { mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -109,6 +110,7 @@ export const FileInfo: Component<{
       await deleteFile.mutateAsync(fileExtraMetadata.fileId);
       setTotalCost(totalCost - fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies);
       clearFileConfig();
+      clearSpecificPageAndPageBothSide();
     }
     handleOpenDialog();
   }, [
@@ -124,6 +126,7 @@ export const FileInfo: Component<{
     setTotalCost,
     handleOpenDialog,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     updateAmountFiles
   ]);
 
@@ -148,7 +151,7 @@ export const FileInfo: Component<{
         <div className='w-full'>
           <div className='flex flex-col text-gray/4'>
             <div className='flex items-center gap-1 font-medium'>
-              <p className='max-w-[256px] truncate text-gray/4'>{fileExtraMetadata.fileName}</p>
+              <p className='max-w-[230px] truncate text-gray/4'>{fileExtraMetadata.fileName}</p>
               <p className='text-gray/3'>{`(${formatFileSize(fileExtraMetadata.fileSize)})`}</p>
             </div>
             <p className='flex items-center gap-1 text-sm mb-5'>

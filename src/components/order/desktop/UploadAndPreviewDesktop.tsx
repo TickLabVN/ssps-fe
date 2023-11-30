@@ -1,4 +1,4 @@
-import { ChangeEvent, MutableRefObject, useCallback, useState } from 'react';
+import { ChangeEvent, MutableRefObject, useCallback } from 'react';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, IconButton, Input, Option, Radio, Select } from '@material-tailwind/react';
@@ -38,26 +38,24 @@ export const UploadAndPreviewDesktop: Component<{
     isOrderUpdate,
     fileConfig,
     totalCost,
+    specificPage,
+    pageBothSide,
     setFileConfig,
+    setSpecificPage,
+    setPageBothSide,
     setTotalCost,
     setIsFileUploadSuccess,
     setIsOrderUpdate,
-    clearFileConfig
+    clearFileConfig,
+    clearSpecificPageAndPageBothSide
   } = useOrderPrintStore();
-
-  const [specificPage, setSpecificPage] = useState<string>('');
-  const [pageBothSide, setPageBothSide] = useState<string>(
-    fileConfig.layout === LAYOUT_SIDE.portrait
-      ? PAGE_SIDE.both.portrait[0]!
-      : PAGE_SIDE.both.landscape[0]!
-  );
 
   const handlePageBothSide = useCallback(
     (event: string) => {
       setPageBothSide(event);
       setFileConfig(FILE_CONFIG.pageSide, event);
     },
-    [setFileConfig]
+    [setFileConfig, setPageBothSide]
   );
 
   const handleSaveFileConfig = useCallback(async () => {
@@ -68,6 +66,7 @@ export const UploadAndPreviewDesktop: Component<{
       });
       initialTotalCost.current = totalCost;
       clearFileConfig();
+      clearSpecificPageAndPageBothSide();
       setIsOrderUpdate(true);
       setDesktopOrderStep(1);
       handleCloseUploadForm();
@@ -79,6 +78,7 @@ export const UploadAndPreviewDesktop: Component<{
     fileMetadata?.fileId,
     initialTotalCost,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setIsOrderUpdate,
     setDesktopOrderStep,
     handleCloseUploadForm
@@ -101,6 +101,7 @@ export const UploadAndPreviewDesktop: Component<{
       }
     }
     clearFileConfig();
+    clearSpecificPageAndPageBothSide();
     handleCloseUploadForm();
   }, [
     initialTotalCost,
@@ -112,6 +113,7 @@ export const UploadAndPreviewDesktop: Component<{
     deleteFile,
     cancelPrintingRequest,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setTotalCost,
     setIsFileUploadSuccess,
     setDesktopOrderStep,
@@ -140,22 +142,23 @@ export const UploadAndPreviewDesktop: Component<{
   };
 
   const PreviewDocument = () => {
-    const fileURL = queryClient.getQueryData<string>(['fileURL']);
+    const { data: fileURL } = useQuery({
+      queryKey: ['fileURL'],
+      queryFn: () => queryClient.getQueryData<string>(['fileURL'])
+    });
     const PreviewBody = () => {
-      if (fileURL) {
-        return (
-          <DocViewer
-            config={{
-              header: {
-                disableFileName: true
-              },
-              pdfVerticalScrollByDefault: true
-            }}
-            pluginRenderers={DocViewerRenderers}
-            documents={[{ uri: fileURL, fileType: 'application/pdf' }]}
-          />
-        );
-      } else return null;
+      return (
+        <DocViewer
+          config={{
+            header: {
+              disableFileName: true
+            },
+            pdfVerticalScrollByDefault: true
+          }}
+          pluginRenderers={DocViewerRenderers}
+          documents={[{ uri: fileURL ?? '', fileType: 'application/pdf' }]}
+        />
+      );
     };
     return <PreviewBody />;
   };
@@ -179,7 +182,9 @@ export const UploadAndPreviewDesktop: Component<{
                   isConfigStep={true}
                 />
               ) : (
-                <FileBox />
+                <div className='p-2'>
+                  <FileBox />
+                </div>
               )}
             </div>
             <div
