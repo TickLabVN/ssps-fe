@@ -15,7 +15,7 @@ export function usePrintingRequestQuery() {
     queryFn: () =>
       printingRequestId
         ? printingRequestService.getListFilesByPrintingRequest(printingRequestId.id)
-        : undefined,
+        : null,
     retry: retryQueryFn
   });
 

@@ -131,7 +131,7 @@ export const FileInfo: Component<{
     <>
       <div className='flex gap-4 px-4 py-2 bg-white '>
         <div
-          className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
+          className='md:hidden text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
           onClick={() => {
             if (!isConfigStep) {
               queryClient.setQueryData(['fileURL'], fileExtraMetadata.fileURL);
@@ -158,7 +158,8 @@ export const FileInfo: Component<{
                   ' x ' +
                   (fileIndex === undefined
                     ? fileExtraMetadata.numOfCopies
-                    : listFileAmount[fileIndex]?.numOfCopies)}
+                    : listFileAmount[fileIndex]?.numOfCopies) +
+                  ' copies = '}
               </span>
               <img src={coinImage} className='w-6 h-6' />
               <span className='text-yellow/1 font-bold'>

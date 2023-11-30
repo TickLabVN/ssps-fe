@@ -4,4 +4,4 @@
 
 export * from './ConfirmOrderDesktop';
 export * from './OrderListDesktop';
-export * from './UploadAndPreviewDocBox';
+export * from './UploadAndPreviewDesktop';

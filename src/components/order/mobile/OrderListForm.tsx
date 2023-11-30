@@ -1,11 +1,10 @@
 import { MutableRefObject, useCallback, useMemo } from 'react';
 import { Button, Spinner, Typography } from '@material-tailwind/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
-import { useCloseForm, FileBox, FormFooter } from '@components/order/common';
+import { useCloseForm, FileBox, FileInfo, FormFooter } from '@components/order/common';
 import { usePrintingRequestMutation, usePrintingRequestQuery, useListenEvent } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
-import { FileInfo } from './FileInfo';
 
 export const OrderListForm: Component<{
   handleExistOrderForm: () => Promise<void>;

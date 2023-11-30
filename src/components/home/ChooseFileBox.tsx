@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { useUploadAndPreviewDocBox } from '@components/order/desktop';
-import { useOrderWorkflowBox } from '@components/order/mobile';
+import { useOrderWorkflow } from '@components/order/common';
 import { ScreenSize } from '@constants';
 import { useScreenSize, usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
@@ -11,30 +10,28 @@ import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 export function useChooseFileBox() {
   const queryClient = useQueryClient();
   const [openBox, setOpenBox] = useState<boolean>(false);
-
-  const { openUploadAndPreviewDocBox, closeUploadAndPreviewDocBox, UploadAndPreviewDocBox } =
-    useUploadAndPreviewDocBox();
-  const { openOrderWorkflowBox, closeOrderWorkflowBox, OrderWorkflowBox } = useOrderWorkflowBox();
+  const { openOrderWorkflow, closeOrderWorkflow, OrderWorkflow } = useOrderWorkflow();
 
   const ChooseFileBox = () => {
     const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
     const { screenSize } = useScreenSize();
     const { desktopOrderStep, mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
-    const { isFileUploadSuccess, setIsFileUploadSuccess } = useOrderPrintStore();
+    const { isFileUploadSuccess, totalCost, setIsFileUploadSuccess } = useOrderPrintStore();
     const { uploadFile, cancelPrintingRequest } = usePrintingRequestMutation();
+
+    const initialTotalCost = useRef<number>(totalCost);
 
     useEffect(() => {
       if (isFileUploadSuccess) {
         if (screenSize <= ScreenSize.MD) {
-          openOrderWorkflowBox();
+          openOrderWorkflow();
         } else {
           if (desktopOrderStep === 0) {
-            openUploadAndPreviewDocBox();
+            openOrderWorkflow();
           }
         }
       } else {
-        closeOrderWorkflowBox();
-        closeUploadAndPreviewDocBox();
+        closeOrderWorkflow();
       }
     }, [screenSize, uploadFile, desktopOrderStep, isFileUploadSuccess]);
 
@@ -48,25 +45,14 @@ export function useChooseFileBox() {
           });
           setIsFileUploadSuccess(true);
           setOpenBox(false);
-          if (screenSize <= ScreenSize.MD) {
-            openOrderWorkflowBox();
-          } else {
-            openUploadAndPreviewDocBox();
-          }
+          openOrderWorkflow();
           setMobileOrderStep({
             current: 0,
             prev: mobileOrderStep.current
           });
         }
       },
-      [
-        screenSize,
-        uploadFile,
-        mobileOrderStep,
-        printingRequestId,
-        setMobileOrderStep,
-        setIsFileUploadSuccess
-      ]
+      [uploadFile, mobileOrderStep, printingRequestId, setMobileOrderStep, setIsFileUploadSuccess]
     );
 
     const handleCloseDialog = async () => {
@@ -114,7 +100,7 @@ export function useChooseFileBox() {
             </label>
           </DialogBody>
         </Dialog>
-        {screenSize <= ScreenSize.MD ? <OrderWorkflowBox /> : <UploadAndPreviewDocBox />}
+        {<OrderWorkflow initialTotalCost={initialTotalCost} />}
       </>
     );
   };

@@ -10,11 +10,16 @@ import {
   Typography
 } from '@material-tailwind/react';
 import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { useCloseForm, useLayoutSide, FileBox, FormFooter } from '@components/order/common';
+import {
+  useCloseForm,
+  useLayoutSide,
+  FileBox,
+  FileInfo,
+  FormFooter
+} from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
 import { usePrintingRequestMutation, emitEvent } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
-import { FileInfo } from './FileInfo';
 
 export const UploadDocumentForm: Component<{
   handleExistOrderForm: () => Promise<void>;
@@ -153,8 +158,7 @@ export const UploadDocumentForm: Component<{
       )}
       <div
         className={
-          'p-6 text-gray/4 bg-white mt-4 blur-sm' +
-          (!fileMetadata && ' blur-sm pointer-events-none')
+          'p-6 text-gray/4 bg-white mt-4' + (!fileMetadata && ' blur-sm pointer-events-none')
         }
       >
         <div className='mb-8'>
