@@ -43,5 +43,6 @@ type PrintingRequestStore = {
   clearSpecificPageAndPageBothSide: () => void;
   setTotalCost: (totalCost: number) => void;
   setListFileAmount: (payload: FileAmount) => void;
+  setArrayListFileAmount: (payload: FileAmount[]) => void;
   clearListFileAmount: () => void;
 };

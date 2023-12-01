@@ -64,6 +64,9 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
         return { listFileAmount: [...state.listFileAmount, payload] };
       });
     },
+    setArrayListFileAmount: (payload) => {
+      set({ listFileAmount: payload });
+    },
     clearListFileAmount: () => {
       set({ listFileAmount: [] });
     }

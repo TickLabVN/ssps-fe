@@ -33,7 +33,7 @@ export const UploadAndPreviewDesktop: Component<{
 
   const { uploadFileConfig, deleteFile, cancelPrintingRequest } = usePrintingRequestMutation();
 
-  const { setDesktopOrderStep } = useOrderWorkflowStore();
+  const { setDesktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
   const {
     isOrderUpdate,
     fileConfig,
@@ -69,6 +69,10 @@ export const UploadAndPreviewDesktop: Component<{
       clearSpecificPageAndPageBothSide();
       setIsOrderUpdate(true);
       setDesktopOrderStep(1);
+      setMobileOrderStep({
+        current: 2,
+        prev: 0
+      });
       handleCloseUploadForm();
     }
   }, [
@@ -81,6 +85,7 @@ export const UploadAndPreviewDesktop: Component<{
     clearSpecificPageAndPageBothSide,
     setIsOrderUpdate,
     setDesktopOrderStep,
+    setMobileOrderStep,
     handleCloseUploadForm
   ]);
 

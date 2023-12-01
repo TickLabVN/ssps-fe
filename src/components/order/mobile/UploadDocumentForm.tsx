@@ -32,7 +32,7 @@ export const UploadDocumentForm: Component<{
     queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
   });
   const { uploadFileConfig, deleteFile } = usePrintingRequestMutation();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const {
     isOrderUpdate,
     totalCost,
@@ -73,6 +73,7 @@ export const UploadDocumentForm: Component<{
         current: 2,
         prev: 0
       });
+      setDesktopOrderStep(1);
     }
   }, [
     fileMetadata?.fileId,
@@ -81,6 +82,7 @@ export const UploadDocumentForm: Component<{
     uploadFileConfig,
     initialTotalCost,
     setMobileOrderStep,
+    setDesktopOrderStep,
     clearFileConfig,
     clearSpecificPageAndPageBothSide,
     setIsOrderUpdate

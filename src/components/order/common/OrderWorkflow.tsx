@@ -1,5 +1,5 @@
-import { MutableRefObject, useCallback, useEffect, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { MutableRefObject, useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 import {
   UploadDocumentForm,
@@ -12,7 +12,7 @@ import {
 import { UploadAndPreviewDesktop } from '@components/order/desktop';
 import { ScreenSize } from '@constants';
 import { usePrintingRequestMutation, useScreenSize } from '@hooks';
-import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
+import { useOrderWorkflowStore } from '@states';
 
 export function useOrderWorkflow() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -24,21 +24,9 @@ export function useOrderWorkflow() {
 
     const queryClient = useQueryClient();
     const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
-    const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']);
-    const { data: fileMetadata } = useQuery({
-      queryKey: ['fileMetadata', fileIdCurrent],
-      queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
-    });
     const { cancelPrintingRequest } = usePrintingRequestMutation();
 
-    const { setTotalCost } = useOrderPrintStore();
     const { mobileOrderStep, desktopOrderStep } = useOrderWorkflowStore();
-
-    useEffect(() => {
-      if (fileMetadata?.fileId) {
-        setTotalCost(initialTotalCost.current + fileMetadata?.fileCoin);
-      }
-    }, [fileMetadata?.fileId, fileMetadata?.fileCoin, initialTotalCost, setTotalCost]);
 
     const handleExistOrderForm = useCallback(async () => {
       if (!printingRequestId) return;
