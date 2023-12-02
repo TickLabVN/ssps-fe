@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/TickLabVN/ssps-fe/compare/v1.2.1...v1.2.2) (2023-12-02)
+
+
+### Bug Fixes
+
+* **file-config:** change value to request body of api ([c368808](https://github.com/TickLabVN/ssps-fe/commit/c3688086e198b4ceb35fa1c95763b9b64d78f58a))
+* **type:** edit the correct data type of upload-config api ([53932dc](https://github.com/TickLabVN/ssps-fe/commit/53932dc559276a7a54dd431823d82c07812d3c0b))
+
 ## [1.2.1](https://github.com/TickLabVN/ssps-fe/compare/v1.2.0...v1.2.1) (2023-12-02)
 
 
