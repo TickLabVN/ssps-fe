@@ -248,12 +248,12 @@ export const UploadDocumentForm: Component<{
             value={`${fileConfig.pagesPerSheet}`}
             onChange={(event) => {
               if (event) {
-                setFileConfig(FILE_CONFIG.pagesPerSheet, parseInt(event));
+                setFileConfig(FILE_CONFIG.pagesPerSheet, event);
               }
             }}
           >
             {PAGES_PER_SHEET.map((item) => (
-              <Option key={item} value={`${item}`}>
+              <Option key={item} value={item}>
                 {item}
               </Option>
             ))}
