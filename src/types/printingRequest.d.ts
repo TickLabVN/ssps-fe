@@ -17,7 +17,7 @@ type FileConfig = {
   numOfCopies: number;
   layout: string;
   pages: string;
-  pagesPerSheet: string;
+  pagesPerSheet: number;
   pageSide: string;
 };
 

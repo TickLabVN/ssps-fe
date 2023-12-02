@@ -8,8 +8,8 @@ import landscapeLeft from '@assets/landscape-left.png';
 import landscapeRight from '@assets/landscape-right.jpg';
 
 export const LAYOUT_SIDE = {
-  portrait: 'Portrait',
-  landscape: 'Landscape'
+  portrait: 'portrait',
+  landscape: 'landscape'
 };
 
 export const LAYOUT_INFO = [
@@ -17,29 +17,53 @@ export const LAYOUT_INFO = [
     pos: 'Left',
     portraitImage: portraitLeft,
     landscapeImage: landscapeLeft,
-    portraitSize: 'Long edge',
-    landscapeSize: 'Short edge'
+    portraitSize: {
+      label: 'Long edge',
+      value: 'long'
+    },
+    landscapeSize: {
+      label: 'Short edge',
+      value: 'short'
+    }
   },
   {
     pos: 'Right',
     portraitImage: portraitRight,
     landscapeImage: landscapeRight,
-    portraitSize: 'Long edge',
-    landscapeSize: 'Short edge'
+    portraitSize: {
+      label: 'Long edge',
+      value: 'long'
+    },
+    landscapeSize: {
+      label: 'Short edge',
+      value: 'short'
+    }
   },
   {
     pos: 'Top',
     portraitImage: portraitTop,
     landscapeImage: landscapeTop,
-    portraitSize: 'Short edge',
-    landscapeSize: 'Long edge'
+    portraitSize: {
+      label: 'Short edge',
+      value: 'short'
+    },
+    landscapeSize: {
+      label: 'Long edge',
+      value: 'long'
+    }
   },
   {
     pos: 'Bottom',
     portraitImage: portraitBottom,
     landscapeImage: landscapeBottom,
-    portraitSize: 'Short edge',
-    landscapeSize: 'Long edge'
+    portraitSize: {
+      label: 'Short edge',
+      value: 'short'
+    },
+    landscapeSize: {
+      label: 'Long edge',
+      value: 'long'
+    }
   }
 ];
 
@@ -52,17 +76,51 @@ export const FILE_CONFIG = {
 };
 
 export const PAGES_SPECIFIC = {
-  all: 'All',
-  odd: 'Odd pages only',
-  even: 'Even pages only'
+  all: 'all',
+  odd: 'odd',
+  even: 'even'
 };
 
-export const PAGES_PER_SHEET = ['1', '2', '4', '8', '16'];
+export const PAGES_PER_SHEET = [1, 2, 4, 6, 9, 16];
 
 export const PAGE_SIDE = {
-  one: 'One side',
+  one: 'one',
   both: {
-    portrait: ['Long edge (Left)', 'Long edge (Right)', 'Short edge (Top)', 'Short edge (Bottom)'],
-    landscape: ['Short edge (Left)', 'Short edge (Right)', 'Long edge (Top)', 'Long edge (Bottom)']
+    portrait: [
+      {
+        label: 'Long edge (Left)',
+        value: 'long'
+      },
+      {
+        label: 'Long edge (Right)',
+        value: 'long'
+      },
+      {
+        label: 'Short edge (Top)',
+        value: 'short'
+      },
+      {
+        label: 'Short edge (Bottom)',
+        value: 'short'
+      }
+    ],
+    landscape: [
+      {
+        label: 'Short edge (Left)',
+        value: 'short'
+      },
+      {
+        label: 'Short edge (Right)',
+        value: 'short'
+      },
+      {
+        label: 'Long edge (Top)',
+        value: 'long'
+      },
+      {
+        label: 'Long edge (Bottom)',
+        value: 'long'
+      }
+    ]
   }
 };

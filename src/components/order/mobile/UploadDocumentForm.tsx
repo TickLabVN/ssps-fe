@@ -148,14 +148,14 @@ export const UploadDocumentForm: Component<{
   const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPageBothSide(
       e.target.value === LAYOUT_SIDE.portrait
-        ? PAGE_SIDE.both.portrait[0]!
-        : PAGE_SIDE.both.landscape[0]!
+        ? PAGE_SIDE.both.portrait[0]!.value
+        : PAGE_SIDE.both.landscape[0]!.value
     );
     setFileConfig(
       FILE_CONFIG.pageSide,
       e.target.value === LAYOUT_SIDE.portrait
-        ? PAGE_SIDE.both.portrait[0]!
-        : PAGE_SIDE.both.landscape[0]!
+        ? PAGE_SIDE.both.portrait[0]!.value
+        : PAGE_SIDE.both.landscape[0]!.value
     );
     setFileConfig(FILE_CONFIG.layout, e.target.value);
   };
@@ -194,7 +194,7 @@ export const UploadDocumentForm: Component<{
             {[LAYOUT_SIDE.portrait, LAYOUT_SIDE.landscape].map((item, index) => (
               <Radio
                 key={index}
-                label={item}
+                label={<span className='capitalize'>{item}</span>}
                 value={item}
                 onChange={handleLayoutChange}
                 checked={fileConfig.layout === item}
@@ -209,7 +209,11 @@ export const UploadDocumentForm: Component<{
             {[PAGES_SPECIFIC.all, PAGES_SPECIFIC.odd, PAGES_SPECIFIC.even].map((item, index) => (
               <Radio
                 key={index}
-                label={item}
+                label={
+                  <p>
+                    <span className='capitalize'>{item}</span> {index > 0 && ' pages only'}
+                  </p>
+                }
                 value={item}
                 onChange={handlePagesChange}
                 checked={fileConfig.pages === item}
@@ -241,15 +245,15 @@ export const UploadDocumentForm: Component<{
           <Typography className='font-bold mb-4'>Pages per sheet</Typography>
           <Select
             label='Select an option'
-            value={fileConfig.pagesPerSheet}
+            value={`${fileConfig.pagesPerSheet}`}
             onChange={(event) => {
               if (event) {
-                setFileConfig(FILE_CONFIG.pagesPerSheet, event);
+                setFileConfig(FILE_CONFIG.pagesPerSheet, parseInt(event));
               }
             }}
           >
             {PAGES_PER_SHEET.map((item) => (
-              <Option key={item} value={item}>
+              <Option key={item} value={`${item}`}>
                 {item}
               </Option>
             ))}
@@ -259,7 +263,7 @@ export const UploadDocumentForm: Component<{
           <Typography className='font-bold'>Page Side</Typography>
           <div className='-ml-3'>
             <Radio
-              label={PAGE_SIDE.one}
+              label={<span className='capitalize'>{PAGE_SIDE.one} side</span>}
               value={PAGE_SIDE.one}
               onChange={handlePageSideChange}
               checked={fileConfig.pageSide === PAGE_SIDE.one}
@@ -280,8 +284,8 @@ export const UploadDocumentForm: Component<{
                       }}
                     >
                       {PAGE_SIDE.both.portrait.map((item, index) => (
-                        <Option key={index} value={item}>
-                          {item}
+                        <Option key={index} value={item.value}>
+                          {item.label}
                         </Option>
                       ))}
                     </Select>
@@ -297,8 +301,8 @@ export const UploadDocumentForm: Component<{
                       }}
                     >
                       {PAGE_SIDE.both.landscape.map((item, index) => (
-                        <Option key={index} value={item}>
-                          {item}
+                        <Option key={index} value={item.value}>
+                          {item.label}
                         </Option>
                       ))}
                     </Select>
@@ -315,11 +319,7 @@ export const UploadDocumentForm: Component<{
                 className='w-6 h-6 cursor-pointer text-gray-500 hover:text-black'
                 onClick={openLayoutSide}
               />
-              <LayoutSide
-                layout={fileConfig.layout}
-                pageSide={fileConfig.pageSide}
-                handlePageBothSide={handlePageBothSide}
-              />
+              <LayoutSide layout={fileConfig.layout} handlePageBothSide={handlePageBothSide} />
             </div>
           </div>
         </div>

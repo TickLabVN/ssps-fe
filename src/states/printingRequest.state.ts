@@ -14,7 +14,7 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
       pageSide: PAGE_SIDE.one
     },
     specificPage: '',
-    pageBothSide: PAGE_SIDE.both.portrait[0]!,
+    pageBothSide: PAGE_SIDE.both.portrait[0]!.value,
     totalCost: 0,
     setIsFileUploadSuccess: (data) => {
       set({ isFileUploadSuccess: data });
@@ -43,7 +43,7 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
       set({ pageBothSide: data });
     },
     clearSpecificPageAndPageBothSide: () => {
-      set({ specificPage: '', pageBothSide: PAGE_SIDE.both.portrait[0]! });
+      set({ specificPage: '', pageBothSide: PAGE_SIDE.both.portrait[0]!.value });
     },
     setTotalCost: (totalCost) => {
       set({ totalCost: totalCost });
