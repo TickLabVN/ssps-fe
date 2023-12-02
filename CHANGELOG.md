@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/TickLabVN/ssps-fe/compare/v1.2.0...v1.2.1) (2023-12-02)
+
+
+### Bug Fixes
+
+* **close-form:** add conditional enable/disable continue CloseForm ([96aa62a](https://github.com/TickLabVN/ssps-fe/commit/96aa62ac0af15e58b8b4d1f47441b45a5ef2f8d4))
+
 ## [1.2.0](https://github.com/TickLabVN/ssps-fe/compare/v1.1.1...v1.2.0) (2023-12-02)
 
 
