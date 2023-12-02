@@ -1,13 +1,11 @@
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
-import { ScreenSize } from '@constants';
-import { useScreenSize, usePrintingRequestMutation } from '@hooks';
+import { usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function FileBox() {
   const queryClient = useQueryClient();
-  const { screenSize } = useScreenSize();
   const { setIsFileUploadSuccess } = useOrderPrintStore();
   const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const { uploadFile } = usePrintingRequestMutation();
@@ -24,18 +22,14 @@ export function FileBox() {
           file: event.target.files[0]
         });
         setIsFileUploadSuccess(true);
-        if (screenSize <= ScreenSize.MD) {
-          setMobileOrderStep({
-            current: 0,
-            prev: mobileOrderStep.current
-          });
-        } else {
-          setDesktopOrderStep(0);
-        }
+        setMobileOrderStep({
+          current: 0,
+          prev: mobileOrderStep.current
+        });
+        setDesktopOrderStep(0);
       }
     },
     [
-      screenSize,
       mobileOrderStep,
       uploadFile,
       queryClient,
@@ -55,7 +49,7 @@ export function FileBox() {
           strokeWidth={2}
           className='bg-blue/1 text-white rounded-full w-[40px] h-[40px] p-2 lg:w-[48px] lg:h-[48px] lg:p-3'
         />
-        <span className='text-xl lg:text-2xl text-blue/1 font-semibold h-[40px] p-1 lg:h-[48px] lg:p-2'>
+        <span className='text-xl lg:text-2xl text-blue/1 font-semibold h-[40px] p-1 lg:h-[48px] lg:p-2 truncate'>
           Choose file to print
         </span>
       </div>

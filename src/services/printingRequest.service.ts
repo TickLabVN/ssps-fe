@@ -40,7 +40,7 @@ export const printingRequestService = {
         params: { path: { printingRequestId } }
       })
     ),
-  updateAmountFiles: (payload: FileAmount[]) =>
+  updateAmountFile: (payload: FileAmount) =>
     invoke(
       apiClient.PATCH('/api/printRequest/printAmount', {
         body: payload

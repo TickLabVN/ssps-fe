@@ -1,30 +1,22 @@
 import { MutableRefObject, useCallback, useMemo } from 'react';
 import { Button, Spinner, Typography } from '@material-tailwind/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
-import { useCloseForm, FileBox, FormFooter } from '@components/order/common';
-import { usePrintingRequestMutation, usePrintingRequestQuery, useListenEvent } from '@hooks';
+import { useCloseForm, FileBox, FileInfo, FormFooter } from '@components/order/common';
+import { usePrintingRequestQuery, useListenEvent } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
-import { FileInfo } from './FileInfo';
 
 export const OrderListForm: Component<{
   handleExistOrderForm: () => Promise<void>;
   initialTotalCost: MutableRefObject<number>;
 }> = ({ handleExistOrderForm, initialTotalCost }) => {
-  const { updateAmountFiles } = usePrintingRequestMutation();
   const {
     listFiles: { data: listFiles, isFetching, isError, refetch: refetchListFiles }
   } = usePrintingRequestQuery();
 
-  const {
-    totalCost,
-    listFileAmount,
-    clearListFileAmount,
-    setTotalCost,
-    setIsFileUploadSuccess,
-    setIsOrderUpdate
-  } = useOrderPrintStore();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const { totalCost, setTotalCost, setIsFileUploadSuccess, setIsOrderUpdate } =
+    useOrderPrintStore();
+  const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const { openCloseForm, CloseForm } = useCloseForm();
 
   const totalSize = useMemo(
@@ -32,7 +24,6 @@ export const OrderListForm: Component<{
     [listFiles]
   );
 
-  useListenEvent('listFiles:refetch', clearListFileAmount);
   useListenEvent('listFiles:refetch', refetchListFiles);
 
   const handleExistCloseForm = useCallback(async () => {
@@ -40,33 +31,24 @@ export const OrderListForm: Component<{
     setTotalCost(0);
     setIsFileUploadSuccess(false);
     setIsOrderUpdate(false);
-    clearListFileAmount();
     await handleExistOrderForm();
   }, [
     initialTotalCost,
     setIsFileUploadSuccess,
     setIsOrderUpdate,
     setTotalCost,
-    clearListFileAmount,
     handleExistOrderForm
   ]);
 
-  const handleSaveOrderUpdate = useCallback(async () => {
-    await updateAmountFiles.mutateAsync(listFileAmount);
+  const handleSaveOrderUpdate = useCallback(() => {
     initialTotalCost.current = totalCost;
     setIsOrderUpdate(false);
     setMobileOrderStep({
       current: 3,
       prev: 2
     });
-  }, [
-    totalCost,
-    listFileAmount,
-    initialTotalCost,
-    updateAmountFiles,
-    setMobileOrderStep,
-    setIsOrderUpdate
-  ]);
+    setDesktopOrderStep(2);
+  }, [initialTotalCost, totalCost, setIsOrderUpdate, setMobileOrderStep, setDesktopOrderStep]);
 
   return (
     <div>
@@ -96,7 +78,7 @@ export const OrderListForm: Component<{
               </div>
             ) : isError ? (
               <div className='grid justify-items-center items-center bg-gray-100'>
-                <Typography variant='h6'>
+                <Typography variant='h6' color='red'>
                   Không thể tải danh sách các files trong đơn hàng.
                 </Typography>
               </div>
@@ -106,11 +88,7 @@ export const OrderListForm: Component<{
                   <FileInfo
                     fileExtraMetadata={file}
                     isConfigStep={false}
-                    fileIndex={index}
                     initialTotalCost={initialTotalCost}
-                    updateAmountFiles={(listFileAmount: FileAmount[]) =>
-                      updateAmountFiles.mutateAsync(listFileAmount)
-                    }
                   />
                 </div>
               ))

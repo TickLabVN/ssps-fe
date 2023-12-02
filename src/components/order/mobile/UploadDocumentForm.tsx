@@ -1,4 +1,4 @@
-import { ChangeEvent, MutableRefObject, useCallback, useState } from 'react';
+import { ChangeEvent, MutableRefObject, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -10,11 +10,16 @@ import {
   Typography
 } from '@material-tailwind/react';
 import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { useCloseForm, useLayoutSide, FileBox, FormFooter } from '@components/order/common';
+import {
+  useCloseForm,
+  useLayoutSide,
+  FileBox,
+  FileInfo,
+  FormFooter
+} from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
 import { usePrintingRequestMutation, emitEvent } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
-import { FileInfo } from './FileInfo';
 
 export const UploadDocumentForm: Component<{
   handleExistOrderForm: () => Promise<void>;
@@ -27,33 +32,31 @@ export const UploadDocumentForm: Component<{
     queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
   });
   const { uploadFileConfig, deleteFile } = usePrintingRequestMutation();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const {
     isOrderUpdate,
     totalCost,
     fileConfig,
+    specificPage,
+    pageBothSide,
     setFileConfig,
+    setSpecificPage,
+    setPageBothSide,
     setTotalCost,
     setIsFileUploadSuccess,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setIsOrderUpdate
   } = useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
-
-  const [specificPage, setSpecificPage] = useState<string>('');
-  const [pageBothSide, setPageBothSide] = useState<string>(
-    fileConfig.layout === LAYOUT_SIDE.portrait
-      ? PAGE_SIDE.both.portrait[0]!
-      : PAGE_SIDE.both.landscape[0]!
-  );
 
   const handlePageBothSide = useCallback(
     (event: string) => {
       setPageBothSide(event);
       setFileConfig(FILE_CONFIG.pageSide, event);
     },
-    [setFileConfig]
+    [setFileConfig, setPageBothSide]
   );
 
   const handleSaveFileConfig = useCallback(async () => {
@@ -64,11 +67,13 @@ export const UploadDocumentForm: Component<{
       });
       initialTotalCost.current = totalCost;
       clearFileConfig();
+      clearSpecificPageAndPageBothSide();
       setIsOrderUpdate(true);
       setMobileOrderStep({
         current: 2,
         prev: 0
       });
+      setDesktopOrderStep(1);
     }
   }, [
     fileMetadata?.fileId,
@@ -77,7 +82,9 @@ export const UploadDocumentForm: Component<{
     uploadFileConfig,
     initialTotalCost,
     setMobileOrderStep,
+    setDesktopOrderStep,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setIsOrderUpdate
   ]);
 
@@ -92,6 +99,7 @@ export const UploadDocumentForm: Component<{
         current: 2,
         prev: 0
       });
+      setDesktopOrderStep(1);
     } else {
       initialTotalCost.current = 0;
       setTotalCost(0);
@@ -99,6 +107,7 @@ export const UploadDocumentForm: Component<{
       await handleExistOrderForm();
     }
     clearFileConfig();
+    clearSpecificPageAndPageBothSide();
   }, [
     fileConfig.numOfCopies,
     fileMetadata,
@@ -108,10 +117,33 @@ export const UploadDocumentForm: Component<{
     initialTotalCost,
     handleExistOrderForm,
     clearFileConfig,
+    clearSpecificPageAndPageBothSide,
     setTotalCost,
     setIsFileUploadSuccess,
-    setMobileOrderStep
+    setMobileOrderStep,
+    setDesktopOrderStep
   ]);
+
+  const handleOpenCloseForm = async () => {
+    if (fileMetadata?.fileId) {
+      openCloseForm();
+    } else {
+      if (isOrderUpdate) {
+        if (fileMetadata?.fileId) {
+          openCloseForm();
+        } else {
+          setMobileOrderStep({
+            current: 2,
+            prev: 0
+          });
+          setDesktopOrderStep(1);
+        }
+      } else {
+        setIsFileUploadSuccess(false);
+        await handleExistOrderForm();
+      }
+    }
+  };
 
   const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPageBothSide(
@@ -138,7 +170,7 @@ export const UploadDocumentForm: Component<{
     <>
       <div className='flex justify-between items-center shadow-md px-6 py-3 bg-white mb-6'>
         <span className='text-gray/4 font-bold'>Upload document</span>
-        <IconButton variant='text' onClick={openCloseForm}>
+        <IconButton variant='text' onClick={handleOpenCloseForm}>
           <XMarkIcon className='w-6 h-6' />
         </IconButton>
         <CloseForm handleSave={handleSaveFileConfig} handleExist={handleExistCloseForm} />
@@ -153,8 +185,7 @@ export const UploadDocumentForm: Component<{
       )}
       <div
         className={
-          'p-6 text-gray/4 bg-white mt-4 blur-sm' +
-          (!fileMetadata && ' blur-sm pointer-events-none')
+          'p-6 text-gray/4 bg-white mt-4' + (!fileMetadata && ' blur-sm pointer-events-none')
         }
       >
         <div className='mb-8'>

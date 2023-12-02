@@ -16,14 +16,15 @@ export function useCloseForm() {
     handleExist: () => Promise<void> | void;
   }> = ({ handleSave, handleExist }) =>
     useMemo(() => {
-      const handleOpenDialog = () => {
-        setOpenDialog(!openDialog);
-      };
-
       return (
-        <Dialog open={openDialog} handler={handleOpenDialog} size='xs'>
+        <Dialog open={openDialog} handler={() => setOpenDialog(false)} size='xs'>
           <DialogHeader className='justify-end py-2'>
-            <IconButton color='blue-gray' size='sm' variant='text' onClick={handleOpenDialog}>
+            <IconButton
+              color='blue-gray'
+              size='sm'
+              variant='text'
+              onClick={() => setOpenDialog(false)}
+            >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
@@ -36,16 +37,28 @@ export function useCloseForm() {
               </svg>
             </IconButton>
           </DialogHeader>
-          <DialogBody className='px-[50px] py-2 text-center'>
-            <Typography variant='h4' color='black'>
-              Do you want to save your changes?
+          <DialogBody className='px-[25px] py-2 text-center'>
+            <Typography variant='h5' color='black'>
+              Bạn có muốn tiếp tục đặt hàng?
             </Typography>
-            <Typography variant='h6'>Your changes will be lost if you don't save them</Typography>
             <div className='flex items-center justify-center gap-5 mt-4'>
-              <Button className='bg-green-500' onClick={handleSave}>
-                Save changes
+              <Button
+                className='bg-green-500'
+                onClick={() => {
+                  setOpenDialog(false);
+                  handleSave();
+                }}
+              >
+                Tiếp tục
               </Button>
-              <Button onClick={handleExist}>Don't save</Button>
+              <Button
+                onClick={() => {
+                  setOpenDialog(false);
+                  handleExist();
+                }}
+              >
+                Không
+              </Button>
             </div>
           </DialogBody>
         </Dialog>

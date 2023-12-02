@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 
-type EventKey = 'listFiles:refetch' | 'amountFiles:update';
+type EventKey =
+  | 'listFiles:refetch'
+  | 'amountFiles:update'
+  | 'appNavigation:save'
+  | 'appNavigation:exist';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useListenEvent(event: EventKey, listener: (...args: any[]) => void) {
