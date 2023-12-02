@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useState } from 'react';
+import { MutableRefObject, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -19,55 +19,33 @@ import { formatFileSize } from '@utils';
 export const FileInfo: Component<{
   fileExtraMetadata: FileExtraMetadata;
   isConfigStep: boolean;
-  fileIndex?: number;
   initialTotalCost?: MutableRefObject<number>;
-  updateAmountFiles?: (listFileAmount: FileAmount[]) => Promise<unknown>;
-}> = ({ fileExtraMetadata, isConfigStep, fileIndex, initialTotalCost, updateAmountFiles }) => {
+}> = ({ fileExtraMetadata, isConfigStep, initialTotalCost }) => {
   const queryClient = useQueryClient();
-  const { deleteFile } = usePrintingRequestMutation();
+  const { deleteFile, updateAmountFile } = usePrintingRequestMutation();
 
   const {
     totalCost,
-    listFileAmount,
-    isOrderUpdate,
     setFileConfig,
     setTotalCost,
-    setListFileAmount,
     clearFileConfig,
     clearSpecificPageAndPageBothSide
   } = useOrderPrintStore();
   const { mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (fileIndex !== undefined && listFileAmount[fileIndex] === undefined && isOrderUpdate) {
-      setListFileAmount({
-        fileId: fileExtraMetadata.fileId,
-        numOfCopies: fileExtraMetadata.numOfCopies
-      });
-    }
-  }, [
-    fileExtraMetadata.fileId,
-    fileExtraMetadata.numOfCopies,
-    fileIndex,
-    isOrderUpdate,
-    listFileAmount,
-    setListFileAmount
-  ]);
-
-  const handleOpenDialog = useCallback(() => setOpenDialog(!openDialog), [openDialog]);
-  const handleDecreaseCopies = () => {
-    if (isConfigStep) {
-      if (fileExtraMetadata.numOfCopies > 1) {
+  const handleOpenDialog = () => setOpenDialog(!openDialog);
+  const handleDecreaseCopies = async () => {
+    if (fileExtraMetadata.numOfCopies > 1) {
+      if (isConfigStep) {
         setFileConfig(FILE_CONFIG.numOfCopies, fileExtraMetadata.numOfCopies - 1);
         setTotalCost(totalCost - fileExtraMetadata.fileCoin);
-      }
-    } else if (fileIndex !== undefined) {
-      if ((listFileAmount[fileIndex]?.numOfCopies ?? 0) > 1) {
-        setListFileAmount({
+      } else {
+        await updateAmountFile.mutateAsync({
           fileId: fileExtraMetadata.fileId,
-          numOfCopies: (listFileAmount[fileIndex]?.numOfCopies ?? 0) - 1
+          numOfCopies: fileExtraMetadata.numOfCopies - 1
         });
+        emitEvent('listFiles:refetch');
         setTotalCost(totalCost - fileExtraMetadata.fileCoin);
         if (initialTotalCost) {
           initialTotalCost.current -= fileExtraMetadata.fileCoin;
@@ -75,14 +53,15 @@ export const FileInfo: Component<{
       }
     }
   };
-  const handleIncreaseCopies = () => {
+  const handleIncreaseCopies = async () => {
     if (isConfigStep) {
       setFileConfig(FILE_CONFIG.numOfCopies, fileExtraMetadata.numOfCopies + 1);
-    } else if (fileIndex !== undefined) {
-      setListFileAmount({
+    } else {
+      await updateAmountFile.mutateAsync({
         fileId: fileExtraMetadata.fileId,
-        numOfCopies: (listFileAmount[fileIndex]?.numOfCopies ?? 0) + 1
+        numOfCopies: fileExtraMetadata.numOfCopies + 1
       });
+      emitEvent('listFiles:refetch');
     }
     setTotalCost(totalCost + fileExtraMetadata.fileCoin);
     if (initialTotalCost) {
@@ -90,21 +69,11 @@ export const FileInfo: Component<{
     }
   };
 
-  const handleDeleteFile = useCallback(async () => {
-    if (
-      !isConfigStep &&
-      fileIndex !== undefined &&
-      listFileAmount[fileIndex] !== undefined &&
-      initialTotalCost &&
-      updateAmountFiles
-    ) {
-      await updateAmountFiles(listFileAmount);
+  const handleDeleteFile = async () => {
+    if (!isConfigStep && initialTotalCost) {
       await deleteFile.mutateAsync(fileExtraMetadata.fileId);
-      setTotalCost(
-        totalCost - fileExtraMetadata.fileCoin * (listFileAmount[fileIndex]?.numOfCopies ?? 0)
-      );
-      initialTotalCost.current -=
-        fileExtraMetadata.fileCoin * (listFileAmount[fileIndex]?.numOfCopies ?? 0);
+      setTotalCost(totalCost - fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies);
+      initialTotalCost.current -= fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies;
       emitEvent('listFiles:refetch');
     } else {
       await deleteFile.mutateAsync(fileExtraMetadata.fileId);
@@ -113,22 +82,7 @@ export const FileInfo: Component<{
       clearSpecificPageAndPageBothSide();
     }
     handleOpenDialog();
-  }, [
-    fileExtraMetadata.fileCoin,
-    fileExtraMetadata.fileId,
-    fileExtraMetadata.numOfCopies,
-    fileIndex,
-    initialTotalCost,
-    isConfigStep,
-    listFileAmount,
-    totalCost,
-    deleteFile,
-    setTotalCost,
-    handleOpenDialog,
-    clearFileConfig,
-    clearSpecificPageAndPageBothSide,
-    updateAmountFiles
-  ]);
+  };
 
   return (
     <>
@@ -157,19 +111,11 @@ export const FileInfo: Component<{
             <p className='flex items-center gap-1 text-sm mb-5'>
               <img src={coinImage} className='grayscale w-6 h-6' />
               <span className='text-gray/4 font-normal'>
-                {fileExtraMetadata.fileCoin +
-                  ' x ' +
-                  (fileIndex === undefined
-                    ? fileExtraMetadata.numOfCopies
-                    : listFileAmount[fileIndex]?.numOfCopies) +
-                  ' copies = '}
+                {fileExtraMetadata.fileCoin + ' x ' + fileExtraMetadata.numOfCopies + ' copies = '}
               </span>
               <img src={coinImage} className='w-6 h-6' />
               <span className='text-yellow/1 font-bold'>
-                {fileExtraMetadata.fileCoin *
-                  (fileIndex === undefined
-                    ? fileExtraMetadata.numOfCopies
-                    : listFileAmount[fileIndex]?.numOfCopies ?? 0)}
+                {fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies}
               </span>
             </p>
           </div>
@@ -181,11 +127,7 @@ export const FileInfo: Component<{
               >
                 <MinusIcon width={20} />
               </span>
-              <span className='py-0.5 px-6'>
-                {fileIndex === undefined
-                  ? fileExtraMetadata.numOfCopies
-                  : listFileAmount[fileIndex]?.numOfCopies}
-              </span>
+              <span className='py-0.5 px-6'>{fileExtraMetadata.numOfCopies}</span>
               <span
                 className='p-0.5 border-l-2 flex items-center cursor-pointer'
                 onClick={handleIncreaseCopies}

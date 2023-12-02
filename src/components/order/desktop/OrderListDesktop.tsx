@@ -1,4 +1,5 @@
-import { MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react';
+import { MutableRefObject, useCallback, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   createColumnHelper,
   flexRender,
@@ -19,142 +20,115 @@ import { TrashIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outlin
 import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { FileBox } from '@components/order/common';
-import {
-  usePrintingRequestMutation,
-  usePrintingRequestQuery,
-  useListenEvent,
-  emitEvent
-} from '@hooks';
+import { usePrintingRequestMutation, usePrintingRequestQuery } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
+import { usePreviewDocumentDesktop } from './PreviewDocumentDesktop';
 
 export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
   initialTotalCost
 }) => {
-  const { updateAmountFiles, deleteFile } = usePrintingRequestMutation();
+  const queryClient = useQueryClient();
+  const { updateAmountFile, deleteFile } = usePrintingRequestMutation();
   const {
     listFiles: { data: listFiles, isFetching, isError, refetch: refetchListFiles }
   } = usePrintingRequestQuery();
 
-  const {
-    isOrderUpdate,
-    totalCost,
-    listFileAmount,
-    setListFileAmount,
-    setArrayListFileAmount,
-    clearListFileAmount,
-    setIsOrderUpdate,
-    setTotalCost
-  } = useOrderPrintStore();
+  const { openPreviewDocumentDesktop, PreviewDocumentDesktop } = usePreviewDocumentDesktop();
+
+  const { totalCost, setIsOrderUpdate, setTotalCost } = useOrderPrintStore();
   const { setDesktopOrderStep } = useOrderWorkflowStore();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [fileDeletedParams, setFileDeletedParams] = useState<{
-    fileIndex: number;
     fileId: string;
     fileCoin: number;
+    numOfCopies: number;
   }>({
-    fileIndex: -1,
     fileId: '',
-    fileCoin: -1
+    fileCoin: -1,
+    numOfCopies: -1
   });
 
-  useEffect(() => {
-    if (isOrderUpdate) {
-      setArrayListFileAmount(
-        listFiles?.map(({ fileId, numOfCopies }) => ({ fileId, numOfCopies })) ?? []
-      );
-    }
-  }, [isOrderUpdate, listFiles, setArrayListFileAmount]);
-
-  useListenEvent('listFiles:refetch', clearListFileAmount);
-  useListenEvent('listFiles:refetch', refetchListFiles);
-
-  const handleSaveOrderUpdate = useCallback(async () => {
-    await updateAmountFiles.mutateAsync(listFileAmount);
+  const handleSaveOrderUpdate = () => {
     initialTotalCost.current = totalCost;
     setIsOrderUpdate(false);
     setDesktopOrderStep(2);
-  }, [
-    initialTotalCost,
-    totalCost,
-    listFileAmount,
-    updateAmountFiles,
-    setDesktopOrderStep,
-    setIsOrderUpdate
-  ]);
+  };
 
-  const handleDeleteFile = useCallback(
-    async (fileIndex: number, fileId: string, fileCoin: number) => {
-      await updateAmountFiles.mutateAsync(listFileAmount);
-      await deleteFile.mutateAsync(fileId);
-      setTotalCost(totalCost - fileCoin * (listFileAmount[fileIndex]?.numOfCopies ?? 0));
-      initialTotalCost.current -= fileCoin * (listFileAmount[fileIndex]?.numOfCopies ?? 0);
-      emitEvent('listFiles:refetch');
-      setOpenDialog(false);
-    },
-    [initialTotalCost, totalCost, listFileAmount, deleteFile, updateAmountFiles, setTotalCost]
-  );
+  const handleDeleteFile = async (fileId: string, fileCoin: number, numOfCopies: number) => {
+    await deleteFile.mutateAsync(fileId);
+    setTotalCost(totalCost - fileCoin * numOfCopies);
+    initialTotalCost.current -= fileCoin * numOfCopies;
+    await refetchListFiles();
+    setOpenDialog(false);
+  };
 
   const handleDecreaseCopies = useCallback(
-    (fileIndex: number, fileId: string, fileCoin: number) => {
-      if ((listFileAmount[fileIndex]?.numOfCopies ?? 0) > 1) {
-        setListFileAmount({
+    async (fileId: string, fileCoin: number, numOfCopies: number) => {
+      if (numOfCopies > 1) {
+        await updateAmountFile.mutateAsync({
           fileId: fileId,
-          numOfCopies: (listFileAmount[fileIndex]?.numOfCopies ?? 0) - 1
+          numOfCopies: numOfCopies - 1
         });
         setTotalCost(totalCost - fileCoin);
         if (initialTotalCost) {
           initialTotalCost.current -= fileCoin;
         }
+        await refetchListFiles();
       }
     },
-    [initialTotalCost, totalCost, listFileAmount, setListFileAmount, setTotalCost]
+    [initialTotalCost, totalCost, updateAmountFile, setTotalCost, refetchListFiles]
   );
 
   const handleIncreaseCopies = useCallback(
-    (fileIndex: number, fileId: string, fileCoin: number) => {
-      setListFileAmount({
+    async (fileId: string, fileCoin: number, numOfCopies: number) => {
+      await updateAmountFile.mutateAsync({
         fileId: fileId,
-        numOfCopies: (listFileAmount[fileIndex]?.numOfCopies ?? 0) + 1
+        numOfCopies: numOfCopies + 1
       });
       setTotalCost(totalCost + fileCoin);
       if (initialTotalCost) {
         initialTotalCost.current += fileCoin;
       }
+      await refetchListFiles();
     },
-    [initialTotalCost, totalCost, listFileAmount, setListFileAmount, setTotalCost]
+    [initialTotalCost, totalCost, updateAmountFile, setTotalCost, refetchListFiles]
   );
 
   const columnHelper = createColumnHelper<FileExtraMetadata>();
   const columnDefs = useMemo(
     () => [
-      columnHelper.accessor(
-        (row) => (
+      columnHelper.accessor('fileId', {
+        header: 'TÀI LIỆU ĐẶT IN',
+        cell: (info) => (
           <div className='flex gap-4 px-4 py-2'>
-            <div className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer h-28 w-20'>
+            <div
+              className='text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer h-28 w-20'
+              onClick={() => {
+                queryClient.setQueryData(['fileURL'], info.row.original.fileURL);
+                openPreviewDocumentDesktop();
+              }}
+            >
               <EyeIcon width={20} />
               <span className='text-xs'>Preview</span>
             </div>
             <div className='w-full'>
               <div className='flex flex-col text-gray/4'>
                 <div className='flex items-center gap-1 font-medium text-xl'>
-                  <p className='max-w-[256px] truncate text-blue/1 font-semibold'>{row.fileName}</p>
-                  <p className='text-gray/3'>{`(${formatFileSize(row.fileSize)})`}</p>
+                  <p className='max-w-[256px] truncate text-blue/1 font-semibold'>
+                    {info.row.original.fileName}
+                  </p>
+                  <p className='text-gray/3'>{`(${formatFileSize(info.row.original.fileSize)})`}</p>
                 </div>
                 <div className='flex items-center gap-1 text-base'>
                   <img src={coinImage} className='grayscale w-6 h-6' />
-                  <span className='text-gray/4 font-normal'>{row.fileCoin}</span>
+                  <span className='text-gray/4 font-normal'>{info.row.original.fileCoin}</span>
                 </div>
               </div>
             </div>
           </div>
-        ),
-        {
-          id: 'file',
-          header: 'TÀI LIỆU ĐẶT IN',
-          cell: (info) => info.getValue()
-        }
-      ),
+        )
+      }),
       columnHelper.accessor('numOfCopies', {
         header: 'SỐ LƯỢNG',
         cell: (info) => (
@@ -164,22 +138,22 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
                 className='p-0.5 border-r-2 flex items-center cursor-pointer'
                 onClick={() =>
                   handleDecreaseCopies(
-                    info.row.index,
                     info.row.original.fileId,
-                    info.row.original.fileCoin
+                    info.row.original.fileCoin,
+                    info.row.original.numOfCopies
                   )
                 }
               >
                 <MinusIcon width={20} />
               </span>
-              <span className='py-0.5 px-6'>{listFileAmount[info.row.index]?.numOfCopies}</span>
+              <span className='py-0.5 px-6'>{info.row.original.numOfCopies}</span>
               <span
                 className='p-0.5 border-l-2 flex items-center cursor-pointer'
                 onClick={() =>
                   handleIncreaseCopies(
-                    info.row.index,
                     info.row.original.fileId,
-                    info.row.original.fileCoin
+                    info.row.original.fileCoin,
+                    info.row.original.numOfCopies
                   )
                 }
               >
@@ -195,7 +169,7 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
           <div className='flex items-center gap-1 text-sm justify-center'>
             <img src={coinImage} className='w-6 h-6' />
             <span className='text-yellow/1 font-bold text-xl'>
-              {info.getValue() * (listFileAmount[info.row.index]?.numOfCopies ?? 0)}
+              {info.row.original.fileCoin * info.row.original.numOfCopies}
             </span>
           </div>
         )
@@ -208,9 +182,9 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
             className='w-10 h-10 cursor-pointer text-red-500 hover:bg-red-50 rounded-full p-2'
             onClick={() => {
               setFileDeletedParams({
-                fileIndex: info.row.index,
                 fileId: info.row.original.fileId,
-                fileCoin: info.row.original.fileCoin
+                fileCoin: info.row.original.fileCoin,
+                numOfCopies: info.row.original.numOfCopies
               });
               setOpenDialog(true);
             }}
@@ -218,7 +192,13 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
         )
       })
     ],
-    [columnHelper, listFileAmount, handleDecreaseCopies, handleIncreaseCopies]
+    [
+      columnHelper,
+      queryClient,
+      handleDecreaseCopies,
+      handleIncreaseCopies,
+      openPreviewDocumentDesktop
+    ]
   );
 
   const fileTable = useReactTable<FileExtraMetadata>({
@@ -321,7 +301,7 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
                   alt='Coin Icon'
                   className='w-6 h-6 mr-1 opacity-50 mix-blend-luminosity'
                 />
-                2400
+                {totalCost}
               </div>
             </div>
             <div className='flex justify-between mb-3'>
@@ -332,7 +312,7 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
               <span>Total Cost</span>
               <div className='flex'>
                 <img src={coinImage} alt='Coin Icon' className='w-6 h-6 mr-1' />
-                2400
+                {totalCost}
               </div>
             </div>
           </div>
@@ -371,9 +351,9 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
               className='bg-red-400'
               onClick={() =>
                 handleDeleteFile(
-                  fileDeletedParams.fileIndex,
                   fileDeletedParams.fileId,
-                  fileDeletedParams.fileCoin
+                  fileDeletedParams.fileCoin,
+                  fileDeletedParams.numOfCopies
                 )
               }
             >
@@ -383,6 +363,7 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
           </div>
         </DialogBody>
       </Dialog>
+      {<PreviewDocumentDesktop />}
     </>
   );
 };

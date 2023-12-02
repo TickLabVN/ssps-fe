@@ -706,7 +706,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/printRequest/printAmount': {
+  '/api/printRequest/printAmounts': {
     parameters: {
       query?: never;
       header?: never;
@@ -719,7 +719,10 @@ export interface paths {
     delete?: never;
     options?: never;
     head?: never;
-    /** Change the amount of prints for multiple files */
+    /**
+     * Change the amount of prints for multiple files
+     * @deprecated
+     */
     patch: {
       parameters: {
         query?: never;
@@ -733,6 +736,52 @@ export interface paths {
             fileId: string;
             numOfCopies: number;
           }[];
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              status: string;
+              message?: string;
+            };
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
+  '/api/printRequest/printAmount': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Change the amount of prints for single files */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            fileId: string;
+            numOfCopies: number;
+          };
         };
       };
       responses: {

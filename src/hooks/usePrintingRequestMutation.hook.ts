@@ -39,9 +39,9 @@ export function usePrintingRequestMutation() {
     }
   });
 
-  const updateAmountFiles = useMutation({
+  const updateAmountFile = useMutation({
     mutationKey: ['updateAmountFile'],
-    mutationFn: (payload: FileAmount[]) => printingRequestService.updateAmountFiles(payload)
+    mutationFn: (payload: FileAmount) => printingRequestService.updateAmountFile(payload)
   });
 
   const cancelPrintingRequest = useMutation({
@@ -55,7 +55,7 @@ export function usePrintingRequestMutation() {
     uploadFile: uploadFile,
     uploadFileConfig: uploadFileConfig,
     deleteFile: deleteFile,
-    updateAmountFiles: updateAmountFiles,
+    updateAmountFile: updateAmountFile,
     cancelPrintingRequest: cancelPrintingRequest
   };
 }
