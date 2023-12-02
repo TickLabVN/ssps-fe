@@ -1,5 +1,5 @@
 import { MutableRefObject, useCallback, useMemo } from 'react';
-import { Button, Spinner, Typography } from '@material-tailwind/react';
+import { Button, Typography } from '@material-tailwind/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useCloseForm, FileBox, FileInfo, FormFooter } from '@components/order/common';
 import { usePrintingRequestQuery, useListenEvent } from '@hooks';
@@ -57,7 +57,11 @@ export const OrderListForm: Component<{
           <ChevronLeftIcon className='cursor-pointer w-6 h-6' onClick={openCloseForm} />
           <span className='ml-4 font-bold'>Order list</span>
         </div>
-        <CloseForm handleSave={handleSaveOrderUpdate} handleExist={handleExistCloseForm} />
+        <CloseForm
+          handleSave={handleSaveOrderUpdate}
+          handleExist={handleExistCloseForm}
+          listFilesLength={listFiles?.length}
+        />
         <div className='text-xs flex flex-col'>
           <span className='font-medium'>Size limit:</span>
           <div>
@@ -73,9 +77,15 @@ export const OrderListForm: Component<{
           </div>
           <div className='mt-4 bg-white'>
             {isFetching ? (
-              <div className='grid justify-items-center items-center bg-gray-100'>
-                <Spinner color='green' className='h-12 w-12' />
-              </div>
+              listFiles.map((file, index) => (
+                <div key={index}>
+                  <FileInfo
+                    fileExtraMetadata={file}
+                    isConfigStep={false}
+                    initialTotalCost={initialTotalCost}
+                  />
+                </div>
+              ))
             ) : isError ? (
               <div className='grid justify-items-center items-center bg-gray-100'>
                 <Typography variant='h6' color='red'>

@@ -90,6 +90,7 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
                 handleExist={() => {
                   emitEvent('appNavigation:exist');
                 }}
+                listFilesLength={listFiles?.length}
               />
             </>
           )}
