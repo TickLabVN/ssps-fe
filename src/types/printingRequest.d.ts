@@ -13,12 +13,17 @@ type FileMetadata = {
 
 type FileExtraMetadata = FileMetadata & { numOfCopies: number };
 
+type FileLayout = 'portrait' | 'landscape';
+type FilePages = 'all' | 'odd' | 'even' | string[];
+type FilePagesPerSheet = '1' | '2' | '4' | '6' | '9' | '16';
+type FilePageSide = 'one' | 'long' | 'short';
+
 type FileConfig = {
   numOfCopies: number;
-  layout: string;
-  pages: string;
-  pagesPerSheet: string;
-  pageSide: string;
+  layout: FileLayout;
+  pages: FilePages;
+  pagesPerSheet: FilePagesPerSheet;
+  pageSide: FilePageSide;
 };
 
 type FileAmount = {
