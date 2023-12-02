@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useMemo, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -13,14 +13,13 @@ import {
   DialogBody,
   DialogHeader,
   IconButton,
-  Spinner,
   Typography
 } from '@material-tailwind/react';
 import { TrashIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { EyeIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { FileBox } from '@components/order/common';
-import { usePrintingRequestMutation, usePrintingRequestQuery } from '@hooks';
+import { usePrintingRequestMutation, usePrintingRequestQuery, useListenEvent } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 import { usePreviewDocumentDesktop } from './PreviewDocumentDesktop';
@@ -29,15 +28,17 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
   initialTotalCost
 }) => {
   const queryClient = useQueryClient();
-  const { updateAmountFile, deleteFile } = usePrintingRequestMutation();
+  const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
+  const { updateAmountFile, deleteFile, cancelPrintingRequest } = usePrintingRequestMutation();
   const {
     listFiles: { data: listFiles, isFetching, isError, refetch: refetchListFiles }
   } = usePrintingRequestQuery();
 
   const { openPreviewDocumentDesktop, PreviewDocumentDesktop } = usePreviewDocumentDesktop();
 
-  const { totalCost, setIsOrderUpdate, setTotalCost } = useOrderPrintStore();
-  const { setDesktopOrderStep } = useOrderWorkflowStore();
+  const { totalCost, setIsOrderUpdate, setIsFileUploadSuccess, setTotalCost } =
+    useOrderPrintStore();
+  const { setDesktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [fileDeletedParams, setFileDeletedParams] = useState<{
     fileId: string;
@@ -49,10 +50,29 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
     numOfCopies: -1
   });
 
+  useEffect(() => {
+    setTotalCost(initialTotalCost.current);
+  }, [initialTotalCost, setTotalCost]);
+
   const handleSaveOrderUpdate = () => {
     initialTotalCost.current = totalCost;
     setIsOrderUpdate(false);
     setDesktopOrderStep(2);
+    setMobileOrderStep({
+      current: 3,
+      prev: 2
+    });
+  };
+
+  const handleExistOrderUpdate = async () => {
+    initialTotalCost.current = 0;
+    setTotalCost(0);
+    setIsFileUploadSuccess(false);
+    setIsOrderUpdate(false);
+    setDesktopOrderStep(0);
+    if (printingRequestId?.id) {
+      await cancelPrintingRequest.mutateAsync(printingRequestId?.id);
+    }
   };
 
   const handleDeleteFile = async (fileId: string, fileCoin: number, numOfCopies: number) => {
@@ -94,6 +114,9 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
     },
     [initialTotalCost, totalCost, updateAmountFile, setTotalCost, refetchListFiles]
   );
+
+  useListenEvent('appNavigation:save', handleSaveOrderUpdate);
+  useListenEvent('appNavigation:exist', handleExistOrderUpdate);
 
   const columnHelper = createColumnHelper<FileExtraMetadata>();
   const columnDefs = useMemo(
@@ -244,14 +267,15 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
             <tbody className='bg-white'>
               {listFiles && listFiles.length > 0 ? (
                 isFetching ? (
-                  <tr>
-                    <td colSpan={fileTable.getLeafHeaders().length}>
-                      <div className='grid justify-items-center items-center'>
-                        <Spinner color='green' className='h-12 w-12' />
-                        <span>Đang tải dữ liệu...</span>
-                      </div>
-                    </td>
-                  </tr>
+                  fileTable.getRowModel().rows.map((row) => (
+                    <tr key={row.id}>
+                      {row.getAllCells().map((cell) => (
+                        <td key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
                 ) : isError ? (
                   <tr>
                     <td colSpan={fileTable.getLeafHeaders().length}>
@@ -318,7 +342,9 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
           </div>
           <Button
             className='uppercase font-bold text-white text-xl bg-blue/1 w-full rounded-t-none'
+            color={listFiles && listFiles.length > 0 ? 'blue' : 'gray'}
             onClick={handleSaveOrderUpdate}
+            disabled={!listFiles || listFiles.length === 0}
           >
             order
           </Button>

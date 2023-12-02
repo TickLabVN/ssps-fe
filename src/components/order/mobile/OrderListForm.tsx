@@ -16,7 +16,7 @@ export const OrderListForm: Component<{
 
   const { totalCost, setTotalCost, setIsFileUploadSuccess, setIsOrderUpdate } =
     useOrderPrintStore();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const { openCloseForm, CloseForm } = useCloseForm();
 
   const totalSize = useMemo(
@@ -47,7 +47,8 @@ export const OrderListForm: Component<{
       current: 3,
       prev: 2
     });
-  }, [initialTotalCost, totalCost, setIsOrderUpdate, setMobileOrderStep]);
+    setDesktopOrderStep(2);
+  }, [initialTotalCost, totalCost, setIsOrderUpdate, setMobileOrderStep, setDesktopOrderStep]);
 
   return (
     <div>

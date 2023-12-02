@@ -20,9 +20,12 @@ import {
   QuestionMarkCircleIcon
 } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
+import { useOrderPrintStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export function ConfirmOrderDektop() {
+  const { totalCost } = useOrderPrintStore();
+
   const User_Balance = 200;
   const FEE = [
     { name: 'Print fee', price: 2400 },
@@ -248,9 +251,7 @@ export function ConfirmOrderDektop() {
               <span className='text-base font-medium text-gray/4'>Total cost</span>
               <div className='flex'>
                 <img src={coinImage} alt='Coin Icon' className='w-6 h-6 mr-1' />
-                <span className='text-base font-bold text-[#D97706]'>
-                  {FEE.reduce((total, item) => total + item.price, 0)}
-                </span>
+                <span className='text-base font-bold text-[#D97706]'>{totalCost}</span>
               </div>
             </div>
           </div>

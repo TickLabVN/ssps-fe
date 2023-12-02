@@ -97,6 +97,10 @@ export const UploadAndPreviewDesktop: Component<{
         emitEvent('listFiles:refetch');
       }
       setDesktopOrderStep(1);
+      setMobileOrderStep({
+        current: 2,
+        prev: 0
+      });
     } else {
       initialTotalCost.current = 0;
       setTotalCost(0);
@@ -122,8 +126,30 @@ export const UploadAndPreviewDesktop: Component<{
     setTotalCost,
     setIsFileUploadSuccess,
     setDesktopOrderStep,
+    setMobileOrderStep,
     handleCloseUploadForm
   ]);
+
+  const handleOpenCloseForm = async () => {
+    if (fileMetadata?.fileId) {
+      openCloseForm();
+    } else {
+      if (isOrderUpdate) {
+        if (fileMetadata?.fileId) {
+          openCloseForm();
+        } else {
+          setDesktopOrderStep(1);
+          setMobileOrderStep({
+            current: 2,
+            prev: 0
+          });
+        }
+      } else {
+        setIsFileUploadSuccess(false);
+        handleCloseUploadForm();
+      }
+    }
+  };
 
   const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPageBothSide(
@@ -171,7 +197,7 @@ export const UploadAndPreviewDesktop: Component<{
   return (
     <>
       <div className='flex justify-end'>
-        <IconButton variant='text' onClick={openCloseForm}>
+        <IconButton variant='text' onClick={handleOpenCloseForm}>
           <XMarkIcon className='w-6 h-6' />
         </IconButton>
         <CloseForm handleSave={handleSaveFileConfig} handleExist={handleExistCloseForm} />

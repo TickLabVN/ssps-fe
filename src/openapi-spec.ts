@@ -719,10 +719,7 @@ export interface paths {
     delete?: never;
     options?: never;
     head?: never;
-    /**
-     * Change the amount of prints for multiple files
-     * @deprecated
-     */
+    /** Change the amount of prints for multiple files */
     patch: {
       parameters: {
         query?: never;

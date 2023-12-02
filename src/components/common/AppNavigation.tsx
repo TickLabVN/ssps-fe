@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { ChevronLeftIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import coin from '@assets/coin.png';
 import { AppDrawer, DesktopNavbar, ToggleSidebarBtn, useSidebarMenu } from '@components/common';
+import { useCloseForm } from '@components/order/common';
 import { ScreenSize } from '@constants';
-import { useScreenSize, useUserQuery, usePrintingRequestQuery } from '@hooks';
+import { useScreenSize, useUserQuery, usePrintingRequestQuery, emitEvent } from '@hooks';
 import { useMenuBarStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
@@ -15,6 +16,8 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
   const { openSidebar, handleOpenSidebar, SidebarMenu } = useSidebarMenu();
   const { selectedMenu } = useMenuBarStore();
   const { desktopOrderStep } = useOrderWorkflowStore();
+
+  const { openCloseForm, CloseForm } = useCloseForm();
 
   const {
     remainCoins: { data }
@@ -61,21 +64,34 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
         <>
           <hr className='my-1' />
           {desktopOrderStep === 1 && (
-            <div className='flex items-center justify-between px-9'>
-              <div className='flex items-center gap-2'>
-                <ChevronLeftIcon className='w-5 h-5' />
-                <p className='text-gray/4 font-semibold text-xl'>Order list</p>
+            <>
+              <div className='flex items-center justify-between px-6'>
+                <div
+                  className='flex items-center gap-2 cursor-pointer p-2 rounded-full hover:bg-gray-100'
+                  onClick={openCloseForm}
+                >
+                  <ChevronLeftIcon className='w-5 h-5' />
+                  <p className='text-gray/4 font-semibold text-xl'>Order list</p>
+                </div>
+                <div className='text-right text-sm'>
+                  <p className='font-medium text-gray/4'>Size limit:</p>
+                  <p>
+                    <span className='font-semibold'>{`${
+                      totalSize && formatFileSize(totalSize)
+                    } / `}</span>
+                    <span className='text-gray/3 font-medium'>1GB</span>
+                  </p>
+                </div>
               </div>
-              <div className='text-right text-sm'>
-                <p className='font-medium text-gray/4'>Size limit:</p>
-                <p>
-                  <span className='font-semibold'>{`${
-                    totalSize && formatFileSize(totalSize)
-                  } / `}</span>
-                  <span className='text-gray/3 font-medium'>1GB</span>
-                </p>
-              </div>
-            </div>
+              <CloseForm
+                handleSave={() => {
+                  emitEvent('appNavigation:save');
+                }}
+                handleExist={() => {
+                  emitEvent('appNavigation:exist');
+                }}
+              />
+            </>
           )}
           {desktopOrderStep === 2 && (
             <div className='flex items-center gap-2 px-9'>

@@ -99,6 +99,7 @@ export const UploadDocumentForm: Component<{
         current: 2,
         prev: 0
       });
+      setDesktopOrderStep(1);
     } else {
       initialTotalCost.current = 0;
       setTotalCost(0);
@@ -119,8 +120,30 @@ export const UploadDocumentForm: Component<{
     clearSpecificPageAndPageBothSide,
     setTotalCost,
     setIsFileUploadSuccess,
-    setMobileOrderStep
+    setMobileOrderStep,
+    setDesktopOrderStep
   ]);
+
+  const handleOpenCloseForm = async () => {
+    if (fileMetadata?.fileId) {
+      openCloseForm();
+    } else {
+      if (isOrderUpdate) {
+        if (fileMetadata?.fileId) {
+          openCloseForm();
+        } else {
+          setMobileOrderStep({
+            current: 2,
+            prev: 0
+          });
+          setDesktopOrderStep(1);
+        }
+      } else {
+        setIsFileUploadSuccess(false);
+        await handleExistOrderForm();
+      }
+    }
+  };
 
   const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPageBothSide(
@@ -147,7 +170,7 @@ export const UploadDocumentForm: Component<{
     <>
       <div className='flex justify-between items-center shadow-md px-6 py-3 bg-white mb-6'>
         <span className='text-gray/4 font-bold'>Upload document</span>
-        <IconButton variant='text' onClick={openCloseForm}>
+        <IconButton variant='text' onClick={handleOpenCloseForm}>
           <XMarkIcon className='w-6 h-6' />
         </IconButton>
         <CloseForm handleSave={handleSaveFileConfig} handleExist={handleExistCloseForm} />
