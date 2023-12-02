@@ -7,10 +7,10 @@ import landscapeTop from '@assets/landscape-top.jpg';
 import landscapeLeft from '@assets/landscape-left.png';
 import landscapeRight from '@assets/landscape-right.jpg';
 
-export const LAYOUT_SIDE = {
+export const LAYOUT_SIDE: Readonly<Record<FileLayout, FileLayout>> = Object.freeze({
   portrait: 'portrait',
   landscape: 'landscape'
-};
+});
 
 export const LAYOUT_INFO = [
   {
@@ -81,7 +81,14 @@ export const PAGES_SPECIFIC = {
   even: 'even'
 };
 
-export const PAGES_PER_SHEET = [1, 2, 4, 6, 9, 16];
+export const PAGES_PER_SHEET: ReadonlyArray<FilePagesPerSheet> = Object.freeze([
+  '1',
+  '2',
+  '4',
+  '6',
+  '9',
+  '16'
+]);
 
 export const PAGE_SIDE = {
   one: 'one',
