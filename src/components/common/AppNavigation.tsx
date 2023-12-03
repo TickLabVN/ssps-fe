@@ -66,11 +66,11 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           {desktopOrderStep === 1 && (
             <>
               <div className='flex items-center justify-between px-6'>
-                <div
-                  className='flex items-center gap-2 cursor-pointer p-2 rounded-full hover:bg-gray-100'
-                  onClick={openCloseForm}
-                >
-                  <ChevronLeftIcon className='w-5 h-5' />
+                <div className='flex items-center gap-2'>
+                  <ChevronLeftIcon
+                    className='w-5 h-5 hover:bg-gray-100 cursor-pointer p-2 rounded-full'
+                    onClick={openCloseForm}
+                  />
                   <p className='text-gray/4 font-semibold text-xl'>Order list</p>
                 </div>
                 <div className='text-right text-sm'>

@@ -17,7 +17,7 @@ import {
 import coinImage from '@assets/coin.png';
 import { FormFooter } from '@components/order/common';
 import { usePrintingRequestQuery } from '@hooks';
-import { useOrderPrintStore } from '@states';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export function ConfirmOrderForm() {
@@ -27,14 +27,33 @@ export function ConfirmOrderForm() {
     listFiles: { data: listFiles, isFetching, isError }
   } = usePrintingRequestQuery();
 
-  const { totalCost } = useOrderPrintStore();
+  const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
+  const { totalCost, setIsOrderUpdate } = useOrderPrintStore();
+
+  const handleExistConfirmOrder = () => {
+    setIsOrderUpdate(true);
+    setMobileOrderStep({
+      current: 2,
+      prev: 3
+    });
+    setDesktopOrderStep(1);
+  };
 
   const ConfirmOrderItem: Component<{ fileExtraMetadata: FileExtraMetadata }> = useMemo(
     () =>
       ({ fileExtraMetadata }) => {
         return (
           <div className='flex gap-4 px-4 py-2 bg-white border-b-2'>
-            <div className='md:hidden text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'>
+            <div
+              className='md:hidden text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
+              onClick={() => {
+                queryClient.setQueryData(['fileURL'], fileExtraMetadata.fileURL);
+                setMobileOrderStep({
+                  current: 1,
+                  prev: mobileOrderStep.current
+                });
+              }}
+            >
               <EyeIcon width={20} />
               <span className='text-xs'>Preview</span>
             </div>
@@ -64,18 +83,14 @@ export function ConfirmOrderForm() {
           </div>
         );
       },
-    []
+    [mobileOrderStep, queryClient, setMobileOrderStep]
   );
 
   return (
     <div className='text-gray-4'>
       <div className='px-6 py-3 shadow-md font-semibold bg-white mb-6'>
         <div className='flex items-center'>
-          <ChevronLeftIcon
-            width={28}
-            // onClick={() => setMobileOrderStep(2)}
-            className='cursor-pointer'
-          />
+          <ChevronLeftIcon onClick={handleExistConfirmOrder} className='w-6 h-6 cursor-pointer' />
           <Typography className='ml-4 font-bold text-gray/4'>Confirm order</Typography>
         </div>
       </div>
@@ -116,15 +131,23 @@ export function ConfirmOrderForm() {
           </div>
         </div>
         <div className='px-6 py-4 bg-white mb-4'>
-          <div className='flex items-center mb-4'>
+          <div className='flex items-center'>
             <WalletIcon strokeWidth={2} className='w-6 h-6 mr-2 text-blue-500' />
             <p className='text-gray/4 text-base font-medium'>Payment method</p>
           </div>
-          <div className='flex items-center justify-between'>
+          <div
+            className='flex items-center justify-between cursor-pointer hover:bg-gray-100 p-2 rounded-full'
+            onClick={() => {
+              setMobileOrderStep({
+                current: 4,
+                prev: 3
+              });
+            }}
+          >
             <Typography variant='h6'>Print wallet</Typography>
-            <ChevronRightIcon width={20} />
+            <ChevronRightIcon className='w-5 h-5' />
           </div>
-          <div className='flex items-center mb-4'>
+          <div className='flex items-center mb-4 px-2'>
             <Typography className='mr-2 text-sm'>Balance:</Typography>
             <div className='flex items-center'>
               <img src={coinImage} alt='coinImage' className='w-6 h-6' />
