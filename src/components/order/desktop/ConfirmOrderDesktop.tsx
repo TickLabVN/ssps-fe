@@ -49,7 +49,7 @@ export function ConfirmOrderDektop() {
                   <p className='text-gray/3'>{`(${formatFileSize(row.fileSize)})`}</p>
                 </div>
                 <div className='flex items-center gap-1 text-base'>
-                  <img src={coinImage} className='grayscale w-6 h-6' />
+                  <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
                   <span className='text-gray/4 font-normal'>{row.fileCoin}</span>
                 </div>
               </div>
@@ -70,7 +70,7 @@ export function ConfirmOrderDektop() {
         header: 'THÀNH TIỀN',
         cell: (info) => (
           <div className='flex items-center gap-1 text-sm justify-center'>
-            <img src={coinImage} className='w-6 h-6' />
+            <img src={coinImage} alt='coinImage' className='w-6 h-6' />
             <span className='text-yellow/1 font-bold text-xl'>{info.getValue()}</span>
           </div>
         )

@@ -26,8 +26,8 @@ export function useSidebarMenu() {
                 <ToggleSidebarBtn open={openSidebar} />
               </div>
               <div className='flex'>
-                <img className='w-7 h-7 mr-2' src={logo}></img>
-                <img className='w-7 h-7' src={ticklab}></img>
+                <img className='w-7 h-7 mr-2' src={logo} alt='logo'></img>
+                <img className='w-7 h-7' src={ticklab} alt='ticklab'></img>
               </div>
             </div>
             <div className='min-h-[90%] mt-10 flex flex-col justify-between pb-4'>

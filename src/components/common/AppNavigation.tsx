@@ -56,7 +56,7 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
               {data}
             </div>
           )}
-          <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin}></img>
+          <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin} alt='coin'></img>
           <UserCircleIcon className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer' />
         </div>
       </div>

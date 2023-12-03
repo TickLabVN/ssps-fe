@@ -660,7 +660,7 @@ export interface paths {
           'application/json': {
             numOfCopies: number;
             layout: 'portrait' | 'landscape';
-            pages: 'all' | 'odd' | 'even' | string[];
+            pages: 'all' | 'odd' | 'even' | string;
             pagesPerSheet: '1' | '2' | '4' | '6' | '9' | '16';
             pageSide: 'one' | 'long' | 'short';
           };

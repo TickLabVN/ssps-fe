@@ -109,11 +109,11 @@ export const FileInfo: Component<{
               <p className='text-gray/3'>{`(${formatFileSize(fileExtraMetadata.fileSize)})`}</p>
             </div>
             <p className='flex items-center gap-1 text-sm mb-5'>
-              <img src={coinImage} className='grayscale w-6 h-6' />
+              <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
               <span className='text-gray/4 font-normal'>
                 {fileExtraMetadata.fileCoin + ' x ' + fileExtraMetadata.numOfCopies + ' copies = '}
               </span>
-              <img src={coinImage} className='w-6 h-6' />
+              <img src={coinImage} alt='coinImage' className='w-6 h-6' />
               <span className='text-yellow/1 font-bold'>
                 {fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies}
               </span>

@@ -3,7 +3,6 @@
  */
 
 export * from './ConfirmOrderForm';
-export * from './ConfirmOrderItem';
 export * from './OrderListForm';
 export * from './OrderSuccessForm';
 export * from './PreviewDocument';
