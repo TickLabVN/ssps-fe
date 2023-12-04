@@ -1,9 +1,6 @@
 import { InformationCircleIcon, BanknotesIcon, WalletIcon } from '@heroicons/react/24/outline';
 import { Button, Radio } from '@material-tailwind/react';
 import coinImage from '@assets/coin.png';
-import momoImage from '@assets/momo.png';
-import zaloImage from '@assets/zalo.png';
-import VNPayImage from '@assets/VNPay.png';
 
 export const TopUpWalletDestop = () => {
   const currentBalance = 202;
@@ -12,15 +9,15 @@ export const TopUpWalletDestop = () => {
   const amountLevel = 100000;
   const methodList = [
     {
-      image: momoImage,
+      image: coinImage,
       method: 'Momo'
     },
     {
-      image: zaloImage,
+      image: coinImage,
       method: 'Zalo'
     },
     {
-      image: VNPayImage,
+      image: coinImage,
       method: 'VNPay'
     }
   ];

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { printingRequestService, buyCoinService, userService } from '@services';
+import { retryQueryFn } from '@utils';
 
 export function usePrintingRequestMutation() {
   const queryClient = useQueryClient();
@@ -65,7 +66,8 @@ export function usePrintingRequestMutation() {
     onSuccess: () => {
       queryClient.prefetchQuery({
         queryKey: ['/api/user/remain-coins'],
-        queryFn: () => userService.getRemainCoins()
+        queryFn: () => userService.getRemainCoins(),
+        retry: retryQueryFn
       });
     }
   });

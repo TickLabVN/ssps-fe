@@ -6,6 +6,7 @@ import { MAIN_MENU, SUB_MENU } from '@constants';
 import { useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
+import { authService } from './services/auth.service';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();
@@ -84,8 +85,7 @@ export default function App() {
           {
             type: 'logout-btn',
             name: SUB_MENU.logout,
-            onClick() {}
-            //onClick: () => authService.logout().then(() => getData())
+            onClick: () => authService.logout().then(() => refetch())
           }
         ]}
       />
