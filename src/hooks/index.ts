@@ -3,6 +3,7 @@
  */
 
 export * from './useEvent';
+export * from './useExchangeRateQuery.hook';
 export * from './usePrintingRequestMutation.hook';
 export * from './usePrintingRequestQuery.hook';
 export * from './useScreenSize';
