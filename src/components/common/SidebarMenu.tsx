@@ -71,6 +71,12 @@ export function useSidebarMenu() {
                         </ListItem>
                       </Link>
                     );
+                  } else if (menuItem.type === 'logout-btn') {
+                    return (
+                      <ListItem key={idx} className={ITEM_CLASSNAME} onClick={menuItem.onClick}>
+                        {menuItem.name}
+                      </ListItem>
+                    );
                   }
                 })}
               </List>

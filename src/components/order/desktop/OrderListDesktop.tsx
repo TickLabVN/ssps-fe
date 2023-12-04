@@ -341,7 +341,7 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
             </div>
           </div>
           <Button
-            className='uppercase font-bold text-white text-xl w-full rounded-t-none'
+            className='uppercase font-bold text-white text-lg w-full rounded-t-none'
             color={listFiles && listFiles.length > 0 ? 'blue' : 'gray'}
             onClick={handleSaveOrderUpdate}
             disabled={!listFiles || listFiles.length === 0}
