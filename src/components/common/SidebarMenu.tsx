@@ -80,29 +80,6 @@ export function useSidebarMenu() {
                   }
                 })}
               </List>
-              <List className='p-0'>
-                {subMenu.map((menuItem, idx) => {
-                  if (menuItem.type === 'logout-btn') {
-                    return (
-                      <ListItem
-                        key={idx}
-                        className={
-                          ITEM_CLASSNAME +
-                          (selectedMenu === menuItem.name
-                            ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
-                            : '')
-                        }
-                        onClick={() => {
-                          setSelectedMenu(menuItem.name);
-                          setOpenSidebar(false);
-                        }}
-                      >
-                        {menuItem.name}
-                      </ListItem>
-                    );
-                  }
-                })}
-              </List>
             </div>
           </>
         );
