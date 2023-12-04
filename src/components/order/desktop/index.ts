@@ -5,4 +5,5 @@
 export * from './ConfirmOrderDesktop';
 export * from './OrderListDesktop';
 export * from './PreviewDocumentDesktop';
+export * from './TopUpWalletFormDesktop';
 export * from './UploadAndPreviewDesktop';
