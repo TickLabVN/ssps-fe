@@ -5,7 +5,7 @@ import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
 import { useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
-import { AuthPage, HomePage, OrderListForm } from '@pages';
+import { AuthPage, HomePage } from '@pages';
 import { TopUpWalletFormDestop } from '@components/order/desktop';
 
 export default function App() {
@@ -88,13 +88,6 @@ export default function App() {
             name: SUB_MENU.settings,
             element: <></>
           },
-          {
-            type: 'sub-item',
-            path: '/orderList',
-            name: SUB_MENU.orderList,
-            element: <OrderListForm />
-          },
-
           {
             type: 'logout-btn',
             name: SUB_MENU.logout,

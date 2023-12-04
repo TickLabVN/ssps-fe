@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { LAYOUT_SIDE, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
+import { LAYOUT_SIDE, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
 
 export const useOrderPrintStore = create<PrintingRequestStore>()(
   devtools((set) => ({
@@ -9,12 +9,13 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
     fileConfig: {
       numOfCopies: 1,
       layout: LAYOUT_SIDE.portrait,
-      pages: PAGES_SPECIFIC.all,
+      pages: 'all',
       pagesPerSheet: PAGES_PER_SHEET[0]!,
-      pageSide: PAGE_SIDE.one
+      pageSide: 'one'
     },
+    specificPage: '',
+    pageBothSide: PAGE_SIDE.both.portrait[0]!.value,
     totalCost: 0,
-    listFileAmount: [],
     setIsFileUploadSuccess: (data) => {
       set({ isFileUploadSuccess: data });
     },
@@ -29,32 +30,23 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
         fileConfig: {
           numOfCopies: 1,
           layout: LAYOUT_SIDE.portrait,
-          pages: PAGES_SPECIFIC.all,
+          pages: 'all',
           pagesPerSheet: PAGES_PER_SHEET[0]!,
-          pageSide: PAGE_SIDE.one
+          pageSide: 'one'
         }
       });
+    },
+    setSpecificPage: (data) => {
+      set({ specificPage: data });
+    },
+    setPageBothSide: (data) => {
+      set({ pageBothSide: data });
+    },
+    clearSpecificPageAndPageBothSide: () => {
+      set({ specificPage: '', pageBothSide: PAGE_SIDE.both.portrait[0]!.value });
     },
     setTotalCost: (totalCost) => {
       set({ totalCost: totalCost });
-    },
-    setListFileAmount: (payload) => {
-      set((state) => {
-        const existingIndex = state.listFileAmount.findIndex(
-          (file) => file.fileId === payload.fileId
-        );
-        if (existingIndex !== -1) {
-          const updatedListFileAmount = { ...state.listFileAmount[existingIndex], ...payload };
-          const updatedListFileAmountArray = [...state.listFileAmount];
-          updatedListFileAmountArray[existingIndex] = updatedListFileAmount;
-
-          return { listFileAmount: updatedListFileAmountArray };
-        }
-        return { listFileAmount: [...state.listFileAmount, payload] };
-      });
-    },
-    clearListFileAmount: () => {
-      set({ listFileAmount: [] });
     }
   }))
 );

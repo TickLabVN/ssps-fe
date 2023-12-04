@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.2.2](https://github.com/TickLabVN/ssps-fe/compare/v1.2.1...v1.2.2) (2023-12-02)
+
+
+### Bug Fixes
+
+* **file-config:** change value to request body of api ([c368808](https://github.com/TickLabVN/ssps-fe/commit/c3688086e198b4ceb35fa1c95763b9b64d78f58a))
+* **type:** edit the correct data type of upload-config api ([53932dc](https://github.com/TickLabVN/ssps-fe/commit/53932dc559276a7a54dd431823d82c07812d3c0b))
+
+## [1.2.1](https://github.com/TickLabVN/ssps-fe/compare/v1.2.0...v1.2.1) (2023-12-02)
+
+
+### Bug Fixes
+
+* **close-form:** add conditional enable/disable continue CloseForm ([96aa62a](https://github.com/TickLabVN/ssps-fe/commit/96aa62ac0af15e58b8b4d1f47441b45a5ef2f8d4))
+
+## [1.2.0](https://github.com/TickLabVN/ssps-fe/compare/v1.1.1...v1.2.0) (2023-12-02)
+
+
+### Features
+
+* **confirm-order:** create ui for confirm-order step version desktop ([ee9430c](https://github.com/TickLabVN/ssps-fe/commit/ee9430c030f6a273c9accbf7329f2710a1ee6679))
+* **order-form:** add logic into components of OrderList ([efce6a9](https://github.com/TickLabVN/ssps-fe/commit/efce6a95ad961a69c130f1359820e50e51ecb38c))
+* **order:** create UI for order list version desktop ([4c37f2e](https://github.com/TickLabVN/ssps-fe/commit/4c37f2e6b339c80c8e583ec9f7612274ad0e274c))
+
+
+### Bug Fixes
+
+* **order-list:** handle total cost and CloseForm ([66cd66c](https://github.com/TickLabVN/ssps-fe/commit/66cd66cbe1279a701b1c8b563cc5eece35fd9287))
+
 ## [1.1.1](https://github.com/TickLabVN/ssps-fe/compare/v1.1.0...v1.1.1) (2023-11-28)
 
 

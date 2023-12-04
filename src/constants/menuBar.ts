@@ -8,6 +8,5 @@ export const SUB_MENU = {
   help: 'Help Center',
   settings: 'Settings',
   logout: 'Log out',
-  orderList: 'Order list',
   wallet: 'Wallet'
 };
