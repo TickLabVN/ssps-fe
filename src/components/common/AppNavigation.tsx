@@ -32,9 +32,6 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
     () => listFiles?.reduce((totalSize, file) => totalSize + file.fileSize, 0),
     [listFiles]
   );
-  const handleLogout = () => {
-    logout.mutateAsync();
-  };
   return (
     <div className='w-full max-h-[768px] py-3 shadow-md lg:sticky my-3 lg:my-0'>
       <div className='flex items-center justify-between px-6 lg:px-9'>
@@ -62,7 +59,9 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           )}
           <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin} alt='coin'></img>
           <PowerIcon
-            onClick={handleLogout}
+            onClick={() => {
+              logout.mutateAsync();
+            }}
             className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer'
           />
         </div>
