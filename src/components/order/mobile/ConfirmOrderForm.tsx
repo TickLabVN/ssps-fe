@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { MutableRefObject, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Alert, Button, Typography } from '@material-tailwind/react';
 import {
@@ -20,15 +20,22 @@ import { usePrintingRequestQuery } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
-export function ConfirmOrderForm() {
+export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
+  initialTotalCost
+}) => {
   const queryClient = useQueryClient();
   const remainCoins = queryClient.getQueryData<number>(['/api/user/remain-coins']);
   const {
-    listFiles: { data: listFiles, isFetching, isError }
+    listFiles: { data: listFiles, isFetching, isError },
+    serviceFee: { data: serviceFee }
   } = usePrintingRequestQuery();
 
   const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
-  const { totalCost, setIsOrderUpdate } = useOrderPrintStore();
+  const { totalCost, setIsOrderUpdate, setTotalCost } = useOrderPrintStore();
+
+  useEffect(() => {
+    setTotalCost(initialTotalCost.current);
+  }, [initialTotalCost, setTotalCost]);
 
   const handleExistConfirmOrder = () => {
     setIsOrderUpdate(true);
@@ -187,7 +194,7 @@ export function ConfirmOrderForm() {
               </Typography>
               <p className='flex items-center gap-1 text-sm'>
                 <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
-                <span className='text-gray/4 font-normal'>2</span>
+                <span className='text-gray/4 font-normal'>{serviceFee ?? 0}</span>
               </p>
             </li>
             <li className='flex justify-between'>
@@ -196,22 +203,31 @@ export function ConfirmOrderForm() {
               </Typography>
               <p className='flex items-center gap-1'>
                 <img src={coinImage} alt='coinImage' className='w-6 h-6' />
-                <span className='text-yellow/1 font-bold'>{totalCost + 2}</span>
+                <span className='text-yellow/1 font-bold'>{totalCost + (serviceFee ?? 0)}</span>
               </p>
             </li>
           </ul>
         </div>
       </div>
-      <FormFooter totalCost={totalCost + 2}>
+      <FormFooter totalCost={totalCost + (serviceFee ?? 0)}>
         <Button
-          color={remainCoins !== undefined && remainCoins >= totalCost + 2 ? 'blue' : 'gray'}
+          color={
+            remainCoins !== undefined && remainCoins >= totalCost + (serviceFee ?? 0)
+              ? 'blue'
+              : 'gray'
+          }
           className='rounded-none w-[30%]'
-          //onClick={() => setMobileOrderStep(4)}
-          disabled={!remainCoins || remainCoins < totalCost + 2}
+          onClick={() =>
+            setMobileOrderStep({
+              current: 5,
+              prev: 3
+            })
+          }
+          disabled={!remainCoins || remainCoins < totalCost + (serviceFee ?? 0)}
         >
           <span className='text-base'>Confirm</span>
         </Button>
       </FormFooter>
     </div>
   );
-}
+};

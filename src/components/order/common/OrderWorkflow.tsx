@@ -52,11 +52,16 @@ export function useOrderWorkflow() {
           />
         );
       } else if (mobileOrderStep.current === 3) {
-        return <ConfirmOrderForm />;
+        return <ConfirmOrderForm initialTotalCost={initialTotalCost} />;
       } else if (mobileOrderStep.current === 4) {
         return <TopupWalletForm />;
       } else if (mobileOrderStep.current === 5) {
-        return <OrderSuccessForm />;
+        return (
+          <OrderSuccessForm
+            handleCloseOrderForm={() => setOpenDialog(false)}
+            initialTotalCost={initialTotalCost}
+          />
+        );
       }
     } else {
       if (desktopOrderStep === 0) {

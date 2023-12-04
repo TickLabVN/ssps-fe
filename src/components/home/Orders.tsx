@@ -9,6 +9,11 @@ import { printingRequestService } from '@services';
 import { retryQueryFn } from '@utils';
 
 export function Orders() {
+  const { data: orders } = useQuery({
+    queryKey: ['/api/printRequest'],
+    queryFn: () => printingRequestService.getPrintingRequest(),
+    retry: retryQueryFn
+  });
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -21,12 +26,6 @@ export function Orders() {
       sliderRef.current.scrollLeft += 500;
     }
   };
-
-  const { data: orders } = useQuery({
-    queryKey: ['/api/printRequest'],
-    queryFn: () => printingRequestService.getPrintingRequest(),
-    retry: retryQueryFn
-  });
 
   return (
     <div className='relative'>
@@ -49,7 +48,7 @@ export function Orders() {
                   <span className={`capitalize text-${ORDER_STATUS_COLOR[order.status]}-500`}>
                     {order.status}
                   </span>
-                  <span>{order.id.slice(8, order.id.length)}</span>
+                  <span>{`#${order.id.slice(0, 4)}-${order.id.slice(4, 8)}`}</span>
                 </div>
                 <div>
                   <span className='text-blue/1 mr-1'>{order.filesName[0]}</span>
@@ -57,7 +56,11 @@ export function Orders() {
                 </div>
                 <div className='flex items-center text-gray/3 mb-4'>
                   <MapPinIcon className='w-5 h-5 mr-1' />
-                  <span>{order.location}</span>
+                  <span>
+                    {order.location.length > 0
+                      ? order.location.length
+                      : 'Tiệm in thư viện H3, tầng 1'}
+                  </span>
                 </div>
                 <hr className='h-[1px] mb-4' />
                 <div className='flex items-center justify-between text-gray/4 text-base lg:text-lg'>

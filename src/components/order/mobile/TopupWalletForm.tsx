@@ -1,5 +1,6 @@
-import { ReactElement, useState, useRef } from 'react';
+import { ReactElement, useState, useRef, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 import { Alert, Button, Card, CardBody, Input, Typography } from '@material-tailwind/react';
 import {
   BanknotesIcon,
@@ -18,37 +19,42 @@ import {
 import coinImage from '@assets/coin.png';
 import paypal from '@assets/paypal.png';
 import { SUGGEST_AMOUNT } from '@constants';
-import { useExchangeRateQuery } from '@hooks';
+import { usePrintingRequestQuery, usePrintingRequestMutation } from '@hooks';
+import { useOrderWorkflowStore } from '@states';
 
 export function TopupWalletForm() {
   const queryClient = useQueryClient();
   const {
     exchangeRate: [coinPerPage, coinPerDollar]
-  } = useExchangeRateQuery();
+  } = usePrintingRequestQuery();
+  const { createPayPalOrder, approvePayPalOrder } = usePrintingRequestMutation();
+  const { setMobileOrderStep } = useOrderWorkflowStore();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const ExchangeRateInfo = () => {
     const CHEVRON_CLASSNAME =
       'w-5 h-5 opacity-40 hover:text-[#0F172A] hover:opacity-100 focus:opacity-100 active:opacity-100';
     const [chevronIcon, setChevronIcon] = useState<boolean>(false);
 
-    const ExchangeRateRow: Component<{ title: string; coins?: number; children: ReactElement }> = ({
-      title,
-      coins,
-      children
-    }) => (
-      <div className='flex items-center justify-between'>
-        <p className='text-gray/3 text-xs font-normal'>{title}</p>
-        <div className='flex items-center'>
-          {coins !== undefined && <p className='text-gray/4 text-xs font-medium'>{coins}</p>}
-          <img className='w-4 h-4 mix-blend-luminosity' src={coinImage} alt='coinImage'></img>
-          <p className='text-gray/4 text-xs font-medium mx-1'>=</p>
-          <div className='min-w-[48px] flex justify-end'>
-            <p className='text-gray/4 text-xs font-medium'>1</p>
-            {children}
-          </div>
-        </div>
-      </div>
-    );
+    const ExchangeRateRow: Component<{ title: string; coins?: number; children: ReactElement }> =
+      useMemo(
+        () =>
+          ({ title, coins, children }) => (
+            <div className='flex items-center justify-between'>
+              <p className='text-gray/3 text-xs font-normal'>{title}</p>
+              <div className='flex items-center'>
+                {coins !== undefined && <p className='text-gray/4 text-xs font-medium'>{coins}</p>}
+                <img className='w-4 h-4 mix-blend-luminosity' src={coinImage} alt='coinImage'></img>
+                <p className='text-gray/4 text-xs font-medium mx-1'>=</p>
+                <div className='min-w-[48px] flex justify-end'>
+                  <p className='text-gray/4 text-xs font-medium'>1</p>
+                  {children}
+                </div>
+              </div>
+            </div>
+          ),
+        []
+      );
 
     return (
       <Card className='rounded-none shadow-sm'>
@@ -93,9 +99,8 @@ export function TopupWalletForm() {
 
   const TopupAmountInput = () => {
     const remainCoins = queryClient.getQueryData<number>(['/api/user/remain-coins']);
+    const [amountInputValue, setAmountInputValue] = useState<string>('');
     const [showInfo, setShowInfo] = useState<boolean>(false);
-    const [inputValue, setInputValue] = useState<string>('');
-    const inputRef = useRef<HTMLInputElement>(null);
 
     return (
       <Card className='rounded-none shadow-sm my-4'>
@@ -119,7 +124,7 @@ export function TopupWalletForm() {
             <Input
               color='blue'
               label='Top up Amount'
-              value={inputValue}
+              value={amountInputValue}
               size='lg'
               className='px-4 pb-11 text-gray/4 !text-2xl !font-bold border rounded-lg '
               labelProps={{
@@ -133,7 +138,7 @@ export function TopupWalletForm() {
               inputRef={inputRef}
               onBlur={() => !inputRef.current?.value && setShowInfo(false)}
               onChange={(e) => {
-                setInputValue(e.target.value);
+                setAmountInputValue(e.target.value);
                 setShowInfo(true);
               }}
               maxLength={10}
@@ -142,7 +147,7 @@ export function TopupWalletForm() {
               <XMarkIcon
                 className='w-7 h-7 text-gray/4 absolute right-4 top-4 cursor-pointer'
                 onClick={() => {
-                  setInputValue('');
+                  setAmountInputValue('');
                   setShowInfo(false);
                 }}
               />
@@ -152,7 +157,7 @@ export function TopupWalletForm() {
                   <img className='w-4 h-4 ml-1' src={coinImage} alt='coinImage'></img>
                   <p className='text-[#D97706] text-xs font-bold'>
                     {Math.floor(
-                      parseFloat(inputValue.replace(/[^0-9.]/g, '') || '0') *
+                      parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') *
                         (coinPerDollar.data ?? 1)
                     )}
                   </p>
@@ -165,13 +170,13 @@ export function TopupWalletForm() {
                     alt='coinImage'
                   ></img>
                   <Typography className='text-gray/4 text-xs'>
-                    {Math.floor(parseInt(inputValue.replace(/[^0-9.]/g, '') || '0') / 10) *
+                    {Math.floor(parseInt(amountInputValue.replace(/[^0-9.]/g, '') || '0') / 10) *
                       (coinPerDollar.data ?? 1)}
                     )
                   </Typography>
                 </div>
               </div>
-              {parseFloat(inputValue.replace(/[^0-9.]/g, '')) < 1 && (
+              {parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') < 1 && (
                 <Alert className='bg-red-50 text-red-600 p-2'>
                   <div className='flex items-center'>
                     <ExclamationTriangleIcon className='w-5 h-5 mr-2' />
@@ -183,7 +188,7 @@ export function TopupWalletForm() {
           </div>
           <div
             className={
-              showInfo && Number(inputValue.replace(/[^0-9.]/g, '')) < 10000
+              showInfo && parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') < 1
                 ? 'mt-6 mb-4 flex items-start content-start flex-wrap gap-2'
                 : 'my-4 flex items-start content-start flex-wrap gap-2'
             }
@@ -193,7 +198,7 @@ export function TopupWalletForm() {
                 key={index}
                 className='flex items-center p-2 rounded-lg bg-[#DBEAFE] text-base font-semibold text-blue/1 shadow-none normal-case'
                 onClick={() => {
-                  setInputValue(item);
+                  setAmountInputValue(item);
                   setShowInfo(true);
                 }}
               >
@@ -205,7 +210,7 @@ export function TopupWalletForm() {
             <Typography className='text-gray/4 text-xs font-medium flex'>Bonus:</Typography>
             <img className='w-4 h-4' src={coinImage} alt='coinImage'></img>
             <Typography className='text-[#D97706] text-xs font-bold'>
-              {coinPerDollar.data}
+              {coinPerDollar.data ? coinPerDollar.data : 0}
             </Typography>
             <Typography className='text-gray/3 text-xs font-normal ml-1'>
               (for every 10$)
@@ -216,24 +221,27 @@ export function TopupWalletForm() {
     );
   };
 
-  const PaymentMethod = () => (
-    <Card className='rounded-none shadow-sm my-4'>
-      <CardBody className='p-0'>
-        <div className='px-6 py-4 flex items-center'>
-          <WalletIcon strokeWidth={2} className='w-5 h-5 text-blue/1 mr-2' />
-          <p className='text-gray/4 text-base font-medium '>Payment Method</p>
-        </div>
-        <div className='px-6 flex items-center'>
-          <div className='flex items-center gap-2'>
-            <img className='w-16 object-cover' src={paypal} alt='paypal'></img>
-            <div className='flex flex-col justify-between items-start'>
-              <p className='text-gray/4 text-sm font-normal '>Pay with PayPal wallet</p>
-              <p className='text-gray/3 text-sm font-normal'>Redirect to PayPal</p>
+  const PaymentMethod = useMemo(
+    () => () => (
+      <Card className='rounded-none shadow-sm'>
+        <CardBody className='p-0'>
+          <div className='px-6 py-4 flex items-center'>
+            <WalletIcon strokeWidth={2} className='w-5 h-5 text-blue/1 mr-2' />
+            <p className='text-gray/4 text-base font-medium '>Payment Method</p>
+          </div>
+          <div className='px-6 pb-4 flex items-center'>
+            <div className='flex items-center gap-2'>
+              <img className='w-16 object-cover' src={paypal} alt='paypal'></img>
+              <div className='flex flex-col justify-between items-start'>
+                <p className='text-gray/4 text-sm font-normal '>Pay with PayPal wallet</p>
+                <p className='text-gray/3 text-sm font-normal'>Redirect to PayPal</p>
+              </div>
             </div>
           </div>
-        </div>
-      </CardBody>
-    </Card>
+        </CardBody>
+      </Card>
+    ),
+    []
   );
 
   return (
@@ -243,7 +251,12 @@ export function TopupWalletForm() {
           <div className='flex items-center'>
             <ChevronLeftIcon
               className='w-7 h-7 mr-4 opacity-40 hover:opacity-100 focus:opacity-100 active:opacity-100 cursor-pointer'
-              //onClick={() => setOrderStep(2)}
+              onClick={() =>
+                setMobileOrderStep({
+                  current: 3,
+                  prev: 4
+                })
+              }
             />
             <Typography className='text-gray/4 text-base font-semibold '>Top up wallet</Typography>
           </div>
@@ -254,14 +267,24 @@ export function TopupWalletForm() {
         <TopupAmountInput />
         <PaymentMethod />
       </div>
-      <footer className='relative w-full'>
-        <Button
-          className='w-full px-4 py-8 bg-blue/1 rounded-none focus:bg-blue/2 active:bg-blue-2 sticky'
-          //onClick={() => setOrderStep(3)}
-        >
-          Top up wallet
-        </Button>
-      </footer>
+      <PayPalButtons
+        fundingSource='paypal'
+        style={{ color: 'blue' }}
+        createOrder={() =>
+          createPayPalOrder.mutateAsync(
+            parseFloat(inputRef.current?.value.replace(/[^0-9.]/g, '') || '0')
+          )
+        }
+        onApprove={async () => {
+          const paypalOrderId = queryClient.getQueryData<string>(['paypalOrderId']);
+          if (!paypalOrderId) return;
+          await approvePayPalOrder.mutateAsync(paypalOrderId);
+          setMobileOrderStep({
+            current: 3,
+            prev: 4
+          });
+        }}
+      />
     </>
   );
 }

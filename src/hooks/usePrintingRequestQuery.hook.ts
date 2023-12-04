@@ -1,5 +1,5 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { printingRequestService } from '@services';
+import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
+import { printingRequestService, configurationService } from '@services';
 import { retryQueryFn } from '@utils';
 
 export function usePrintingRequestQuery() {
@@ -19,7 +19,28 @@ export function usePrintingRequestQuery() {
     retry: retryQueryFn
   });
 
+  const exchangeRate = useQueries({
+    queries: [
+      {
+        queryKey: ['/api/configuration/coinPerPage'],
+        queryFn: () => configurationService.getCoinPerPage()
+      },
+      {
+        queryKey: ['/api/configuration/dollarToCoin'],
+        queryFn: () => configurationService.getCoinPerDollar()
+      }
+    ]
+  });
+
+  const serviceFee = useQuery({
+    queryKey: ['/api/configuration/serviceFee'],
+    queryFn: () => configurationService.getServiceFee(),
+    retry: retryQueryFn
+  });
+
   return {
-    listFiles: listFiles
+    listFiles: listFiles,
+    exchangeRate: exchangeRate,
+    serviceFee: serviceFee
   };
 }
