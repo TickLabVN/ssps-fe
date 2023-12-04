@@ -7,7 +7,6 @@ import { ScreenSize } from '@constants';
 import { useScreenSize, useUserQuery, usePrintingRequestQuery, emitEvent } from '@hooks';
 import { useMenuBarStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
-import { useAuthMutation } from '@hooks';
 
 export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu }> = ({
   mainMenu,
@@ -17,7 +16,6 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
   const { openSidebar, handleOpenSidebar, SidebarMenu } = useSidebarMenu();
   const { selectedMenu } = useMenuBarStore();
   const { desktopOrderStep } = useOrderWorkflowStore();
-  const { logout } = useAuthMutation();
 
   const { openCloseForm, CloseForm } = useCloseForm();
 
@@ -59,9 +57,7 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           )}
           <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin} alt='coin'></img>
           <PowerIcon
-            onClick={() => {
-              logout.mutateAsync();
-            }}
+            onClick={() => emitEvent('logout')}
             className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer'
           />
         </div>

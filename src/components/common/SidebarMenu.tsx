@@ -5,10 +5,8 @@ import logo from '@assets/logobk.png';
 import ticklab from '@assets/ticklab.png';
 import { ToggleSidebarBtn } from '@components/common';
 import { useMenuBarStore } from '@states';
-import { useAuthMutation } from '@hooks';
 
 export function useSidebarMenu() {
-  const { logout } = useAuthMutation();
   const { selectedMenu, setSelectedMenu } = useMenuBarStore();
 
   const ITEM_CLASSNAME =
@@ -32,19 +30,14 @@ export function useSidebarMenu() {
                 <img className='w-7 h-7' src={ticklab} alt='ticklab'></img>
               </div>
             </div>
-            <div className='min-h-[90%] mt-10 flex flex-col justify-between pb-4'>
+            <div className='min-h-[90%] mt-10 flex flex-col justify-between'>
               <List className='p-0'>
                 {mainMenu.map((menuItem, idx) => {
                   if (menuItem.type === 'main-item') {
                     return (
                       <Link key={idx} to={menuItem.path}>
                         <ListItem
-                          className={
-                            ITEM_CLASSNAME +
-                            (selectedMenu === menuItem.name
-                              ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
-                              : '')
-                          }
+                          className={ITEM_CLASSNAME}
                           onClick={() => {
                             setSelectedMenu(menuItem.name);
                             setOpenSidebar(false);
@@ -56,9 +49,6 @@ export function useSidebarMenu() {
                     );
                   }
                 })}
-                <ListItem className={ITEM_CLASSNAME} onClick={() => logout.mutateAsync()}>
-                  Log out
-                </ListItem>
               </List>
               <List className='p-0'>
                 {subMenu.map((menuItem, idx) => {
@@ -80,6 +70,29 @@ export function useSidebarMenu() {
                           {menuItem.name}
                         </ListItem>
                       </Link>
+                    );
+                  }
+                })}
+              </List>
+              <List className='p-0'>
+                {subMenu.map((menuItem, idx) => {
+                  if (menuItem.type === 'logout-btn') {
+                    return (
+                      <ListItem
+                        key={idx}
+                        className={
+                          ITEM_CLASSNAME +
+                          (selectedMenu === menuItem.name
+                            ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
+                            : '')
+                        }
+                        onClick={() => {
+                          setSelectedMenu(menuItem.name);
+                          setOpenSidebar(false);
+                        }}
+                      >
+                        {menuItem.name}
+                      </ListItem>
                     );
                   }
                 })}

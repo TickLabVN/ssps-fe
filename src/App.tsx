@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { NavigateFunction, useNavigate, useLocation } from 'react-router-dom';
 import { AppSkeleton } from '@components/common';
 import { MAIN_MENU, SUB_MENU } from '@constants';
-import { useUserQuery } from '@hooks';
+import { emitEvent, useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
 
@@ -84,8 +84,7 @@ export default function App() {
           {
             type: 'logout-btn',
             name: SUB_MENU.logout,
-            onClick() {}
-            //onClick: () => authService.logout().then(() => getData())
+            onClick: () => emitEvent('logout')
           }
         ]}
       />
