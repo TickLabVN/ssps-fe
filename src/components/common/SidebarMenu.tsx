@@ -5,8 +5,10 @@ import logo from '@assets/logobk.png';
 import ticklab from '@assets/ticklab.png';
 import { ToggleSidebarBtn } from '@components/common';
 import { useMenuBarStore } from '@states';
+import { useAuthMutation } from '@hooks';
 
 export function useSidebarMenu() {
+  const { logout } = useAuthMutation();
   const { selectedMenu, setSelectedMenu } = useMenuBarStore();
 
   const ITEM_CLASSNAME =
@@ -54,6 +56,9 @@ export function useSidebarMenu() {
                     );
                   }
                 })}
+                <ListItem className={ITEM_CLASSNAME} onClick={() => logout.mutateAsync()}>
+                  Log out
+                </ListItem>
               </List>
               <List className='p-0'>
                 {subMenu.map((menuItem, idx) => {

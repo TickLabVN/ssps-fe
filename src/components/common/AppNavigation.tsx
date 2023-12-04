@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ChevronLeftIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { ChevronLeftIcon, PowerIcon } from '@heroicons/react/24/solid';
 import coin from '@assets/coin.png';
 import { AppDrawer, DesktopNavbar, ToggleSidebarBtn, useSidebarMenu } from '@components/common';
 import { useCloseForm } from '@components/order/common';
@@ -7,6 +7,7 @@ import { ScreenSize } from '@constants';
 import { useScreenSize, useUserQuery, usePrintingRequestQuery, emitEvent } from '@hooks';
 import { useMenuBarStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
+import { useAuthMutation } from '@hooks';
 
 export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu }> = ({
   mainMenu,
@@ -16,6 +17,7 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
   const { openSidebar, handleOpenSidebar, SidebarMenu } = useSidebarMenu();
   const { selectedMenu } = useMenuBarStore();
   const { desktopOrderStep } = useOrderWorkflowStore();
+  const { logout } = useAuthMutation();
 
   const { openCloseForm, CloseForm } = useCloseForm();
 
@@ -30,7 +32,9 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
     () => listFiles?.reduce((totalSize, file) => totalSize + file.fileSize, 0),
     [listFiles]
   );
-
+  const handleLogout = () => {
+    logout.mutateAsync();
+  };
   return (
     <div className='w-full max-h-[768px] py-3 shadow-md lg:sticky my-3 lg:my-0'>
       <div className='flex items-center justify-between px-6 lg:px-9'>
@@ -57,7 +61,10 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
             </div>
           )}
           <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin} alt='coin'></img>
-          <UserCircleIcon className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer' />
+          <PowerIcon
+            onClick={handleLogout}
+            className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer'
+          />
         </div>
       </div>
       {screenSize >= ScreenSize.MD && desktopOrderStep > 0 && (
