@@ -6,7 +6,6 @@ import { MAIN_MENU, SUB_MENU } from '@constants';
 import { useUserQuery } from '@hooks';
 import { AppLayout, AuthLayout } from '@layouts';
 import { AuthPage, HomePage } from '@pages';
-import { TopUpWalletFormDestop } from '@components/order/desktop';
 
 export default function App() {
   const navigate: NavigateFunction = useNavigate();
@@ -75,12 +74,6 @@ export default function App() {
             path: '/help',
             name: SUB_MENU.help,
             element: <></>
-          },
-          {
-            type: 'sub-item',
-            path: '/wallet',
-            name: SUB_MENU.wallet,
-            element: <TopUpWalletFormDestop />
           },
           {
             type: 'sub-item',

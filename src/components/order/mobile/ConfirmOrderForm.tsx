@@ -161,7 +161,7 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
               <span className='text-yellow/1 font-bold'>{remainCoins}</span>
             </div>
           </div>
-          {remainCoins !== undefined && remainCoins < totalCost && (
+          {remainCoins !== undefined && remainCoins < totalCost + (serviceFee ?? 0) && (
             <Alert className='bg-red-50 text-red-600 mb-4'>
               <div className='flex items-center gap-1'>
                 <ExclamationCircleIcon className='w-6 h-6' />

@@ -4,7 +4,8 @@ import coinImage from '@assets/coin.png';
 import momoImage from '@assets/momo.png';
 import zaloImage from '@assets/zalo.png';
 import VNPayImage from '@assets/VNPay.png';
-export const TopUpWalletFormDestop = () => {
+
+export const TopUpWalletDestop = () => {
   const currentBalance = 202;
   const amountList = [10000, 20000, 50000, 100000, 200000, 500000];
   const bonus = 20;
