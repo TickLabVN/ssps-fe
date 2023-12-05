@@ -4,7 +4,6 @@ import { PayPalButtons } from '@paypal/react-paypal-js';
 import { Alert, Button, Card, CardBody, Input, Typography } from '@material-tailwind/react';
 import {
   BanknotesIcon,
-  CurrencyDollarIcon,
   DocumentTextIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
@@ -25,7 +24,7 @@ import { useOrderWorkflowStore } from '@states';
 export function TopupWalletForm() {
   const queryClient = useQueryClient();
   const {
-    exchangeRate: [coinPerPage, coinPerDollar]
+    exchangeRate: [coinPerPage, VNDPerCoin, bonusCoin]
   } = usePrintingRequestQuery();
   const { createPayPalOrder, approvePayPalOrder } = usePrintingRequestMutation();
   const { setMobileOrderStep } = useOrderWorkflowStore();
@@ -36,25 +35,31 @@ export function TopupWalletForm() {
       'w-5 h-5 opacity-40 hover:text-[#0F172A] hover:opacity-100 focus:opacity-100 active:opacity-100';
     const [chevronIcon, setChevronIcon] = useState<boolean>(false);
 
-    const ExchangeRateRow: Component<{ title: string; coins?: number; children: ReactElement }> =
-      useMemo(
-        () =>
-          ({ title, coins, children }) => (
-            <div className='flex items-center justify-between'>
-              <p className='text-gray/3 text-xs font-normal'>{title}</p>
-              <div className='flex items-center'>
-                {coins !== undefined && <p className='text-gray/4 text-xs font-medium'>{coins}</p>}
-                <img className='w-4 h-4 mix-blend-luminosity' src={coinImage} alt='coinImage'></img>
-                <p className='text-gray/4 text-xs font-medium mx-1'>=</p>
-                <div className='min-w-[48px] flex justify-end'>
-                  <p className='text-gray/4 text-xs font-medium'>1</p>
-                  {children}
-                </div>
+    const ExchangeRateRow: Component<{
+      title: string;
+      coins?: number;
+      numItems?: number;
+      children: ReactElement;
+    }> = useMemo(
+      () =>
+        ({ title, coins, numItems, children }) => (
+          <div className='flex items-center justify-between'>
+            <p className='text-gray/3 text-xs font-normal'>{title}</p>
+            <div className='flex items-center'>
+              {coins !== undefined && <p className='text-gray/4 text-xs font-medium'>{coins}</p>}
+              <img className='w-4 h-4 mix-blend-luminosity' src={coinImage} alt='coinImage'></img>
+              <p className='text-gray/4 text-xs font-medium mx-1'>=</p>
+              <div className='min-w-[48px] flex justify-end'>
+                {numItems !== undefined && (
+                  <p className='text-gray/4 text-xs font-medium'>{numItems}</p>
+                )}
+                {children}
               </div>
             </div>
-          ),
-        []
-      );
+          </div>
+        ),
+      []
+    );
 
     return (
       <Card className='rounded-none shadow-sm'>
@@ -78,12 +83,14 @@ export function TopupWalletForm() {
           <div className={`px-6 pt-4 pb-6 flex flex-col ${!chevronIcon ? 'hidden' : ''}`}>
             <ExchangeRateRow
               title='To Dollar:'
-              coins={coinPerDollar.data}
-              children={<CurrencyDollarIcon className='w-4 h-4 text-gray/4' />}
+              coins={1}
+              numItems={VNDPerCoin.data}
+              children={<p className='text-gray/4 text-xs font-medium'>VND</p>}
             />
             <ExchangeRateRow
               title='To A4 paper:'
               coins={coinPerPage.data}
+              numItems={1}
               children={
                 <>
                   <p className='text-gray/4 text-xs font-medium'>A4</p>
@@ -157,8 +164,8 @@ export function TopupWalletForm() {
                   <img className='w-4 h-4 ml-1' src={coinImage} alt='coinImage'></img>
                   <p className='text-[#D97706] text-xs font-bold'>
                     {Math.floor(
-                      parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') *
-                        (coinPerDollar.data ?? 1)
+                      parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') /
+                        (VNDPerCoin.data ?? 1)
                     )}
                   </p>
                 </div>
@@ -170,13 +177,14 @@ export function TopupWalletForm() {
                     alt='coinImage'
                   ></img>
                   <Typography className='text-gray/4 text-xs'>
-                    {Math.floor(parseInt(amountInputValue.replace(/[^0-9.]/g, '') || '0') / 10) *
-                      (coinPerDollar.data ?? 1)}
+                    {Math.floor(
+                      parseInt(amountInputValue.replace(/[^0-9.]/g, '') || '0') / 100000
+                    ) * (bonusCoin.data ?? 1)}
                     )
                   </Typography>
                 </div>
               </div>
-              {parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') < 1 && (
+              {parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') < 10000 && (
                 <Alert className='bg-red-50 text-red-600 p-2'>
                   <div className='flex items-center'>
                     <ExclamationTriangleIcon className='w-5 h-5 mr-2' />
@@ -188,7 +196,7 @@ export function TopupWalletForm() {
           </div>
           <div
             className={
-              showInfo && parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') < 1
+              showInfo && parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') < 10000
                 ? 'mt-6 mb-4 flex items-start content-start flex-wrap gap-2'
                 : 'my-4 flex items-start content-start flex-wrap gap-2'
             }
@@ -210,10 +218,10 @@ export function TopupWalletForm() {
             <Typography className='text-gray/4 text-xs font-medium flex'>Bonus:</Typography>
             <img className='w-4 h-4' src={coinImage} alt='coinImage'></img>
             <Typography className='text-[#D97706] text-xs font-bold'>
-              {coinPerDollar.data ? coinPerDollar.data : 0}
+              {bonusCoin.data ? bonusCoin.data : 0}
             </Typography>
             <Typography className='text-gray/3 text-xs font-normal ml-1'>
-              (for every 10$)
+              (for every 100,000đ)
             </Typography>
           </div>
         </div>

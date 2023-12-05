@@ -58,7 +58,7 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin} alt='coin'></img>
           <PowerIcon
             onClick={() => emitEvent('logout')}
-            className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer'
+            className='w-8 h-8 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer hover:bg-gray-200 rounded-full'
           />
         </div>
       </div>

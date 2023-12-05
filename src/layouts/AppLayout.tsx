@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { AppNavigation } from '@components/common';
 import { Dialog, DialogBody, DialogHeader, Typography, Button } from '@material-tailwind/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import { AppNavigation } from '@components/common';
 import { useAuthMutation, useListenEvent } from '@hooks';
 
 export const AppLayout: Component<{ menu: RouteMenu }> = ({ menu }) => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const { logout } = useAuthMutation();
+
   const handleOpenDialog = () => {
     setOpenDialog(!openDialog);
   };
@@ -46,7 +47,9 @@ export const AppLayout: Component<{ menu: RouteMenu }> = ({ menu }) => {
       subItem
     };
   }, [menu]);
+
   useListenEvent('logout', handleOpenDialog);
+
   return (
     <div className='flex flex-col h-screen sm:min-h-screen'>
       <AppNavigation mainMenu={routeItems.mainItem} subMenu={routeItems.subItem} />

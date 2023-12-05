@@ -26,8 +26,12 @@ export function usePrintingRequestQuery() {
         queryFn: () => configurationService.getCoinPerPage()
       },
       {
-        queryKey: ['/api/configuration/dollarToCoin'],
-        queryFn: () => configurationService.getCoinPerDollar()
+        queryKey: ['/api/configuration/VNDPerCoin'],
+        queryFn: () => configurationService.getVNDPerCoin()
+      },
+      {
+        queryKey: ['/api/configuration/bonusCoinPer100000Vnd'],
+        queryFn: () => configurationService.getBonusCoin()
       }
     ]
   });

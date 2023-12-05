@@ -227,7 +227,10 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Create PayPal Order to buy more coin */
+    /**
+     * Create PayPal Order to buy more coin
+     * @description Create PayPal Order to buy more coin, the unit of amount is vnd, the system will convert to apporiate currency base on amount vnd
+     */
     post: {
       parameters: {
         query?: never;
@@ -490,6 +493,77 @@ export interface paths {
     trace?: never;
   };
   '/api/configuration/dollarToCoin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @deprecated */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': number;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/configuration/coinToVnd': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': number;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/configuration/bonusCoinPer100000Vnd': {
     parameters: {
       query?: never;
       header?: never;
@@ -802,6 +876,7 @@ export interface paths {
             'application/json': {
               status: string;
               message: string;
+              printingRequestId: string;
             };
           };
         };
@@ -852,6 +927,7 @@ export interface paths {
           content: {
             'application/json': {
               status: string;
+              fileId: string;
             };
           };
         };
@@ -955,6 +1031,7 @@ export interface paths {
             'application/json': {
               status: string;
               message?: string;
+              fileId?: string;
             };
           };
         };
@@ -1001,6 +1078,7 @@ export interface paths {
             'application/json': {
               status: string;
               message?: string;
+              fileId?: string;
             };
           };
         };
@@ -1041,6 +1119,7 @@ export interface paths {
           content: {
             'application/json': {
               printingStatus: 'progressing' | 'ready' | 'done' | 'canceled';
+              printingRequestId: string;
             };
           };
         };
