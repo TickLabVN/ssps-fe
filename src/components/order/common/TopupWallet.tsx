@@ -17,17 +17,19 @@ import {
 } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import paypal from '@assets/paypal.png';
-import { SUGGEST_AMOUNT } from '@constants';
-import { usePrintingRequestQuery, usePrintingRequestMutation } from '@hooks';
+import { SUGGEST_AMOUNT, ScreenSize } from '@constants';
+import { usePrintingRequestQuery, usePrintingRequestMutation, useScreenSize } from '@hooks';
 import { useOrderWorkflowStore } from '@states';
 
-export function TopupWalletForm() {
+export function TopupWallet() {
   const queryClient = useQueryClient();
   const {
     exchangeRate: [coinPerPage, VNDPerCoin, bonusCoin]
   } = usePrintingRequestQuery();
   const { createPayPalOrder, approvePayPalOrder } = usePrintingRequestMutation();
-  const { setMobileOrderStep } = useOrderWorkflowStore();
+
+  const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
+  const { screenSize } = useScreenSize();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const ExchangeRateInfo = () => {
@@ -44,14 +46,20 @@ export function TopupWalletForm() {
       () =>
         ({ title, coins, numItems, children }) => (
           <div className='flex items-center justify-between'>
-            <p className='text-gray/3 text-xs font-normal'>{title}</p>
+            <p className='text-gray/3 text-xs md:text-sm font-normal'>{title}</p>
             <div className='flex items-center'>
-              {coins !== undefined && <p className='text-gray/4 text-xs font-medium'>{coins}</p>}
-              <img className='w-4 h-4 mix-blend-luminosity' src={coinImage} alt='coinImage'></img>
-              <p className='text-gray/4 text-xs font-medium mx-1'>=</p>
-              <div className='min-w-[48px] flex justify-end'>
+              {coins !== undefined && (
+                <p className='text-gray/4 text-xs md:text-sm font-medium'>{coins}</p>
+              )}
+              <img
+                className='w-4 h-4 md:w-5 md:h-5 mix-blend-luminosity'
+                src={coinImage}
+                alt='coinImage'
+              ></img>
+              <p className='text-gray/4 text-xs md:text-sm font-medium mx-1'>=</p>
+              <div className='min-w-[48px] flex justify-end items-center gap-1'>
                 {numItems !== undefined && (
-                  <p className='text-gray/4 text-xs font-medium'>{numItems}</p>
+                  <p className='text-gray/4 text-xs md:text-sm font-medium'>{numItems}</p>
                 )}
                 {children}
               </div>
@@ -85,17 +93,17 @@ export function TopupWalletForm() {
               title='To VND:'
               coins={1}
               numItems={VNDPerCoin.data}
-              children={<p className='text-gray/4 text-xs font-medium'>VND</p>}
+              children={<p className='text-gray/4 text-xs md:text-sm font-medium'>đ</p>}
             />
             <ExchangeRateRow
               title='To A4 paper:'
               coins={coinPerPage.data}
               numItems={1}
               children={
-                <>
-                  <p className='text-gray/4 text-xs font-medium'>A4</p>
+                <div className='flex items-center'>
+                  <p className='text-gray/4 text-xs md:text-sm font-medium'>A4</p>
                   <DocumentTextIcon className='w-4 h-4 text-gray/4' />
-                </>
+                </div>
               }
             />
           </div>
@@ -119,13 +127,13 @@ export function TopupWalletForm() {
         </CardBody>
         <div className='px-6 pt-0 pb-6'>
           <div className='flex items-center'>
-            <p className='text-gray/4 text-xs font-medium'>Current balance:</p>
+            <p className='text-gray/4 text-xs md:text-base font-medium'>Current balance:</p>
             <img
-              className='w-4 h-4 mix-blend-luminosity ml-1'
+              className='w-4 h-4 md:w-5 md:h-5 mix-blend-luminosity ml-1'
               src={coinImage}
               alt='coinImage'
             ></img>
-            <p className='text-gray/4 text-xs font-medium'>{remainCoins}</p>
+            <p className='text-gray/4 text-xs md:text-base font-medium'>{remainCoins}</p>
           </div>
           <div className='relative'>
             <Input
@@ -136,7 +144,7 @@ export function TopupWalletForm() {
               className='px-4 pb-11 text-gray/4 !text-2xl !font-bold border rounded-lg '
               labelProps={{
                 className:
-                  'text-gray/4 text-xs font-normal peer-placeholder-shown:text-base peer-placeholder-shown:text-[#9CA3AF] peer-disabled:peer-placeholder-shown::text-xs '
+                  'text-gray/4 text-xs font-normal peer-placeholder-shown:text-base peer-placeholder-shown:text-[#9CA3AF] peer-disabled:peer-placeholder-shown::text-xs'
               }}
               containerProps={{
                 className: 'min-h-[88px] mt-2 '
@@ -160,9 +168,9 @@ export function TopupWalletForm() {
               />
               <div className='px-4 absolute flex justify-between w-full left-0 bottom-3'>
                 <div className='flex items-center flex-wrap'>
-                  <p className='text-gray/4 text-xs'>Exchange to:</p>
-                  <img className='w-4 h-4 ml-1' src={coinImage} alt='coinImage'></img>
-                  <p className='text-[#D97706] text-xs font-bold'>
+                  <p className='text-gray/4 text-xs md:text-sm'>Exchange to:</p>
+                  <img className='w-4 h-4 md:w-5 md:h-5 ml-1' src={coinImage} alt='coinImage'></img>
+                  <p className='text-[#D97706] text-xs md:text-sm font-bold'>
                     {Math.floor(
                       parseFloat(amountInputValue.replace(/[^0-9.]/g, '') || '0') /
                         (VNDPerCoin.data ?? 1)
@@ -170,13 +178,13 @@ export function TopupWalletForm() {
                   </p>
                 </div>
                 <div className='flex items-center flex-wrap'>
-                  <p className='text-gray/4 text-xs'>(Bonus:</p>
+                  <p className='text-gray/4 text-xs md:text-sm'>(Bonus:</p>
                   <img
-                    className='w-4 h-4 mix-blend-luminosity'
+                    className='w-4 h-4 md:w-5 md:h-5 mix-blend-luminosity'
                     src={coinImage}
                     alt='coinImage'
                   ></img>
-                  <Typography className='text-gray/4 text-xs'>
+                  <Typography className='text-gray/4 text-xs md:text-sm'>
                     {Math.floor(
                       parseInt(amountInputValue.replace(/[^0-9.]/g, '') || '0') / 100000
                     ) * (bonusCoin.data ?? 1)}
@@ -215,12 +223,14 @@ export function TopupWalletForm() {
             ))}
           </div>
           <div className='flex'>
-            <Typography className='text-gray/4 text-xs font-medium flex'>Bonus:</Typography>
-            <img className='w-4 h-4' src={coinImage} alt='coinImage'></img>
-            <Typography className='text-[#D97706] text-xs font-bold'>
+            <Typography className='text-gray/4 text-xs md:text-sm font-medium flex'>
+              Bonus:
+            </Typography>
+            <img className='w-4 h-4 md:w-5 md:h-5' src={coinImage} alt='coinImage'></img>
+            <Typography className='text-[#D97706] text-xs md:text-sm font-bold'>
               {bonusCoin.data ? bonusCoin.data : 0}
             </Typography>
-            <Typography className='text-gray/3 text-xs font-normal ml-1'>
+            <Typography className='text-gray/3 text-xs md:text-sm font-medium ml-1'>
               (for every 100,000đ)
             </Typography>
           </div>
@@ -242,7 +252,7 @@ export function TopupWalletForm() {
               <img className='w-16 object-cover' src={paypal} alt='paypal'></img>
               <div className='flex flex-col justify-between items-start'>
                 <p className='text-gray/4 text-sm font-normal '>Pay with PayPal wallet</p>
-                <p className='text-gray/3 text-sm font-normal'>Redirect to PayPal</p>
+                <p className='text-gray/3 text-sm font-medium'>Redirect to PayPal</p>
               </div>
             </div>
           </div>
@@ -254,45 +264,54 @@ export function TopupWalletForm() {
 
   return (
     <>
-      <Card className='rounded-none shadow-md'>
-        <CardBody className='px-6 py-4'>
-          <div className='flex items-center'>
-            <ChevronLeftIcon
-              className='w-7 h-7 mr-4 opacity-40 hover:opacity-100 focus:opacity-100 active:opacity-100 cursor-pointer'
-              onClick={() =>
-                setMobileOrderStep({
-                  current: 3,
-                  prev: 4
-                })
-              }
-            />
-            <Typography className='text-gray/4 text-base font-semibold '>Top up wallet</Typography>
-          </div>
-        </CardBody>
-      </Card>
-      <div className='w-screen py-6'>
-        <ExchangeRateInfo />
-        <TopupAmountInput />
-        <PaymentMethod />
+      {screenSize <= ScreenSize.MD && (
+        <Card className='rounded-none shadow-md'>
+          <CardBody className='px-6 py-4'>
+            <div className='flex items-center'>
+              <ChevronLeftIcon
+                className='w-7 h-7 mr-4 opacity-40 hover:opacity-100 focus:opacity-100 active:opacity-100 cursor-pointer'
+                onClick={() =>
+                  setMobileOrderStep({
+                    current: 3,
+                    prev: 4
+                  })
+                }
+              />
+              <Typography className='text-gray/4 text-base font-semibold '>
+                Top up wallet
+              </Typography>
+            </div>
+          </CardBody>
+        </Card>
+      )}
+      <div className='md:pt-4 md:px-24'>
+        <div className='w-screen md:w-full py-6 md:py-0'>
+          <ExchangeRateInfo />
+          <TopupAmountInput />
+          <PaymentMethod />
+        </div>
+        <div className='w-full'>
+          <PayPalButtons
+            fundingSource='paypal'
+            style={{ color: 'blue', disableMaxWidth: true }}
+            createOrder={() =>
+              createPayPalOrder.mutateAsync(
+                parseFloat(inputRef.current?.value.replace(/[^0-9.]/g, '') || '0')
+              )
+            }
+            onApprove={async () => {
+              const paypalOrderId = queryClient.getQueryData<string>(['paypalOrderId']);
+              if (!paypalOrderId) return;
+              await approvePayPalOrder.mutateAsync(paypalOrderId);
+              setMobileOrderStep({
+                current: 3,
+                prev: 4
+              });
+              setDesktopOrderStep(2);
+            }}
+          />
+        </div>
       </div>
-      <PayPalButtons
-        fundingSource='paypal'
-        style={{ color: 'blue' }}
-        createOrder={() =>
-          createPayPalOrder.mutateAsync(
-            parseFloat(inputRef.current?.value.replace(/[^0-9.]/g, '') || '0')
-          )
-        }
-        onApprove={async () => {
-          const paypalOrderId = queryClient.getQueryData<string>(['paypalOrderId']);
-          if (!paypalOrderId) return;
-          await approvePayPalOrder.mutateAsync(paypalOrderId);
-          setMobileOrderStep({
-            current: 3,
-            prev: 4
-          });
-        }}
-      />
     </>
   );
 }

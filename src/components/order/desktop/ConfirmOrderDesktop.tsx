@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { MutableRefObject, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -22,11 +22,13 @@ import {
 } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { usePrintingRequestQuery } from '@hooks';
-import { useOrderPrintStore } from '@states';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 import { usePreviewDocumentDesktop } from './PreviewDocumentDesktop';
 
-export function ConfirmOrderDektop() {
+export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
+  initialTotalCost
+}) => {
   const queryClient = useQueryClient();
   const remainCoins = queryClient.getQueryData<number>(['/api/user/remain-coins']);
   const {
@@ -36,12 +38,13 @@ export function ConfirmOrderDektop() {
 
   const { openPreviewDocumentDesktop, PreviewDocumentDesktop } = usePreviewDocumentDesktop();
 
-  const { totalCost } = useOrderPrintStore();
+  const { totalCost, setTotalCost } = useOrderPrintStore();
+  const { setDesktopOrderStep } = useOrderWorkflowStore();
 
-  const FEE = [
-    { name: 'Print fee', price: 2400 },
-    { name: 'Service fee', price: 2 }
-  ];
+  useEffect(() => {
+    setTotalCost(initialTotalCost.current);
+  }, [initialTotalCost, setTotalCost]);
+
   const columnHelper = createColumnHelper<FileExtraMetadata>();
 
   const columnDefs = useMemo(
@@ -168,7 +171,10 @@ export function ConfirmOrderDektop() {
             </div>
             <div className='px-6 pb-4'>
               <div className='flex flex-col'>
-                <div className='flex justify-between items-center cursor-pointer hover:bg-gray-100 p-2 rounded-full'>
+                <div
+                  className='flex justify-between items-center cursor-pointer hover:bg-gray-100 p-2 rounded-full'
+                  onClick={() => setDesktopOrderStep(3)}
+                >
                   <p className='text-base font-medium text-gray/4'>Print wallet</p>
                   <ChevronRightIcon className='w-7 h-7 opacity-40 focus:opacity-100 active:opacity-100 cursor-pointer' />
                 </div>
@@ -197,26 +203,35 @@ export function ConfirmOrderDektop() {
               <span className='text-base font-medium text-gray/4'>Charge Details</span>
             </div>
             <div className='px-6 pb-6'>
-              {FEE.map((item, index) => (
-                <div key={index} className='flex justify-between'>
-                  <span className='text-base font-normal text-gray/4'>{item.name}</span>
-                  <div className='flex'>
-                    <img
-                      src={coinImage}
-                      alt='Coin Icon'
-                      className='w-6 h-6 mr-1 mix-blend-luminosity opacity-50;'
-                    />
-                    <span className='text-base font-normal text-gray/4'>{item.price}</span>
-                  </div>
-                </div>
-              ))}
-              <div className='flex justify-between mt-3'>
-                <span className='text-base font-medium text-gray/4'>Total cost</span>
-                <div className='flex'>
-                  <img src={coinImage} alt='Coin Icon' className='w-6 h-6 mr-1' />
-                  <span className='text-base font-bold text-[#D97706]'>{totalCost}</span>
-                </div>
-              </div>
+              <ul>
+                <li className='flex justify-between mb-1'>
+                  <Typography variant='small' className='font-medium'>
+                    Print fee
+                  </Typography>
+                  <p className='flex items-center gap-1 text-sm'>
+                    <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
+                    <span className='text-gray/4 font-normal'>{totalCost}</span>
+                  </p>
+                </li>
+                <li className='flex justify-between mb-1'>
+                  <Typography variant='small' className='font-medium'>
+                    Service fee
+                  </Typography>
+                  <p className='flex items-center gap-1 text-sm'>
+                    <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
+                    <span className='text-gray/4 font-normal'>{serviceFee ?? 0}</span>
+                  </p>
+                </li>
+                <li className='flex justify-between'>
+                  <Typography variant='paragraph' className='font-bold'>
+                    Total Cost
+                  </Typography>
+                  <p className='flex items-center gap-1'>
+                    <img src={coinImage} alt='coinImage' className='w-6 h-6' />
+                    <span className='text-yellow/1 font-bold'>{totalCost + (serviceFee ?? 0)}</span>
+                  </p>
+                </li>
+              </ul>
             </div>
             <Button
               className='uppercase font-bold text-white text-lg w-full rounded-t-none'
@@ -225,6 +240,7 @@ export function ConfirmOrderDektop() {
                   ? 'blue'
                   : 'gray'
               }
+              onClick={() => setDesktopOrderStep(4)}
               disabled={!remainCoins || remainCoins < totalCost + (serviceFee ?? 0)}
             >
               Confirm Order
@@ -235,4 +251,4 @@ export function ConfirmOrderDektop() {
       {<PreviewDocumentDesktop />}
     </>
   );
-}
+};

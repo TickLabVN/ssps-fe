@@ -1,7 +1,12 @@
 import { useRef } from 'react';
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
-import { OrderListDesktop, ConfirmOrderDektop } from '@components/order/desktop';
+import { TopupWallet } from '@components/order/common';
+import {
+  OrderListDesktop,
+  ConfirmOrderDektop,
+  OrderSuccessDesktop
+} from '@components/order/desktop';
 import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore } from '@states';
 
@@ -51,7 +56,11 @@ export function HomePage() {
     } else if (desktopOrderStep === 1) {
       return <OrderListDesktop initialTotalCost={initialTotalCost} />;
     } else if (desktopOrderStep === 2) {
-      return <ConfirmOrderDektop />;
+      return <ConfirmOrderDektop initialTotalCost={initialTotalCost} />;
+    } else if (desktopOrderStep === 3) {
+      return <TopupWallet />;
+    } else if (desktopOrderStep === 4) {
+      return <OrderSuccessDesktop />;
     }
   };
 

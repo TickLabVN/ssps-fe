@@ -8,3 +8,4 @@ export * from './FileInfo';
 export * from './FormFooter';
 export * from './LayoutSide';
 export * from './OrderWorkflow';
+export * from './TopupWallet';

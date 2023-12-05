@@ -4,6 +4,6 @@
 
 export * from './ConfirmOrderDesktop';
 export * from './OrderListDesktop';
+export * from './OrderSuccessDesktop';
 export * from './PreviewDocumentDesktop';
-export * from './TopUpWalletDesktop';
 export * from './UploadAndPreviewDesktop';

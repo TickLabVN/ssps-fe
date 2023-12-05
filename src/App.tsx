@@ -37,59 +37,57 @@ export default function App() {
 
   if (isSuccess) {
     return (
-      <>
-        <AppLayout
-          menu={[
-            {
-              type: 'skeleton',
-              path: '/',
-              name: 'Skeleton',
-              element: <AppSkeleton />
-            },
-            {
-              type: 'main-item',
-              path: '/home',
-              name: MAIN_MENU.home,
-              element: <HomePage />
-            },
-            {
-              type: 'main-item',
-              path: '/order',
-              name: MAIN_MENU.order,
-              element: <></>
-            },
-            {
-              type: 'main-item',
-              path: '/payment',
-              name: MAIN_MENU.payment,
-              element: <></>
-            },
-            {
-              type: 'main-item',
-              path: '/location',
-              name: MAIN_MENU.location,
-              element: <></>
-            },
-            {
-              type: 'sub-item',
-              path: '/help',
-              name: SUB_MENU.help,
-              element: <></>
-            },
-            {
-              type: 'sub-item',
-              path: '/settings',
-              name: SUB_MENU.settings,
-              element: <></>
-            },
-            {
-              type: 'logout-btn',
-              name: SUB_MENU.logout,
-              onClick: () => emitEvent('logout')
-            }
-          ]}
-        />
-      </>
+      <AppLayout
+        menu={[
+          {
+            type: 'skeleton',
+            path: '/',
+            name: 'Skeleton',
+            element: <AppSkeleton />
+          },
+          {
+            type: 'main-item',
+            path: '/home',
+            name: MAIN_MENU.home,
+            element: <HomePage />
+          },
+          {
+            type: 'main-item',
+            path: '/order',
+            name: MAIN_MENU.order,
+            element: <></>
+          },
+          {
+            type: 'main-item',
+            path: '/payment',
+            name: MAIN_MENU.payment,
+            element: <></>
+          },
+          {
+            type: 'main-item',
+            path: '/location',
+            name: MAIN_MENU.location,
+            element: <></>
+          },
+          {
+            type: 'sub-item',
+            path: '/help',
+            name: SUB_MENU.help,
+            element: <></>
+          },
+          {
+            type: 'sub-item',
+            path: '/settings',
+            name: SUB_MENU.settings,
+            element: <></>
+          },
+          {
+            type: 'logout-btn',
+            name: SUB_MENU.logout,
+            onClick: () => emitEvent('logout')
+          }
+        ]}
+      />
     );
   }
 }
