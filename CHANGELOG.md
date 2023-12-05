@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/TickLabVN/ssps-fe/compare/v1.3.0...v1.3.1) (2023-12-05)
+
+
+### Bug Fixes
+
+* **ci-cd:** add env variable ([d89bc5c](https://github.com/TickLabVN/ssps-fe/commit/d89bc5ca12ab86906ed202bf7e2a47f245c371c2))
+
 ## [1.3.0](https://github.com/TickLabVN/ssps-fe/compare/v1.2.2...v1.3.0) (2023-12-05)
 
 
