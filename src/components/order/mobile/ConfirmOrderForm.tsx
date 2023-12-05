@@ -1,146 +1,233 @@
-import { useOrderPrintStore } from '@states';
+import { MutableRefObject, useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Alert, Button, Typography } from '@material-tailwind/react';
 import {
-  PrinterIcon,
-  ChevronLeftIcon,
-  XMarkIcon,
+  ClipboardDocumentListIcon,
   MapPinIcon,
-  QuestionMarkCircleIcon,
-  WalletIcon,
+  PrinterIcon,
+  WalletIcon
+} from '@heroicons/react/24/outline';
+import {
+  ChevronLeftIcon,
   ChevronRightIcon,
-  ClipboardDocumentListIcon
+  ExclamationCircleIcon,
+  EyeIcon,
+  QuestionMarkCircleIcon
 } from '@heroicons/react/24/solid';
-import { Typography, Select, Option } from '@material-tailwind/react';
+import coinImage from '@assets/coin.png';
 import { FormFooter } from '@components/order/common';
-//import { ConfirmOrderItem } from '@components/order/mobile';
-import coin from '@assets/coin.png';
+import { usePrintingRequestQuery } from '@hooks';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
+import { formatFileSize } from '@utils';
 
-// Tan's third-task in here.
-export function ConfirmOrderForm() {
-  const { totalCost } = useOrderPrintStore();
-  //const { setMobileOrderStep } = useOrderWorkflowStore();
-  //const { userRemainCoins } = useHomeStore();
-  //const { extraFeeData } = useOrderExtraStore();
-  // function IconSolid() {
-  //   return (
-  //     <svg
-  //       xmlns='http://www.w3.org/2000/svg'
-  //       viewBox='0 0 24 24'
-  //       fill='currentColor'
-  //       className='h-4 w-4 text-red-600'
-  //     >
-  //       <path
-  //         fillRule='evenodd'
-  //         d='M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z'
-  //         clipRule='evenodd'
-  //       />
-  //     </svg>
-  //   );
-  // }
+export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
+  initialTotalCost
+}) => {
+  const queryClient = useQueryClient();
+  const remainCoins = queryClient.getQueryData<number>(['/api/user/remain-coins']);
+  const {
+    listFiles: { data: listFiles, isFetching, isError },
+    serviceFee: { data: serviceFee }
+  } = usePrintingRequestQuery();
+
+  const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
+  const { totalCost, setIsOrderUpdate, setTotalCost } = useOrderPrintStore();
+
+  useEffect(() => {
+    setTotalCost(initialTotalCost.current);
+  }, [initialTotalCost, setTotalCost]);
+
+  const handleExistConfirmOrder = () => {
+    setIsOrderUpdate(true);
+    setMobileOrderStep({
+      current: 2,
+      prev: 3
+    });
+    setDesktopOrderStep(1);
+  };
+
+  const ConfirmOrderItem: Component<{ fileExtraMetadata: FileExtraMetadata }> = useMemo(
+    () =>
+      ({ fileExtraMetadata }) => {
+        return (
+          <div className='flex gap-4 px-4 py-2 bg-white border-b-2'>
+            <div
+              className='md:hidden text-white rounded-lg border-2 border-transparent shadow-lg bg-gray/3 flex flex-col items-center justify-center cursor-pointer'
+              onClick={() => {
+                queryClient.setQueryData(['fileURL'], fileExtraMetadata.fileURL);
+                setMobileOrderStep({
+                  current: 1,
+                  prev: mobileOrderStep.current
+                });
+              }}
+            >
+              <EyeIcon width={20} />
+              <span className='text-xs'>Preview</span>
+            </div>
+            <div className='w-full'>
+              <div className='flex flex-col text-gray/4'>
+                <div className='flex items-center gap-1 font-medium'>
+                  <p className='max-w-[230px] truncate text-gray/4'>{fileExtraMetadata.fileName}</p>
+                  <p className='text-gray/3'>{`(${formatFileSize(fileExtraMetadata.fileSize)})`}</p>
+                </div>
+                <p className='flex items-center gap-1 text-sm mb-5'>
+                  <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
+                  <span className='text-gray/4 font-normal'>
+                    {fileExtraMetadata.fileCoin + ' x ' + fileExtraMetadata.numOfCopies + ' copies'}
+                  </span>
+                </p>
+              </div>
+              <div className='flex flex-col items-end text-sm'>
+                <p className='text-gray/4 font-medium'>Charge price</p>
+                <div className='flex items-center gap-1'>
+                  <img src={coinImage} alt='coinImage' className='w-6 h-6' />
+                  <span className='text-yellow/1 font-bold'>
+                    {fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      },
+    [mobileOrderStep, queryClient, setMobileOrderStep]
+  );
+
   return (
     <div className='text-gray-4'>
-      <div className='flex justify-between px-6 py-3  shadow-md font-semibold bg-white mb-6'>
+      <div className='px-6 py-3 shadow-md font-semibold bg-white mb-6'>
         <div className='flex items-center'>
-          <ChevronLeftIcon
-            width={28}
-            // onClick={() => setMobileOrderStep(2)}
-            className='cursor-pointer'
-          />
+          <ChevronLeftIcon onClick={handleExistConfirmOrder} className='w-6 h-6 cursor-pointer' />
           <Typography className='ml-4 font-bold text-gray/4'>Confirm order</Typography>
         </div>
-        <XMarkIcon width={28} className='cursor-pointer' />
       </div>
       <div>
         <div className='flex px-6 py-4 items-center bg-white'>
-          <PrinterIcon width={24} className='mr-2 text-blue-500' />
-          <Typography>Document</Typography>
+          <PrinterIcon strokeWidth={2} className='w-6 h-6 mr-2 text-blue-500' />
+          <p className='text-gray/4 text-base font-medium'>Document</p>
         </div>
         <div className='mb-4'>
-          {/* {orderPrintList.map((orderItem, index) => (
-            <ConfirmOrderItem
-              key={index}
-              fileName={orderItem.filesName[0]}
-              coins={orderItem.coins}
-              size={orderItem.size}
-              number={orderItem.number}
-            />
-          ))} */}
+          {isFetching ? (
+            listFiles?.map((item, index) => (
+              <div key={index}>
+                <ConfirmOrderItem fileExtraMetadata={item} />
+              </div>
+            ))
+          ) : isError ? (
+            <div className='grid justify-items-center items-center bg-gray-100'>
+              <Typography variant='h6' color='red'>
+                Không thể tải danh sách các files trong đơn hàng.
+              </Typography>
+            </div>
+          ) : (
+            listFiles?.map((item, index) => (
+              <div key={index}>
+                <ConfirmOrderItem fileExtraMetadata={item} />
+              </div>
+            ))
+          )}
         </div>
         <div className='bg-white mb-4 px-6 py-4'>
-          <div className='flex mb-4'>
-            <MapPinIcon width={24} className='mr-2 text-blue-500' />
-            <Typography>Pick-up location</Typography>
+          <div className='flex items-center mb-4'>
+            <MapPinIcon strokeWidth={2} className='w-6 h-6 mr-2 text-blue-500' />
+            <p className='text-gray/4 text-base font-medium'>Pick-up location</p>
           </div>
-          <div className='flex gap-4'>
-            <Select label='Chọn địa điểm'>
-              <Option>Tiệm in thư viện H3, tầng 1</Option>
-              <Option>Phương án khác</Option>
-            </Select>
+          <div className='flex items-center justify-between gap-4'>
+            <Typography variant='h6'>Tiệm in thư viện H3, tầng 1</Typography>
             <QuestionMarkCircleIcon width={24} className='cursor-pointer' />
           </div>
         </div>
         <div className='px-6 py-4 bg-white mb-4'>
-          <div className='flex mb-4'>
-            <WalletIcon width={24} className='mr-2 text-blue-500' />
-            <Typography>Payment method</Typography>
+          <div className='flex items-center'>
+            <WalletIcon strokeWidth={2} className='w-6 h-6 mr-2 text-blue-500' />
+            <p className='text-gray/4 text-base font-medium'>Payment method</p>
           </div>
-          <div className='flex justify-between'>
-            <Typography className='font-medium'>Print wallet</Typography>
-            <ChevronRightIcon width={20} />
+          <div
+            className='flex items-center justify-between cursor-pointer hover:bg-gray-100 p-2 rounded-full'
+            onClick={() => {
+              setMobileOrderStep({
+                current: 4,
+                prev: 3
+              });
+            }}
+          >
+            <Typography variant='h6'>Print wallet</Typography>
+            <ChevronRightIcon className='w-5 h-5' />
           </div>
-          <div className='flex items-center mb-4'>
-            <Typography className='mr-2 text-xs'>Current balance:</Typography>
+          <div className='flex items-center mb-4 px-2'>
+            <Typography className='mr-2 text-sm'>Balance:</Typography>
             <div className='flex items-center'>
-              {/* <Typography className='text-xs'>{userRemainCoins}</Typography> */}
-              <img src={coin} width={16} />
+              <img src={coinImage} alt='coinImage' className='w-6 h-6' />
+              <span className='text-yellow/1 font-bold'>{remainCoins}</span>
             </div>
           </div>
-          {/* {userRemainCoins < totalCost && (
-            <Alert className='bg-red-50 text-red-600 mb-4' icon={<IconSolid />}>
-              <Typography className='text-xs font-bold'>Amout exceed balance</Typography>
-              <Typography className='-ml-7 text-xs'>Top up your account to proceed</Typography>
+          {remainCoins !== undefined && remainCoins < totalCost + (serviceFee ?? 0) && (
+            <Alert className='bg-red-50 text-red-600 mb-4'>
+              <div className='flex items-center gap-1'>
+                <ExclamationCircleIcon className='w-6 h-6' />
+                <Typography className='text-sm font-bold'>Amount exceed balance!</Typography>
+              </div>
+              <Typography className='text-sm font-normal'>
+                Top up your account to proceed.
+              </Typography>
             </Alert>
-          )} */}
+          )}
         </div>
         <div className='px-6 py-4 bg-white mb-4'>
           <div className='flex mb-4'>
-            <ClipboardDocumentListIcon width={24} className='mr-2 text-blue-500' />
-            <Typography>Charge Details</Typography>
+            <ClipboardDocumentListIcon strokeWidth={2} className='w-6 h-6 mr-2 text-blue-500' />
+            <p className='text-gray/4 text-base font-medium'>Charge Details</p>
           </div>
           <ul>
-            <li className='flex justify-between text-xs mb-1'>
-              <span>Print fee</span>
-              <div className='flex'>
-                <img className='grayscale' src={coin} width={16} />
-                <span>{totalCost}</span>
-              </div>
+            <li className='flex justify-between mb-1'>
+              <Typography variant='small' className='font-medium'>
+                Print fee
+              </Typography>
+              <p className='flex items-center gap-1 text-sm'>
+                <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
+                <span className='text-gray/4 font-normal'>{totalCost}</span>
+              </p>
             </li>
-            <li className='flex justify-between text-xs mb-1'>
-              <span>Service fee</span>
-              <div className='flex'>
-                <img className='grayscale' src={coin} width={16} />
-                {/* <span>{extraFeeData.extraFee}</span> */}
-              </div>
+            <li className='flex justify-between mb-1'>
+              <Typography variant='small' className='font-medium'>
+                Service fee
+              </Typography>
+              <p className='flex items-center gap-1 text-sm'>
+                <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
+                <span className='text-gray/4 font-normal'>{serviceFee ?? 0}</span>
+              </p>
             </li>
             <li className='flex justify-between'>
-              <span>Total Cost</span>
-              <div className='flex'>
-                <img src={coin} width={20} />
-                {/* <span>{totalCost + extraFeeData.extraFee}</span> */}
-              </div>
+              <Typography variant='paragraph' className='font-bold'>
+                Total Cost
+              </Typography>
+              <p className='flex items-center gap-1'>
+                <img src={coinImage} alt='coinImage' className='w-6 h-6' />
+                <span className='text-yellow/1 font-bold'>{totalCost + (serviceFee ?? 0)}</span>
+              </p>
             </li>
           </ul>
         </div>
       </div>
-      <FormFooter totalCost={totalCost /* + extraFeeData.extraFee*/}>
-        {/* <Button
-          color={orderPrintList.length > 0 ? 'blue' : 'gray'}
+      <FormFooter totalCost={totalCost + (serviceFee ?? 0)}>
+        <Button
+          color={
+            remainCoins !== undefined && remainCoins >= totalCost + (serviceFee ?? 0)
+              ? 'blue'
+              : 'gray'
+          }
           className='rounded-none w-[30%]'
-          onClick={() => setMobileOrderStep(4)}
-          disabled={orderPrintList.length === 0}
+          onClick={() =>
+            setMobileOrderStep({
+              current: 5,
+              prev: 3
+            })
+          }
+          disabled={!remainCoins || remainCoins < totalCost + (serviceFee ?? 0)}
         >
-          Confirm
-        </Button> */}
+          <span className='text-base'>Confirm</span>
+        </Button>
       </FormFooter>
     </div>
   );
-}
+};

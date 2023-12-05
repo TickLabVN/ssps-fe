@@ -78,7 +78,7 @@ export const OrderListForm: Component<{
           <div className='mt-4 bg-white'>
             {isFetching ? (
               listFiles.map((file, index) => (
-                <div key={index}>
+                <div key={index} className='border-b-2'>
                   <FileInfo
                     fileExtraMetadata={file}
                     isConfigStep={false}
@@ -94,7 +94,7 @@ export const OrderListForm: Component<{
               </div>
             ) : (
               listFiles.map((file, index) => (
-                <div key={index}>
+                <div key={index} className='border-b-2'>
                   <FileInfo
                     fileExtraMetadata={file}
                     isConfigStep={false}
@@ -117,7 +117,7 @@ export const OrderListForm: Component<{
           onClick={handleSaveOrderUpdate}
           disabled={!listFiles || listFiles.length === 0}
         >
-          <span className='text-base'>Save</span>
+          <span className='text-base'>Order</span>
         </Button>
       </FormFooter>
     </div>

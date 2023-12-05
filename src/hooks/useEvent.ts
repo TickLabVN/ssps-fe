@@ -4,7 +4,8 @@ type EventKey =
   | 'listFiles:refetch'
   | 'amountFiles:update'
   | 'appNavigation:save'
-  | 'appNavigation:exist';
+  | 'appNavigation:exist'
+  | 'logout';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useListenEvent(event: EventKey, listener: (...args: any[]) => void) {

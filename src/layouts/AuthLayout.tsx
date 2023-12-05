@@ -8,7 +8,7 @@ export const AuthLayout: ILayout = ({ children }) => {
       <div className="bg-[url('./src/assets/header.png')] bg-no-repeat bg-cover bg-center py-5">
         <div className='flex items-center justify-center sm:justify-start sm:px-20'>
           <div className='w-[10%] mr-[5px] sm:w-[10%] lg:w-[5%]'>
-            <img src={logo} alt='' />
+            <img src={logo} alt='logo' />
           </div>
           <div className='flex flex-col items-center justify-center'>
             <p className='uppercase text-[#1488D8] text-[10px] sm:text-[12px] '>
@@ -22,7 +22,7 @@ export const AuthLayout: ILayout = ({ children }) => {
       </div>
       <div className='basis-1/2 flex justify-center items-start sm:items-center'>{children}</div>
       <div className='absolute bottom-0 left-[-250px] sm:left-[-200px] lg:left-0 lg:bottom-[-30px] '>
-        <img src={corner} alt='' />
+        <img src={corner} alt='corner' />
       </div>
     </div>
   );

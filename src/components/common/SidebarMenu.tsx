@@ -26,23 +26,18 @@ export function useSidebarMenu() {
                 <ToggleSidebarBtn open={openSidebar} />
               </div>
               <div className='flex'>
-                <img className='w-7 h-7 mr-2' src={logo}></img>
-                <img className='w-7 h-7' src={ticklab}></img>
+                <img className='w-7 h-7 mr-2' src={logo} alt='logo'></img>
+                <img className='w-7 h-7' src={ticklab} alt='ticklab'></img>
               </div>
             </div>
-            <div className='min-h-[90%] mt-10 flex flex-col justify-between pb-4'>
+            <div className='min-h-[90%] mt-10 flex flex-col justify-between'>
               <List className='p-0'>
                 {mainMenu.map((menuItem, idx) => {
                   if (menuItem.type === 'main-item') {
                     return (
                       <Link key={idx} to={menuItem.path}>
                         <ListItem
-                          className={
-                            ITEM_CLASSNAME +
-                            (selectedMenu === menuItem.name
-                              ? ' bg-blue-100 text-blue/1 font-bold pointer-events-none'
-                              : '')
-                          }
+                          className={ITEM_CLASSNAME}
                           onClick={() => {
                             setSelectedMenu(menuItem.name);
                             setOpenSidebar(false);
@@ -75,6 +70,12 @@ export function useSidebarMenu() {
                           {menuItem.name}
                         </ListItem>
                       </Link>
+                    );
+                  } else if (menuItem.type === 'logout-btn') {
+                    return (
+                      <ListItem key={idx} className={ITEM_CLASSNAME} onClick={menuItem.onClick}>
+                        {menuItem.name}
+                      </ListItem>
                     );
                   }
                 })}

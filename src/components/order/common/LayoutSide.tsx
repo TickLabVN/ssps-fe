@@ -68,6 +68,7 @@ export const useLayoutSide = () => {
                               ? item.portraitImage
                               : item.landscapeImage
                           }
+                          alt='image'
                         />
                       </ListItemPrefix>
                       <div className='text-gray/4'>

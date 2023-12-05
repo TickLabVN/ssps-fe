@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ChevronLeftIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { ChevronLeftIcon, PowerIcon } from '@heroicons/react/24/solid';
 import coin from '@assets/coin.png';
 import { AppDrawer, DesktopNavbar, ToggleSidebarBtn, useSidebarMenu } from '@components/common';
 import { useCloseForm } from '@components/order/common';
@@ -30,7 +30,6 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
     () => listFiles?.reduce((totalSize, file) => totalSize + file.fileSize, 0),
     [listFiles]
   );
-
   return (
     <div className='w-full max-h-[768px] py-3 shadow-md lg:sticky my-3 lg:my-0'>
       <div className='flex items-center justify-between px-6 lg:px-9'>
@@ -56,8 +55,11 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
               {data}
             </div>
           )}
-          <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin}></img>
-          <UserCircleIcon className='w-10 h-10 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer' />
+          <img className='w-7 h-7 lg:w-10 lg:h-10' src={coin} alt='coin'></img>
+          <PowerIcon
+            onClick={() => emitEvent('logout')}
+            className='w-8 h-8 hidden lg:block lg:opacity-40 lg:ml-6 lg:cursor-pointer hover:bg-gray-200 rounded-full'
+          />
         </div>
       </div>
       {screenSize >= ScreenSize.MD && desktopOrderStep > 0 && (
@@ -66,11 +68,11 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           {desktopOrderStep === 1 && (
             <>
               <div className='flex items-center justify-between px-6'>
-                <div
-                  className='flex items-center gap-2 cursor-pointer p-2 rounded-full hover:bg-gray-100'
-                  onClick={openCloseForm}
-                >
-                  <ChevronLeftIcon className='w-5 h-5' />
+                <div className='flex items-center gap-2'>
+                  <ChevronLeftIcon
+                    className='w-5 h-5 hover:bg-gray-100 cursor-pointer p-2 rounded-full'
+                    onClick={openCloseForm}
+                  />
                   <p className='text-gray/4 font-semibold text-xl'>Order list</p>
                 </div>
                 <div className='text-right text-sm'>

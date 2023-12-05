@@ -10,10 +10,10 @@ export const DesktopNavbar: Component<{ mainMenu: RouteMenu }> = ({ mainMenu }) 
   return (
     <div className='flex'>
       <div className='max-w-[40px] max-h-[40px] ml-0 mr-3 object-cover'>
-        <img className='w-full h-full' src={logo}></img>
+        <img className='w-full h-full' src={logo} alt='logo'></img>
       </div>
       <div className='max-w-[40px] max-h-[40px] ml-0 mr-3 object-cover'>
-        <img className='w-full h-full' src={ticklab}></img>
+        <img className='w-full h-full' src={ticklab} alt='ticklab'></img>
       </div>
       <List className='p-0 flex-row -ml-3 max-w-[calc(100%-36px)]'>
         {mainMenu.map((menuItem, idx) => {
