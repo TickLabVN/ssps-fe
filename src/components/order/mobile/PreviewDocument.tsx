@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import DocViewer, { DocViewerRenderers, IHeaderOverride } from '@cyntler/react-doc-viewer';
 import { IconButton } from '@material-tailwind/react';
@@ -8,6 +9,15 @@ export function PreviewDocument() {
   const queryClient = useQueryClient();
   const fileURL = queryClient.getQueryData<string>(['fileURL']);
   const { mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
+
+  useEffect(() => {
+    return () => {
+      const revokeURL = queryClient.getQueryData<string>(['fileURL']);
+      if (revokeURL) {
+        URL.revokeObjectURL(revokeURL);
+      }
+    };
+  }, [queryClient]);
 
   const MyHeader: IHeaderOverride = (state) => {
     return (

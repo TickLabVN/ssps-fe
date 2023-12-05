@@ -25,6 +25,7 @@ import { usePrintingRequestQuery } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 import { usePreviewDocumentDesktop } from './PreviewDocumentDesktop';
+import { useOrderSuccessDesktop } from './OrderSuccessDesktop';
 
 export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
   initialTotalCost
@@ -37,6 +38,7 @@ export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<
   } = usePrintingRequestQuery();
 
   const { openPreviewDocumentDesktop, PreviewDocumentDesktop } = usePreviewDocumentDesktop();
+  const { openOrderSuccessDesktop, OrderSuccessDesktop } = useOrderSuccessDesktop();
 
   const { totalCost, setTotalCost } = useOrderPrintStore();
   const { setDesktopOrderStep } = useOrderWorkflowStore();
@@ -240,7 +242,7 @@ export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<
                   ? 'blue'
                   : 'gray'
               }
-              onClick={() => setDesktopOrderStep(4)}
+              onClick={openOrderSuccessDesktop}
               disabled={!remainCoins || remainCoins < totalCost + (serviceFee ?? 0)}
             >
               Confirm Order
@@ -249,6 +251,7 @@ export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<
         </div>
       </div>
       {<PreviewDocumentDesktop />}
+      {<OrderSuccessDesktop initialTotalCost={initialTotalCost} serviceFee={serviceFee} />}
     </>
   );
 };
