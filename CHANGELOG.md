@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3.0](https://github.com/TickLabVN/ssps-fe/compare/v1.2.2...v1.3.0) (2023-12-05)
+
+
+### Features
+
+* **confirm-order:** create ui for ConfirmOrderForm version mobile ([bf736d7](https://github.com/TickLabVN/ssps-fe/commit/bf736d7758f8e0d8b63a9787abd0d901e1a3bc70))
+* **logout:** add edit appnavigation ([6eb933a](https://github.com/TickLabVN/ssps-fe/commit/6eb933aa9f5e725da3c9b03624b0c51a4d08b2f2))
+* **logout:** add logout settting ([d7f1e10](https://github.com/TickLabVN/ssps-fe/commit/d7f1e10aa8fbc2a8987e47122f94564dbbcfdd84))
+* **logout:** reSetting for logout ([686498c](https://github.com/TickLabVN/ssps-fe/commit/686498c0cc3989198b5e31a772eeff9b1c9d1f42))
+* **logout:** setting for logout ([005c849](https://github.com/TickLabVN/ssps-fe/commit/005c8492e369a8a71a17ac64cf0dfe166bfce2d4))
+* **logout:** setting for logout ([5bd22cb](https://github.com/TickLabVN/ssps-fe/commit/5bd22cbe9fd02192dccdff43809238ddd4fd55d7))
+* **order-success:** create ui for Order Success Form version mobile ([47834f2](https://github.com/TickLabVN/ssps-fe/commit/47834f2f17fae4d24569827018d22ab259dc2939))
+* **top-up-wallet:** create ui for TopupWallet version mobile ([eef5227](https://github.com/TickLabVN/ssps-fe/commit/eef522741195f1768708524c9d641e622968752e))
+
+
+### Bug Fixes
+
+* **logout:** fix logic code undefined in invoke api ([d600dce](https://github.com/TickLabVN/ssps-fe/commit/d600dce4a7818137a6c9bee7c9533d844dd85b0a))
+* **logout:** remove redundant Dialog at App.tsx ([b671a36](https://github.com/TickLabVN/ssps-fe/commit/b671a36aa8aa740317bde97f155a1eeb5ee90f97))
+
 ## [1.2.2](https://github.com/TickLabVN/ssps-fe/compare/v1.2.1...v1.2.2) (2023-12-02)
 
 
