@@ -82,7 +82,7 @@ export function TopupWalletForm() {
           </div>
           <div className={`px-6 pt-4 pb-6 flex flex-col ${!chevronIcon ? 'hidden' : ''}`}>
             <ExchangeRateRow
-              title='To Dollar:'
+              title='To VND:'
               coins={1}
               numItems={VNDPerCoin.data}
               children={<p className='text-gray/4 text-xs font-medium'>VND</p>}

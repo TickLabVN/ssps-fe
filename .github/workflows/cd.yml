@@ -43,6 +43,7 @@ jobs:
           echo VITE_BACKEND_URL=${{ vars.BACKEND_URL }} >> .env
           echo VITE_GOOGLE_OAUTH_REDIRECT_URL=${{ vars.GOOGLE_OAUTH_REDIRECT_URL }} >> .env
           echo VITE_GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }} >> .env
+          echo VITE_PAYPAL_CLIENT_ID=${{ vars.PAYPAL_CLIENT_ID }} >> .env
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
