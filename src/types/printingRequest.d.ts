@@ -33,6 +33,7 @@ type FileAmount = {
 type PrintingRequestStore = {
   isFileUploadSuccess: boolean;
   isOrderUpdate: boolean;
+  isOrderSuccess: boolean;
   fileConfig: FileConfig;
   specificPage: string;
   pageBothSide: string;
@@ -40,6 +41,7 @@ type PrintingRequestStore = {
   fileCoins: number;
   setIsFileUploadSuccess: (data: boolean) => void;
   setIsOrderUpdate: (data: boolean) => void;
+  setIsOrderSuccess: (data: boolean) => void;
   setFileConfig: (key: string, value: string | number) => void;
   clearFileConfig: () => void;
   setSpecificPage: (data: string) => void;

@@ -81,7 +81,14 @@ export function usePrintingRequestMutation() {
   const executePrintingRequest = useMutation({
     mutationKey: ['executePrintingRequest'],
     mutationFn: (printingRequestId: string) =>
-      printingRequestService.executePrintingRequest(printingRequestId)
+      printingRequestService.executePrintingRequest(printingRequestId),
+    onSuccess: () => {
+      queryClient.prefetchQuery({
+        queryKey: ['/api/user/remain-coins'],
+        queryFn: () => userService.getRemainCoins(),
+        retry: retryQueryFn
+      });
+    }
   });
 
   return {

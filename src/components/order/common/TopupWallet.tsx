@@ -27,6 +27,7 @@ export function TopupWallet() {
   const { createPayPalOrder, approvePayPalOrder } = usePrintingRequestMutation();
 
   const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
+
   const { screenSize } = useScreenSize();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -268,12 +269,13 @@ export function TopupWallet() {
             <div className='flex items-center'>
               <ChevronLeftIcon
                 className='w-7 h-7 mr-4 opacity-40 hover:opacity-100 focus:opacity-100 active:opacity-100 cursor-pointer'
-                onClick={() =>
+                onClick={() => {
                   setMobileOrderStep({
                     current: 3,
                     prev: 4
-                  })
-                }
+                  });
+                  setDesktopOrderStep(2);
+                }}
               />
               <Typography className='text-gray/4 text-base font-semibold '>
                 Top up wallet

@@ -6,6 +6,7 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
   devtools((set) => ({
     isFileUploadSuccess: false,
     isOrderUpdate: false,
+    isOrderSuccess: false,
     fileConfig: {
       numOfCopies: 1,
       layout: LAYOUT_SIDE.portrait,
@@ -21,6 +22,9 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
       set({ isFileUploadSuccess: data });
     },
     setIsOrderUpdate: (data) => {
+      set({ isOrderUpdate: data });
+    },
+    setIsOrderSuccess: (data) => {
       set({ isOrderUpdate: data });
     },
     setFileConfig: (key, value) => {

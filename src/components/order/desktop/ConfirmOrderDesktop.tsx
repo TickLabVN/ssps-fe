@@ -21,31 +21,44 @@ import {
   QuestionMarkCircleIcon
 } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
-import { usePrintingRequestQuery } from '@hooks';
+import { usePrintingRequestQuery, usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 import { usePreviewDocumentDesktop } from './PreviewDocumentDesktop';
-import { useOrderSuccessDesktop } from './OrderSuccessDesktop';
 
-export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
-  initialTotalCost
-}) => {
+export const ConfirmOrderDektop: Component<{
+  initialTotalCost: MutableRefObject<number>;
+  handleOpenOrderSuccessDesktop: () => void;
+}> = ({ initialTotalCost, handleOpenOrderSuccessDesktop }) => {
   const queryClient = useQueryClient();
   const remainCoins = queryClient.getQueryData<number>(['/api/user/remain-coins']);
+  const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
+
   const {
     listFiles: { data: listFiles },
     serviceFee: { data: serviceFee }
   } = usePrintingRequestQuery();
+  const { executePrintingRequest } = usePrintingRequestMutation();
 
   const { openPreviewDocumentDesktop, PreviewDocumentDesktop } = usePreviewDocumentDesktop();
-  const { openOrderSuccessDesktop, OrderSuccessDesktop } = useOrderSuccessDesktop();
 
-  const { totalCost, setTotalCost } = useOrderPrintStore();
-  const { setDesktopOrderStep } = useOrderWorkflowStore();
+  const { totalCost, setTotalCost, setIsOrderSuccess } = useOrderPrintStore();
+  const { setDesktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
 
   useEffect(() => {
     setTotalCost(initialTotalCost.current);
   }, [initialTotalCost, setTotalCost]);
+
+  const handleExecutePrintingRequest = async () => {
+    if (!printingRequestId) return;
+    await executePrintingRequest.mutateAsync(printingRequestId.id);
+    setIsOrderSuccess(true);
+    setMobileOrderStep({
+      current: 5,
+      prev: 3
+    });
+    handleOpenOrderSuccessDesktop();
+  };
 
   const columnHelper = createColumnHelper<FileExtraMetadata>();
 
@@ -144,7 +157,7 @@ export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<
             </thead>
             <tbody className='bg-white'>
               {fileTable.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
+                <tr key={row.id} className='border-b-2'>
                   {row.getAllCells().map((cell) => (
                     <td key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -175,7 +188,13 @@ export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<
               <div className='flex flex-col'>
                 <div
                   className='flex justify-between items-center cursor-pointer hover:bg-gray-100 p-2 rounded-full'
-                  onClick={() => setDesktopOrderStep(3)}
+                  onClick={() => {
+                    setDesktopOrderStep(3);
+                    setMobileOrderStep({
+                      current: 4,
+                      prev: 3
+                    });
+                  }}
                 >
                   <p className='text-base font-medium text-gray/4'>Print wallet</p>
                   <ChevronRightIcon className='w-7 h-7 opacity-40 focus:opacity-100 active:opacity-100 cursor-pointer' />
@@ -242,7 +261,7 @@ export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<
                   ? 'blue'
                   : 'gray'
               }
-              onClick={openOrderSuccessDesktop}
+              onClick={handleExecutePrintingRequest}
               disabled={!remainCoins || remainCoins < totalCost + (serviceFee ?? 0)}
             >
               Confirm Order
@@ -251,7 +270,6 @@ export const ConfirmOrderDektop: Component<{ initialTotalCost: MutableRefObject<
         </div>
       </div>
       {<PreviewDocumentDesktop />}
-      {<OrderSuccessDesktop initialTotalCost={initialTotalCost} serviceFee={serviceFee} />}
     </>
   );
 };

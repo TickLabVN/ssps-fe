@@ -13,9 +13,10 @@ export function useChooseFileBox() {
   const [openBox, setOpenBox] = useState<boolean>(false);
   const { openOrderWorkflow, closeOrderWorkflow, OrderWorkflow } = useOrderWorkflow();
 
-  const ChooseFileBox: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
-    initialTotalCost
-  }) => {
+  const ChooseFileBox: Component<{
+    initialTotalCost: MutableRefObject<number>;
+    handleOpenOrderSuccessDesktop: () => void;
+  }> = ({ initialTotalCost, handleOpenOrderSuccessDesktop }) => {
     const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
     const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']) || null;
     const { data: fileMetadata } = useQuery({
@@ -24,7 +25,8 @@ export function useChooseFileBox() {
     });
     const { screenSize } = useScreenSize();
     const { desktopOrderStep, mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
-    const { isFileUploadSuccess, setIsFileUploadSuccess, setTotalCost } = useOrderPrintStore();
+    const { isFileUploadSuccess, isOrderSuccess, setIsFileUploadSuccess, setTotalCost } =
+      useOrderPrintStore();
 
     const {
       fileUploadRequirement: [acceptedFileExtension, maxFileSize]
@@ -47,11 +49,20 @@ export function useChooseFileBox() {
           } else {
             closeOrderWorkflow();
           }
+          if (isOrderSuccess) {
+            handleOpenOrderSuccessDesktop();
+          }
         }
       } else {
         closeOrderWorkflow();
       }
-    }, [screenSize, desktopOrderStep, isFileUploadSuccess]);
+    }, [
+      screenSize,
+      desktopOrderStep,
+      isFileUploadSuccess,
+      isOrderSuccess,
+      handleOpenOrderSuccessDesktop
+    ]);
 
     const handleUploadDocument = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {

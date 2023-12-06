@@ -1,15 +1,6 @@
 import { MutableRefObject, useState } from 'react';
-import {
-  Button,
-  Card,
-  CardBody,
-  Dialog,
-  DialogBody,
-  DialogHeader,
-  IconButton,
-  Typography
-} from '@material-tailwind/react';
-import { CheckIcon, DocumentChartBarIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Button, Card, CardBody, Dialog, DialogBody, Typography } from '@material-tailwind/react';
+import { CheckIcon, DocumentChartBarIcon } from '@heroicons/react/24/outline';
 import coinImage from '@assets/coin.png';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
@@ -28,15 +19,19 @@ export function useOrderSuccessDesktop() {
       setTotalCost(0);
       initialTotalCost.current = 0;
       setDesktopOrderStep(0);
+      setOpenDialog(false);
     };
 
     return (
-      <Dialog size='xs' open={openDialog} handler={() => setOpenDialog(false)}>
-        <DialogHeader className='p-0'>
-          <IconButton variant='text' onClick={() => setOpenDialog(false)}>
-            <XMarkIcon className='w-6 h-6' />
-          </IconButton>
-        </DialogHeader>
+      <Dialog
+        size='xs'
+        open={openDialog}
+        handler={() => setOpenDialog(false)}
+        dismiss={{
+          escapeKey: false,
+          outsidePress: false
+        }}
+      >
         <DialogBody>
           <div className='w-full flex flex-col justify-center items-center h-32 overscroll-y-auto'>
             <div className='p-5 rounded-full bg-[#DBEAFE]'>

@@ -34,7 +34,7 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
   const { executePrintingRequest } = usePrintingRequestMutation();
 
   const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
-  const { totalCost, setIsOrderUpdate, setTotalCost } = useOrderPrintStore();
+  const { totalCost, setIsOrderUpdate, setIsOrderSuccess, setTotalCost } = useOrderPrintStore();
 
   useEffect(() => {
     setTotalCost(initialTotalCost.current);
@@ -52,6 +52,7 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
   const handleExecutePrintingRequest = async () => {
     if (!printingRequestId) return;
     await executePrintingRequest.mutateAsync(printingRequestId.id);
+    setIsOrderSuccess(true);
     setMobileOrderStep({
       current: 5,
       prev: 3
@@ -161,6 +162,7 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
                 current: 4,
                 prev: 3
               });
+              setDesktopOrderStep(3);
             }}
           >
             <Typography variant='h6'>Print wallet</Typography>
