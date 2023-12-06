@@ -37,6 +37,7 @@ type PrintingRequestStore = {
   specificPage: string;
   pageBothSide: string;
   totalCost: number;
+  fileCoins: number;
   setIsFileUploadSuccess: (data: boolean) => void;
   setIsOrderUpdate: (data: boolean) => void;
   setFileConfig: (key: string, value: string | number) => void;
@@ -45,4 +46,5 @@ type PrintingRequestStore = {
   setPageBothSide: (data: string) => void;
   clearSpecificPageAndPageBothSide: () => void;
   setTotalCost: (totalCost: number) => void;
+  setFileCoins: (fileCoins: number) => void;
 };

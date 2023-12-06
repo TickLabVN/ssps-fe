@@ -1,13 +1,18 @@
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
-import { usePrintingRequestMutation } from '@hooks';
+import { usePrintingRequestMutation, usePrintingRequestQuery } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
+import { formatFileSize } from '@utils';
 
 export function FileBox() {
   const queryClient = useQueryClient();
   const { setIsFileUploadSuccess } = useOrderPrintStore();
   const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
+
+  const {
+    fileUploadRequirement: [acceptedFileExtension, maxFileSize]
+  } = usePrintingRequestQuery();
   const { uploadFile } = usePrintingRequestMutation();
 
   const handleUploadDocument = useCallback(
@@ -55,10 +60,11 @@ export function FileBox() {
       </div>
 
       <div className='text-sm lg:text-md w-54 h-13 gap-1'>
-        <span className='font-semibold h-8'>Allowed formats:</span> .doc, .docx, .xls, .xlsx, .ppt,
-        .jpg, .png, .pdf
+        <span className='font-semibold h-8'>Allowed formats:</span>{' '}
+        {acceptedFileExtension.data?.map((fileType) => `.${fileType}`).join(', ')}
         <div className='text-sm lg:text-md h-4'>
-          <span className='font-semibold'>Maximum size:</span> 100MB
+          <span className='font-semibold'>Maximum size:</span>{' '}
+          {maxFileSize.data !== undefined && formatFileSize(maxFileSize.data)}
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import { ChangeEvent, MutableRefObject, useCallback, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { PDFDocument } from 'pdf-lib';
 import type { Buffer } from 'buffer';
 import {
   Button,
@@ -19,7 +20,7 @@ import {
   FormFooter
 } from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
-import { usePrintingRequestMutation, emitEvent } from '@hooks';
+import { usePrintingRequestMutation, usePrintingRequestQuery, emitEvent } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
 import { editPdf } from '@utils';
 import type { PagePerSheet } from '@utils';
@@ -36,6 +37,9 @@ export const UploadDocumentForm: Component<{
   });
   const fileBuffer = queryClient.getQueryData<Buffer>(['fileBuffer']);
 
+  const {
+    coinPerPage: { data: coinPerPage }
+  } = usePrintingRequestQuery();
   const { uploadFileConfig, deleteFile } = usePrintingRequestMutation();
   const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const {
@@ -51,7 +55,8 @@ export const UploadDocumentForm: Component<{
     setIsFileUploadSuccess,
     clearFileConfig,
     clearSpecificPageAndPageBothSide,
-    setIsOrderUpdate
+    setIsOrderUpdate,
+    setFileCoins
   } = useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
@@ -69,16 +74,25 @@ export const UploadDocumentForm: Component<{
           parseInt(fileConfig.pagesPerSheet) as PagePerSheet
         );
         queryClient.setQueryData(['fileURL'], URL.createObjectURL(new Blob([fileEditedBuffer])));
+        if (coinPerPage !== undefined) {
+          const pdfDoc = await PDFDocument.load(fileEditedBuffer);
+          setFileCoins(pdfDoc.getPageCount() * coinPerPage);
+          setTotalCost(initialTotalCost.current + pdfDoc.getPageCount() * coinPerPage);
+        }
       }
     };
     handleEditPdfPrinting();
   }, [
+    initialTotalCost,
+    coinPerPage,
     fileBuffer,
     fileConfig.layout,
     fileConfig.pageSide,
     fileConfig.pages,
     fileConfig.pagesPerSheet,
     queryClient,
+    setFileCoins,
+    setTotalCost,
     editPdfPrinting
   ]);
 
@@ -189,6 +203,9 @@ export const UploadDocumentForm: Component<{
         : PAGE_SIDE.both.landscape[0]!.value
     );
     setFileConfig(FILE_CONFIG.layout, e.target.value);
+    if (e.target.value === LAYOUT_SIDE.landscape && fileConfig.pagesPerSheet === '1') {
+      setFileConfig(FILE_CONFIG.pagesPerSheet, '2');
+    }
   };
   const handlePagesChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFileConfig(FILE_CONFIG.pages, e.target.value);
@@ -284,7 +301,11 @@ export const UploadDocumentForm: Component<{
             }}
           >
             {PAGES_PER_SHEET.map((item) => (
-              <Option key={item} value={item}>
+              <Option
+                key={item}
+                value={item}
+                disabled={item === '1' && fileConfig.layout === LAYOUT_SIDE.landscape}
+              >
                 {item}
               </Option>
             ))}

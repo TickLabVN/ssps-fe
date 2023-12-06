@@ -23,9 +23,7 @@ import { useOrderWorkflowStore } from '@states';
 
 export function TopupWallet() {
   const queryClient = useQueryClient();
-  const {
-    exchangeRate: [coinPerPage, VNDPerCoin, bonusCoin]
-  } = usePrintingRequestQuery();
+  const { coinPerPage, VNDPerCoin, bonusCoin } = usePrintingRequestQuery();
   const { createPayPalOrder, approvePayPalOrder } = usePrintingRequestMutation();
 
   const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();

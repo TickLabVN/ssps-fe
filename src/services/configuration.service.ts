@@ -4,5 +4,7 @@ export const configurationService = {
   getCoinPerPage: () => invoke(apiClient.GET('/api/configuration/coinPerPage')),
   getVNDPerCoin: () => invoke(apiClient.GET('/api/configuration/coinToVnd')),
   getServiceFee: () => invoke(apiClient.GET('/api/configuration/serviceFee')),
-  getBonusCoin: () => invoke(apiClient.GET('/api/configuration/bonusCoinPer100000Vnd'))
+  getBonusCoin: () => invoke(apiClient.GET('/api/configuration/bonusCoinPer100000Vnd')),
+  getAcceptedFileExtension: () => invoke(apiClient.GET('/api/configuration/acceptedExtension')),
+  getMaxFileSize: () => invoke(apiClient.GET('/api/configuration/maxFileSize'))
 };
