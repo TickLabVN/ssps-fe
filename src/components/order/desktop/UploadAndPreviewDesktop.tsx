@@ -75,11 +75,20 @@ export const UploadAndPreviewDesktop: Component<{
         if (coinPerPage !== undefined) {
           const pdfDoc = await PDFDocument.load(fileEditedBuffer);
           setFileCoins(pdfDoc.getPageCount() * coinPerPage);
-          setTotalCost(initialTotalCost.current + pdfDoc.getPageCount() * coinPerPage);
+          setTotalCost(
+            initialTotalCost.current + pdfDoc.getPageCount() * coinPerPage * fileConfig.numOfCopies
+          );
         }
       }
     };
     handleEditPdfPrinting();
+
+    return () => {
+      const revokeURL = queryClient.getQueryData<string>(['fileURL']);
+      if (revokeURL) {
+        URL.revokeObjectURL(revokeURL);
+      }
+    };
   }, [
     initialTotalCost,
     coinPerPage,
@@ -88,6 +97,7 @@ export const UploadAndPreviewDesktop: Component<{
     fileConfig.pageSide,
     fileConfig.pages,
     fileConfig.pagesPerSheet,
+    fileConfig.numOfCopies,
     queryClient,
     editPdfPrinting,
     setFileCoins,
@@ -224,15 +234,6 @@ export const UploadAndPreviewDesktop: Component<{
       queryKey: ['fileURL'],
       queryFn: () => queryClient.getQueryData<string>(['fileURL'])
     });
-
-    useEffect(() => {
-      return () => {
-        const revokeURL = queryClient.getQueryData<string>(['fileURL']);
-        if (revokeURL) {
-          URL.revokeObjectURL(revokeURL);
-        }
-      };
-    }, []);
 
     const PreviewBody = () => {
       return (

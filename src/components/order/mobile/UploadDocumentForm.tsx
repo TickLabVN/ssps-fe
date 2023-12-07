@@ -77,7 +77,9 @@ export const UploadDocumentForm: Component<{
         if (coinPerPage !== undefined) {
           const pdfDoc = await PDFDocument.load(fileEditedBuffer);
           setFileCoins(pdfDoc.getPageCount() * coinPerPage);
-          setTotalCost(initialTotalCost.current + pdfDoc.getPageCount() * coinPerPage);
+          setTotalCost(
+            initialTotalCost.current + pdfDoc.getPageCount() * coinPerPage * fileConfig.numOfCopies
+          );
         }
       }
     };
@@ -90,6 +92,7 @@ export const UploadDocumentForm: Component<{
     fileConfig.pageSide,
     fileConfig.pages,
     fileConfig.pagesPerSheet,
+    fileConfig.numOfCopies,
     queryClient,
     setFileCoins,
     setTotalCost,
