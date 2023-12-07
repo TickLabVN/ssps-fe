@@ -25,7 +25,7 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
       set({ isOrderUpdate: data });
     },
     setIsOrderSuccess: (data) => {
-      set({ isOrderUpdate: data });
+      set({ isOrderSuccess: data });
     },
     setFileConfig: (key, value) => {
       set((state) => ({ fileConfig: { ...state.fileConfig, [key]: value } }));

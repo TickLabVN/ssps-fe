@@ -12,7 +12,8 @@ import { useOrderWorkflowStore } from '@states';
 
 export function HomePage() {
   const { openChooseFileBox, ChooseFileBox } = useChooseFileBox();
-  const { openOrderSuccessDesktop, OrderSuccessDesktop } = useOrderSuccessDesktop();
+  const { openOrderSuccessDesktop, closeOrderSuccessDesktop, OrderSuccessDesktop } =
+    useOrderSuccessDesktop();
 
   const { createPrintingRequest } = usePrintingRequestMutation();
   const initialTotalCost = useRef<number>(0);
@@ -74,6 +75,7 @@ export function HomePage() {
       <ChooseFileBox
         initialTotalCost={initialTotalCost}
         handleOpenOrderSuccessDesktop={openOrderSuccessDesktop}
+        handleCloseOrderSuccessDesktop={closeOrderSuccessDesktop}
       />
       <HomePageContent />
       <OrderSuccessDesktop initialTotalCost={initialTotalCost} />

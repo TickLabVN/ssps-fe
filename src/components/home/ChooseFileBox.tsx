@@ -16,7 +16,8 @@ export function useChooseFileBox() {
   const ChooseFileBox: Component<{
     initialTotalCost: MutableRefObject<number>;
     handleOpenOrderSuccessDesktop: () => void;
-  }> = ({ initialTotalCost, handleOpenOrderSuccessDesktop }) => {
+    handleCloseOrderSuccessDesktop: () => void;
+  }> = ({ initialTotalCost, handleOpenOrderSuccessDesktop, handleCloseOrderSuccessDesktop }) => {
     const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
     const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']) || null;
     const { data: fileMetadata } = useQuery({
@@ -43,6 +44,9 @@ export function useChooseFileBox() {
       if (isFileUploadSuccess) {
         if (screenSize <= ScreenSize.MD) {
           openOrderWorkflow();
+          if (isOrderSuccess) {
+            handleCloseOrderSuccessDesktop();
+          }
         } else {
           if (desktopOrderStep === 0) {
             openOrderWorkflow();
@@ -61,7 +65,8 @@ export function useChooseFileBox() {
       desktopOrderStep,
       isFileUploadSuccess,
       isOrderSuccess,
-      handleOpenOrderSuccessDesktop
+      handleOpenOrderSuccessDesktop,
+      handleCloseOrderSuccessDesktop
     ]);
 
     const handleUploadDocument = useCallback(

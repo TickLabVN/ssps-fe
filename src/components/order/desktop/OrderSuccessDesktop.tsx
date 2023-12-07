@@ -115,6 +115,7 @@ export function useOrderSuccessDesktop() {
 
   return {
     openOrderSuccessDesktop: () => setOpenDialog(true),
+    closeOrderSuccessDesktop: () => setOpenDialog(false),
     OrderSuccessDesktop: OrderSuccessDesktop
   };
 }
