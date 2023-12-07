@@ -3,17 +3,21 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, CardBody, Dialog, DialogBody, Typography } from '@material-tailwind/react';
 import { CheckIcon, DocumentChartBarIcon } from '@heroicons/react/24/outline';
 import coinImage from '@assets/coin.png';
+import { usePrintingRequestQuery } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function useOrderSuccessDesktop() {
   const queryClient = useQueryClient();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
-  const OrderSuccessDesktop: Component<{
-    initialTotalCost: MutableRefObject<number>;
-    serviceFee?: number;
-  }> = ({ initialTotalCost, serviceFee }) => {
+  const OrderSuccessDesktop: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
+    initialTotalCost
+  }) => {
     const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
+    const {
+      serviceFee: { data: serviceFee }
+    } = usePrintingRequestQuery();
+
     const { totalCost, setTotalCost, setIsFileUploadSuccess } = useOrderPrintStore();
     const { setDesktopOrderStep } = useOrderWorkflowStore();
 

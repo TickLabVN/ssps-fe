@@ -71,13 +71,12 @@ export const useLayoutSide = () => {
                           alt='image'
                         />
                       </ListItemPrefix>
-                      <div className='text-gray/4'>
+                      <div className='text-gray/4 items-center'>
                         <p className='text-base md:text-lg font-medium'>
                           {layout === LAYOUT_SIDE.portrait
                             ? item.portraitSize.label
                             : item.landscapeSize.label}
                         </p>
-                        <p className='text-xs md:text-sm font-bold uppercase'>{item.pos}</p>
                       </div>
                     </ListItem>
                   ))}
