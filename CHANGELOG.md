@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/TickLabVN/ssps-fe/compare/v1.4.1...v1.4.2) (2023-12-07)
+
+
+### Bug Fixes
+
+* **delete-file:** handle remove file buffer when deleting file ([b0a9fba](https://github.com/TickLabVN/ssps-fe/commit/b0a9fba0c005d400cc185514c0eacc1c0e396084))
+
 ## [1.4.1](https://github.com/TickLabVN/ssps-fe/compare/v1.4.0...v1.4.1) (2023-12-07)
 
 
