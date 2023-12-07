@@ -43,6 +43,7 @@ export function usePrintingRequestMutation() {
       queryClient.setQueryData(['fileIdCurrent'], null);
       queryClient.setQueryData(['fileURL'], null);
       queryClient.setQueryData(['fileMetadata', data.fileId], null);
+      queryClient.setQueryData(['fileBuffer'], null);
     }
   });
 

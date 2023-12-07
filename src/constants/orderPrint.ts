@@ -1,11 +1,7 @@
-import portraitBottom from '@assets/portrait-bottom.jpg';
 import portraitTop from '@assets/portrait-top.jpg';
 import portraitLeft from '@assets/portrait-left.jpg';
-import portraitRight from '@assets/portrait-right.jpg';
-import landscapeBottom from '@assets/landscape-bottom.jpg';
 import landscapeTop from '@assets/landscape-top.jpg';
 import landscapeLeft from '@assets/landscape-left.png';
-import landscapeRight from '@assets/landscape-right.jpg';
 
 export const LAYOUT_SIDE: Readonly<Record<FileLayout, FileLayout>> = Object.freeze({
   portrait: 'portrait',
@@ -14,7 +10,6 @@ export const LAYOUT_SIDE: Readonly<Record<FileLayout, FileLayout>> = Object.free
 
 export const LAYOUT_INFO = [
   {
-    pos: 'Left',
     portraitImage: portraitLeft,
     landscapeImage: landscapeLeft,
     portraitSize: {
@@ -27,35 +22,8 @@ export const LAYOUT_INFO = [
     }
   },
   {
-    pos: 'Right',
-    portraitImage: portraitRight,
-    landscapeImage: landscapeRight,
-    portraitSize: {
-      label: 'Long edge',
-      value: 'long'
-    },
-    landscapeSize: {
-      label: 'Short edge',
-      value: 'short'
-    }
-  },
-  {
-    pos: 'Top',
     portraitImage: portraitTop,
     landscapeImage: landscapeTop,
-    portraitSize: {
-      label: 'Short edge',
-      value: 'short'
-    },
-    landscapeSize: {
-      label: 'Long edge',
-      value: 'long'
-    }
-  },
-  {
-    pos: 'Bottom',
-    portraitImage: portraitBottom,
-    landscapeImage: landscapeBottom,
     portraitSize: {
       label: 'Short edge',
       value: 'short'
@@ -95,37 +63,21 @@ export const PAGE_SIDE = {
   both: {
     portrait: [
       {
-        label: 'Long edge (Left)',
+        label: 'Long edge',
         value: 'long'
       },
       {
-        label: 'Long edge (Right)',
-        value: 'long'
-      },
-      {
-        label: 'Short edge (Top)',
-        value: 'short'
-      },
-      {
-        label: 'Short edge (Bottom)',
+        label: 'Short edge',
         value: 'short'
       }
     ],
     landscape: [
       {
-        label: 'Short edge (Left)',
+        label: 'Short edge',
         value: 'short'
       },
       {
-        label: 'Short edge (Right)',
-        value: 'short'
-      },
-      {
-        label: 'Long edge (Top)',
-        value: 'long'
-      },
-      {
-        label: 'Long edge (Bottom)',
+        label: 'Long edge',
         value: 'long'
       }
     ]
