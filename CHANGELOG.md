@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0](https://github.com/TickLabVN/ssps-fe/compare/v1.3.1...v1.4.0) (2023-12-07)
+
+
+### Features
+
+* **edit-pdf:** use util pdf-editor for configuration from back-end ([bbf92ff](https://github.com/TickLabVN/ssps-fe/commit/bbf92ffc4481bb102c0bafc3fa76c509d08b061b))
+* **order-success:** create ui for Order Success Form version desktop ([94c3181](https://github.com/TickLabVN/ssps-fe/commit/94c31816f82433e443663cfcd67765561d1a27f3))
+
+
+### Bug Fixes
+
+* **landscape:** disable page per sheet as 1 when layout of page is landscape ([d1001c4](https://github.com/TickLabVN/ssps-fe/commit/d1001c4047c14d483d192b656a870ad0c991f87e))
+* **order-success:** handle open and close Order Success Form version desktop ([fcb8e39](https://github.com/TickLabVN/ssps-fe/commit/fcb8e39bec7460c9f56831b1b40d6dfd1f89700c))
+* **responsive:** add api execute and responsive Order Success Form ([fd827dd](https://github.com/TickLabVN/ssps-fe/commit/fd827dd112305647d9cb45972234f07c64a46029))
+
 ## [1.3.1](https://github.com/TickLabVN/ssps-fe/compare/v1.3.0...v1.3.1) (2023-12-05)
 
 
