@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/TickLabVN/ssps-fe/compare/v1.4.0...v1.4.1) (2023-12-07)
+
+
+### Bug Fixes
+
+* **preview:** fix revoke url when Preview unmount ([85feeb3](https://github.com/TickLabVN/ssps-fe/commit/85feeb3747f2215e579fd6476de900655b7515ef))
+
 ## [1.4.0](https://github.com/TickLabVN/ssps-fe/compare/v1.3.1...v1.4.0) (2023-12-07)
 
 
