@@ -70,6 +70,10 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
     setIsFileUploadSuccess(false);
     setIsOrderUpdate(false);
     setDesktopOrderStep(0);
+    setMobileOrderStep({
+      current: 0,
+      prev: 3
+    });
     if (printingRequestId?.id) {
       await cancelPrintingRequest.mutateAsync(printingRequestId?.id);
     }

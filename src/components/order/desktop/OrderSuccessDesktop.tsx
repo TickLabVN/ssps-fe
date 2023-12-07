@@ -1,16 +1,19 @@
 import { MutableRefObject, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, CardBody, Dialog, DialogBody, Typography } from '@material-tailwind/react';
 import { CheckIcon, DocumentChartBarIcon } from '@heroicons/react/24/outline';
 import coinImage from '@assets/coin.png';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export function useOrderSuccessDesktop() {
+  const queryClient = useQueryClient();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const OrderSuccessDesktop: Component<{
     initialTotalCost: MutableRefObject<number>;
     serviceFee?: number;
   }> = ({ initialTotalCost, serviceFee }) => {
+    const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
     const { totalCost, setTotalCost, setIsFileUploadSuccess } = useOrderPrintStore();
     const { setDesktopOrderStep } = useOrderWorkflowStore();
 
@@ -51,7 +54,10 @@ export function useOrderSuccessDesktop() {
                 <div className='flex flex-col gap-1'>
                   <div className='flex justify-between items-center'>
                     <p className='text-gray/4 text-base font-normal'>Order number:</p>
-                    <p className='text-gray/4 text-base font-medium'>{`#1234-5678`}</p>
+                    <p className='text-gray/4 text-base font-medium'>
+                      {printingRequestId &&
+                        `#${printingRequestId.id.slice(0, 4)}-${printingRequestId.id.slice(4, 8)}`}
+                    </p>
                   </div>
                   <div className='flex justify-between items-center'>
                     <p className='text-gray/4 text-base font-normal'>Pick-up location:</p>

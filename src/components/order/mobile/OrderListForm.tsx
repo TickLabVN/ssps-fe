@@ -31,12 +31,19 @@ export const OrderListForm: Component<{
     setTotalCost(0);
     setIsFileUploadSuccess(false);
     setIsOrderUpdate(false);
+    setMobileOrderStep({
+      current: 0,
+      prev: 2
+    });
+    setDesktopOrderStep(0);
     await handleExistOrderForm();
   }, [
     initialTotalCost,
     setIsFileUploadSuccess,
     setIsOrderUpdate,
     setTotalCost,
+    setMobileOrderStep,
+    setDesktopOrderStep,
     handleExistOrderForm
   ]);
 
