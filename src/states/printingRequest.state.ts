@@ -6,6 +6,7 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
   devtools((set) => ({
     isFileUploadSuccess: false,
     isOrderUpdate: false,
+    isOrderSuccess: false,
     fileConfig: {
       numOfCopies: 1,
       layout: LAYOUT_SIDE.portrait,
@@ -16,11 +17,15 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
     specificPage: '',
     pageBothSide: PAGE_SIDE.both.portrait[0]!.value,
     totalCost: 0,
+    fileCoins: 0,
     setIsFileUploadSuccess: (data) => {
       set({ isFileUploadSuccess: data });
     },
     setIsOrderUpdate: (data) => {
       set({ isOrderUpdate: data });
+    },
+    setIsOrderSuccess: (data) => {
+      set({ isOrderSuccess: data });
     },
     setFileConfig: (key, value) => {
       set((state) => ({ fileConfig: { ...state.fileConfig, [key]: value } }));
@@ -47,6 +52,9 @@ export const useOrderPrintStore = create<PrintingRequestStore>()(
     },
     setTotalCost: (totalCost) => {
       set({ totalCost: totalCost });
+    },
+    setFileCoins: (fileCoins) => {
+      set({ fileCoins: fileCoins });
     }
   }))
 );

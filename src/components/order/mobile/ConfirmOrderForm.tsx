@@ -16,7 +16,7 @@ import {
 } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { FormFooter } from '@components/order/common';
-import { usePrintingRequestQuery } from '@hooks';
+import { usePrintingRequestQuery, usePrintingRequestMutation } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
@@ -25,13 +25,16 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
 }) => {
   const queryClient = useQueryClient();
   const remainCoins = queryClient.getQueryData<number>(['/api/user/remain-coins']);
+  const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
+
   const {
     listFiles: { data: listFiles, isFetching, isError },
     serviceFee: { data: serviceFee }
   } = usePrintingRequestQuery();
+  const { executePrintingRequest } = usePrintingRequestMutation();
 
   const { mobileOrderStep, setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
-  const { totalCost, setIsOrderUpdate, setTotalCost } = useOrderPrintStore();
+  const { totalCost, setIsOrderUpdate, setIsOrderSuccess, setTotalCost } = useOrderPrintStore();
 
   useEffect(() => {
     setTotalCost(initialTotalCost.current);
@@ -44,6 +47,16 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
       prev: 3
     });
     setDesktopOrderStep(1);
+  };
+
+  const handleExecutePrintingRequest = async () => {
+    if (!printingRequestId) return;
+    await executePrintingRequest.mutateAsync(printingRequestId.id);
+    setIsOrderSuccess(true);
+    setMobileOrderStep({
+      current: 5,
+      prev: 3
+    });
   };
 
   const ConfirmOrderItem: Component<{ fileExtraMetadata: FileExtraMetadata }> = useMemo(
@@ -149,6 +162,7 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
                 current: 4,
                 prev: 3
               });
+              setDesktopOrderStep(3);
             }}
           >
             <Typography variant='h6'>Print wallet</Typography>
@@ -217,12 +231,7 @@ export const ConfirmOrderForm: Component<{ initialTotalCost: MutableRefObject<nu
               : 'gray'
           }
           className='rounded-none w-[30%]'
-          onClick={() =>
-            setMobileOrderStep({
-              current: 5,
-              prev: 3
-            })
-          }
+          onClick={handleExecutePrintingRequest}
           disabled={!remainCoins || remainCoins < totalCost + (serviceFee ?? 0)}
         >
           <span className='text-base'>Confirm</span>

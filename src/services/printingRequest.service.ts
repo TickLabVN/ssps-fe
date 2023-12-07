@@ -52,5 +52,11 @@ export const printingRequestService = {
         headers: { 'Content-Type': 'text/plain' },
         params: { path: { printingRequestId } }
       })
+    ),
+  executePrintingRequest: (printingRequestId: string) =>
+    invoke(
+      apiClient.POST('/api/printRequest/execute', {
+        body: { printingRequestId }
+      })
     )
 };

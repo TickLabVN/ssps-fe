@@ -268,7 +268,7 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
               {listFiles && listFiles.length > 0 ? (
                 isFetching ? (
                   fileTable.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
+                    <tr key={row.id} className='border-b-2'>
                       {row.getAllCells().map((cell) => (
                         <td key={cell.id}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -288,7 +288,7 @@ export const OrderListDesktop: Component<{ initialTotalCost: MutableRefObject<nu
                   </tr>
                 ) : (
                   fileTable.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
+                    <tr key={row.id} className='border-b-2'>
                       {row.getAllCells().map((cell) => (
                         <td key={cell.id}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

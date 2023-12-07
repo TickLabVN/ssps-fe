@@ -4,17 +4,20 @@ import { Dialog, DialogBody } from '@material-tailwind/react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useOrderWorkflow } from '@components/order/common';
 import { ScreenSize } from '@constants';
-import { useScreenSize, usePrintingRequestMutation } from '@hooks';
+import { useScreenSize, usePrintingRequestMutation, usePrintingRequestQuery } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
+import { formatFileSize } from '@utils';
 
 export function useChooseFileBox() {
   const queryClient = useQueryClient();
   const [openBox, setOpenBox] = useState<boolean>(false);
   const { openOrderWorkflow, closeOrderWorkflow, OrderWorkflow } = useOrderWorkflow();
 
-  const ChooseFileBox: Component<{ initialTotalCost: MutableRefObject<number> }> = ({
-    initialTotalCost
-  }) => {
+  const ChooseFileBox: Component<{
+    initialTotalCost: MutableRefObject<number>;
+    handleOpenOrderSuccessDesktop: () => void;
+    handleCloseOrderSuccessDesktop: () => void;
+  }> = ({ initialTotalCost, handleOpenOrderSuccessDesktop, handleCloseOrderSuccessDesktop }) => {
     const printingRequestId = queryClient.getQueryData<PrintingRequestId>(['printingRequestId']);
     const fileIdCurrent = queryClient.getQueryData<string>(['fileIdCurrent']) || null;
     const { data: fileMetadata } = useQuery({
@@ -23,7 +26,12 @@ export function useChooseFileBox() {
     });
     const { screenSize } = useScreenSize();
     const { desktopOrderStep, mobileOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
-    const { isFileUploadSuccess, setIsFileUploadSuccess, setTotalCost } = useOrderPrintStore();
+    const { isFileUploadSuccess, isOrderSuccess, setIsFileUploadSuccess, setTotalCost } =
+      useOrderPrintStore();
+
+    const {
+      fileUploadRequirement: [acceptedFileExtension, maxFileSize]
+    } = usePrintingRequestQuery();
     const { uploadFile, cancelPrintingRequest } = usePrintingRequestMutation();
 
     useEffect(() => {
@@ -36,17 +44,30 @@ export function useChooseFileBox() {
       if (isFileUploadSuccess) {
         if (screenSize <= ScreenSize.MD) {
           openOrderWorkflow();
+          if (isOrderSuccess) {
+            handleCloseOrderSuccessDesktop();
+          }
         } else {
           if (desktopOrderStep === 0) {
             openOrderWorkflow();
           } else {
             closeOrderWorkflow();
           }
+          if (isOrderSuccess) {
+            handleOpenOrderSuccessDesktop();
+          }
         }
       } else {
         closeOrderWorkflow();
       }
-    }, [screenSize, desktopOrderStep, isFileUploadSuccess]);
+    }, [
+      screenSize,
+      desktopOrderStep,
+      isFileUploadSuccess,
+      isOrderSuccess,
+      handleOpenOrderSuccessDesktop,
+      handleCloseOrderSuccessDesktop
+    ]);
 
     const handleUploadDocument = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,10 +118,11 @@ export function useChooseFileBox() {
               </div>
 
               <div className='text-sm lg:text-md w-54 h-13 gap-1'>
-                <span className='font-semibold h-8'>Allowed formats:</span> .doc, .docx, .xls,
-                .xlsx, .ppt, .jpg, .png, .pdf
+                <span className='font-semibold h-8'>Allowed formats:</span>{' '}
+                {acceptedFileExtension.data?.map((fileType) => `.${fileType}`).join(', ')}
                 <div className='text-sm lg:text-md h-4'>
-                  <span className='font-semibold'>Maximum size:</span> 100MB
+                  <span className='font-semibold'>Maximum size:</span>{' '}
+                  {maxFileSize.data !== undefined && formatFileSize(maxFileSize.data)}
                 </div>
               </div>
 

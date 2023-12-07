@@ -4,7 +4,7 @@ import { CheckIcon, DocumentChartBarIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import coinImage from '@assets/coin.png';
 import { usePrintingRequestQuery } from '@hooks';
-import { useOrderPrintStore } from '@states';
+import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
 
 export const OrderSuccessForm: Component<{
   handleCloseOrderForm: () => void;
@@ -14,11 +14,17 @@ export const OrderSuccessForm: Component<{
     serviceFee: { data: serviceFee }
   } = usePrintingRequestQuery();
   const { totalCost, setIsFileUploadSuccess, setTotalCost } = useOrderPrintStore();
+  const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
 
   const handleExistOrderSuccessForm = () => {
     setIsFileUploadSuccess(false);
     setTotalCost(0);
     initialTotalCost.current = 0;
+    setMobileOrderStep({
+      current: 0,
+      prev: 5
+    });
+    setDesktopOrderStep(0);
     handleCloseOrderForm();
   };
 

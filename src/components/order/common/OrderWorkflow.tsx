@@ -5,7 +5,6 @@ import {
   UploadDocumentForm,
   OrderListForm,
   ConfirmOrderForm,
-  TopupWalletForm,
   OrderSuccessForm,
   PreviewDocument
 } from '@components/order/mobile';
@@ -13,6 +12,7 @@ import { UploadAndPreviewDesktop } from '@components/order/desktop';
 import { ScreenSize } from '@constants';
 import { usePrintingRequestMutation, useScreenSize } from '@hooks';
 import { useOrderWorkflowStore } from '@states';
+import { TopupWallet } from './TopupWallet';
 
 export function useOrderWorkflow() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -54,7 +54,7 @@ export function useOrderWorkflow() {
       } else if (mobileOrderStep.current === 3) {
         return <ConfirmOrderForm initialTotalCost={initialTotalCost} />;
       } else if (mobileOrderStep.current === 4) {
-        return <TopupWalletForm />;
+        return <TopupWallet />;
       } else if (mobileOrderStep.current === 5) {
         return (
           <OrderSuccessForm

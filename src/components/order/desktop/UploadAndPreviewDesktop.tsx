@@ -1,6 +1,8 @@
-import { ChangeEvent, MutableRefObject, useCallback } from 'react';
+import { ChangeEvent, MutableRefObject, useCallback, useEffect } from 'react';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { PDFDocument } from 'pdf-lib';
+import type { Buffer } from 'buffer';
 import { Button, IconButton, Input, Option, Radio, Select } from '@material-tailwind/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
@@ -12,8 +14,10 @@ import {
   FormFooter
 } from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
-import { usePrintingRequestMutation, emitEvent } from '@hooks';
+import { usePrintingRequestMutation, usePrintingRequestQuery, emitEvent } from '@hooks';
 import { useOrderPrintStore, useOrderWorkflowStore } from '@states';
+import { editPdf } from '@utils';
+import type { PagePerSheet } from '@utils';
 
 export const UploadAndPreviewDesktop: Component<{
   initialTotalCost: MutableRefObject<number>;
@@ -27,10 +31,14 @@ export const UploadAndPreviewDesktop: Component<{
     queryFn: () =>
       fileIdCurrent ? queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent]) : null
   });
+  const fileBuffer = queryClient.getQueryData<Buffer>(['fileBuffer']);
 
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
 
+  const {
+    coinPerPage: { data: coinPerPage }
+  } = usePrintingRequestQuery();
   const { uploadFileConfig, deleteFile, cancelPrintingRequest } = usePrintingRequestMutation();
 
   const { setDesktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
@@ -47,8 +55,44 @@ export const UploadAndPreviewDesktop: Component<{
     setIsFileUploadSuccess,
     setIsOrderUpdate,
     clearFileConfig,
-    clearSpecificPageAndPageBothSide
+    clearSpecificPageAndPageBothSide,
+    setFileCoins
   } = useOrderPrintStore();
+
+  const { editPdfPrinting } = editPdf;
+
+  useEffect(() => {
+    const handleEditPdfPrinting = async () => {
+      if (fileBuffer) {
+        const fileEditedBuffer = await editPdfPrinting(
+          fileBuffer,
+          fileConfig.pageSide,
+          fileConfig.pages,
+          fileConfig.layout,
+          parseInt(fileConfig.pagesPerSheet) as PagePerSheet
+        );
+        queryClient.setQueryData(['fileURL'], URL.createObjectURL(new Blob([fileEditedBuffer])));
+        if (coinPerPage !== undefined) {
+          const pdfDoc = await PDFDocument.load(fileEditedBuffer);
+          setFileCoins(pdfDoc.getPageCount() * coinPerPage);
+          setTotalCost(initialTotalCost.current + pdfDoc.getPageCount() * coinPerPage);
+        }
+      }
+    };
+    handleEditPdfPrinting();
+  }, [
+    initialTotalCost,
+    coinPerPage,
+    fileBuffer,
+    fileConfig.layout,
+    fileConfig.pageSide,
+    fileConfig.pages,
+    fileConfig.pagesPerSheet,
+    queryClient,
+    editPdfPrinting,
+    setFileCoins,
+    setTotalCost
+  ]);
 
   const handlePageBothSide = useCallback(
     (event: string) => {
@@ -164,6 +208,9 @@ export const UploadAndPreviewDesktop: Component<{
         : PAGE_SIDE.both.landscape[0]!.value
     );
     setFileConfig(FILE_CONFIG.layout, e.target.value);
+    if (e.target.value === LAYOUT_SIDE.landscape && fileConfig.pagesPerSheet === '1') {
+      setFileConfig(FILE_CONFIG.pagesPerSheet, '2');
+    }
   };
   const handlePagesChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFileConfig(FILE_CONFIG.pages, e.target.value);
@@ -177,6 +224,16 @@ export const UploadAndPreviewDesktop: Component<{
       queryKey: ['fileURL'],
       queryFn: () => queryClient.getQueryData<string>(['fileURL'])
     });
+
+    useEffect(() => {
+      return () => {
+        const revokeURL = queryClient.getQueryData<string>(['fileURL']);
+        if (revokeURL) {
+          URL.revokeObjectURL(revokeURL);
+        }
+      };
+    }, []);
+
     const PreviewBody = () => {
       return (
         <DocViewer
@@ -291,7 +348,11 @@ export const UploadAndPreviewDesktop: Component<{
                   }}
                 >
                   {PAGES_PER_SHEET.map((item) => (
-                    <Option key={item} value={item}>
+                    <Option
+                      key={item}
+                      value={item}
+                      disabled={item === '1' && fileConfig.layout === LAYOUT_SIDE.landscape}
+                    >
                       {item}
                     </Option>
                   ))}

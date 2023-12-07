@@ -1,5 +1,7 @@
-import { ChangeEvent, MutableRefObject, useCallback } from 'react';
+import { ChangeEvent, MutableRefObject, useCallback, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { PDFDocument } from 'pdf-lib';
+import type { Buffer } from 'buffer';
 import {
   Button,
   IconButton,
@@ -18,8 +20,10 @@ import {
   FormFooter
 } from '@components/order/common';
 import { LAYOUT_SIDE, FILE_CONFIG, PAGES_SPECIFIC, PAGES_PER_SHEET, PAGE_SIDE } from '@constants';
-import { usePrintingRequestMutation, emitEvent } from '@hooks';
+import { usePrintingRequestMutation, usePrintingRequestQuery, emitEvent } from '@hooks';
 import { useOrderWorkflowStore, useOrderPrintStore } from '@states';
+import { editPdf } from '@utils';
+import type { PagePerSheet } from '@utils';
 
 export const UploadDocumentForm: Component<{
   handleExistOrderForm: () => Promise<void>;
@@ -31,6 +35,11 @@ export const UploadDocumentForm: Component<{
     queryKey: ['fileMetadata', fileIdCurrent],
     queryFn: () => queryClient.getQueryData<FileMetadata>(['fileMetadata', fileIdCurrent])
   });
+  const fileBuffer = queryClient.getQueryData<Buffer>(['fileBuffer']);
+
+  const {
+    coinPerPage: { data: coinPerPage }
+  } = usePrintingRequestQuery();
   const { uploadFileConfig, deleteFile } = usePrintingRequestMutation();
   const { setMobileOrderStep, setDesktopOrderStep } = useOrderWorkflowStore();
   const {
@@ -46,10 +55,46 @@ export const UploadDocumentForm: Component<{
     setIsFileUploadSuccess,
     clearFileConfig,
     clearSpecificPageAndPageBothSide,
-    setIsOrderUpdate
+    setIsOrderUpdate,
+    setFileCoins
   } = useOrderPrintStore();
   const { openLayoutSide, LayoutSide } = useLayoutSide();
   const { openCloseForm, CloseForm } = useCloseForm();
+
+  const { editPdfPrinting } = editPdf;
+
+  useEffect(() => {
+    const handleEditPdfPrinting = async () => {
+      if (fileBuffer) {
+        const fileEditedBuffer = await editPdfPrinting(
+          fileBuffer,
+          fileConfig.pageSide,
+          fileConfig.pages,
+          fileConfig.layout,
+          parseInt(fileConfig.pagesPerSheet) as PagePerSheet
+        );
+        queryClient.setQueryData(['fileURL'], URL.createObjectURL(new Blob([fileEditedBuffer])));
+        if (coinPerPage !== undefined) {
+          const pdfDoc = await PDFDocument.load(fileEditedBuffer);
+          setFileCoins(pdfDoc.getPageCount() * coinPerPage);
+          setTotalCost(initialTotalCost.current + pdfDoc.getPageCount() * coinPerPage);
+        }
+      }
+    };
+    handleEditPdfPrinting();
+  }, [
+    initialTotalCost,
+    coinPerPage,
+    fileBuffer,
+    fileConfig.layout,
+    fileConfig.pageSide,
+    fileConfig.pages,
+    fileConfig.pagesPerSheet,
+    queryClient,
+    setFileCoins,
+    setTotalCost,
+    editPdfPrinting
+  ]);
 
   const handlePageBothSide = useCallback(
     (event: string) => {
@@ -145,7 +190,7 @@ export const UploadDocumentForm: Component<{
     }
   };
 
-  const handleLayoutChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleLayoutChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setPageBothSide(
       e.target.value === LAYOUT_SIDE.portrait
         ? PAGE_SIDE.both.portrait[0]!.value
@@ -158,6 +203,9 @@ export const UploadDocumentForm: Component<{
         : PAGE_SIDE.both.landscape[0]!.value
     );
     setFileConfig(FILE_CONFIG.layout, e.target.value);
+    if (e.target.value === LAYOUT_SIDE.landscape && fileConfig.pagesPerSheet === '1') {
+      setFileConfig(FILE_CONFIG.pagesPerSheet, '2');
+    }
   };
   const handlePagesChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFileConfig(FILE_CONFIG.pages, e.target.value);
@@ -253,7 +301,11 @@ export const UploadDocumentForm: Component<{
             }}
           >
             {PAGES_PER_SHEET.map((item) => (
-              <Option key={item} value={item}>
+              <Option
+                key={item}
+                value={item}
+                disabled={item === '1' && fileConfig.layout === LAYOUT_SIDE.landscape}
+              >
                 {item}
               </Option>
             ))}

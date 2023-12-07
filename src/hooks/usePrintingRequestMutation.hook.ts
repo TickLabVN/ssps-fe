@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Buffer } from 'buffer';
 import { printingRequestService, buyCoinService, userService } from '@services';
 import { retryQueryFn } from '@utils';
 
@@ -17,6 +18,11 @@ export function usePrintingRequestMutation() {
     mutationKey: ['uploadFile'],
     mutationFn: ({ printingRequestId, file }: { printingRequestId: string; file: File }) =>
       printingRequestService.uploadFile(printingRequestId, file),
+    onMutate: async ({ file }) => {
+      const fileArrayBuffer = await file.arrayBuffer();
+      const fileBuffer = Buffer.from(fileArrayBuffer);
+      queryClient.setQueryData(['fileBuffer'], fileBuffer);
+    },
     onSuccess: (data) => {
       queryClient.setQueryData(['fileIdCurrent'], data.fileId);
       queryClient.setQueryData(['fileURL'], data.fileURL);
@@ -72,6 +78,19 @@ export function usePrintingRequestMutation() {
     }
   });
 
+  const executePrintingRequest = useMutation({
+    mutationKey: ['executePrintingRequest'],
+    mutationFn: (printingRequestId: string) =>
+      printingRequestService.executePrintingRequest(printingRequestId),
+    onSuccess: () => {
+      queryClient.prefetchQuery({
+        queryKey: ['/api/user/remain-coins'],
+        queryFn: () => userService.getRemainCoins(),
+        retry: retryQueryFn
+      });
+    }
+  });
+
   return {
     createPrintingRequest: createPrintingRequest,
     uploadFile: uploadFile,
@@ -80,6 +99,7 @@ export function usePrintingRequestMutation() {
     updateAmountFile: updateAmountFile,
     cancelPrintingRequest: cancelPrintingRequest,
     createPayPalOrder: createPayPalOrder,
-    approvePayPalOrder: approvePayPalOrder
+    approvePayPalOrder: approvePayPalOrder,
+    executePrintingRequest: executePrintingRequest
   };
 }

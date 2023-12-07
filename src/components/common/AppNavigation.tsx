@@ -5,7 +5,7 @@ import { AppDrawer, DesktopNavbar, ToggleSidebarBtn, useSidebarMenu } from '@com
 import { useCloseForm } from '@components/order/common';
 import { ScreenSize } from '@constants';
 import { useScreenSize, useUserQuery, usePrintingRequestQuery, emitEvent } from '@hooks';
-import { useMenuBarStore, useOrderWorkflowStore } from '@states';
+import { useMenuBarStore, useOrderPrintStore, useOrderWorkflowStore } from '@states';
 import { formatFileSize } from '@utils';
 
 export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu }> = ({
@@ -15,7 +15,8 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
   const { screenSize } = useScreenSize();
   const { openSidebar, handleOpenSidebar, SidebarMenu } = useSidebarMenu();
   const { selectedMenu } = useMenuBarStore();
-  const { desktopOrderStep } = useOrderWorkflowStore();
+  const { setIsOrderUpdate } = useOrderPrintStore();
+  const { desktopOrderStep, setDesktopOrderStep, setMobileOrderStep } = useOrderWorkflowStore();
 
   const { openCloseForm, CloseForm } = useCloseForm();
 
@@ -70,7 +71,7 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
               <div className='flex items-center justify-between px-6'>
                 <div className='flex items-center gap-2'>
                   <ChevronLeftIcon
-                    className='w-5 h-5 hover:bg-gray-100 cursor-pointer p-2 rounded-full'
+                    className='w-5 h-5 hover:bg-gray-100 cursor-pointer rounded-full'
                     onClick={openCloseForm}
                   />
                   <p className='text-gray/4 font-semibold text-xl'>Order list</p>
@@ -98,8 +99,33 @@ export const AppNavigation: Component<{ mainMenu: RouteMenu; subMenu: RouteMenu 
           )}
           {desktopOrderStep === 2 && (
             <div className='flex items-center gap-2 px-9'>
-              <ChevronLeftIcon className='w-5 h-5' />
+              <ChevronLeftIcon
+                className='w-5 h-5 hover:bg-gray-100 cursor-pointer rounded-full'
+                onClick={() => {
+                  setIsOrderUpdate(true);
+                  setDesktopOrderStep(1);
+                  setMobileOrderStep({
+                    current: 2,
+                    prev: 3
+                  });
+                }}
+              />
               <p className='text-gray/4 font-semibold text-lg'>Confirm order</p>
+            </div>
+          )}
+          {desktopOrderStep === 3 && (
+            <div className='flex items-center gap-2 px-9'>
+              <ChevronLeftIcon
+                className='w-5 h-5 hover:bg-gray-100 cursor-pointer rounded-full'
+                onClick={() => {
+                  setDesktopOrderStep(2);
+                  setMobileOrderStep({
+                    current: 3,
+                    prev: 4
+                  });
+                }}
+              />
+              <p className='text-gray/4 font-semibold text-lg'>Top up wallet</p>
             </div>
           )}
         </>

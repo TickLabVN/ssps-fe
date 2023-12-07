@@ -1,12 +1,20 @@
 import { useRef } from 'react';
 import { ArrowRightIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Orders, Slides, useChooseFileBox } from '@components/home';
-import { OrderListDesktop, ConfirmOrderDektop } from '@components/order/desktop';
+import { TopupWallet } from '@components/order/common';
+import {
+  OrderListDesktop,
+  ConfirmOrderDektop,
+  useOrderSuccessDesktop
+} from '@components/order/desktop';
 import { usePrintingRequestMutation } from '@hooks';
 import { useOrderWorkflowStore } from '@states';
 
 export function HomePage() {
   const { openChooseFileBox, ChooseFileBox } = useChooseFileBox();
+  const { openOrderSuccessDesktop, closeOrderSuccessDesktop, OrderSuccessDesktop } =
+    useOrderSuccessDesktop();
+
   const { createPrintingRequest } = usePrintingRequestMutation();
   const initialTotalCost = useRef<number>(0);
 
@@ -51,14 +59,26 @@ export function HomePage() {
     } else if (desktopOrderStep === 1) {
       return <OrderListDesktop initialTotalCost={initialTotalCost} />;
     } else if (desktopOrderStep === 2) {
-      return <ConfirmOrderDektop />;
+      return (
+        <ConfirmOrderDektop
+          initialTotalCost={initialTotalCost}
+          handleOpenOrderSuccessDesktop={openOrderSuccessDesktop}
+        />
+      );
+    } else if (desktopOrderStep === 3) {
+      return <TopupWallet />;
     }
   };
 
   return (
     <>
-      <ChooseFileBox initialTotalCost={initialTotalCost} />
+      <ChooseFileBox
+        initialTotalCost={initialTotalCost}
+        handleOpenOrderSuccessDesktop={openOrderSuccessDesktop}
+        handleCloseOrderSuccessDesktop={closeOrderSuccessDesktop}
+      />
       <HomePageContent />
+      <OrderSuccessDesktop initialTotalCost={initialTotalCost} />
     </>
   );
 }

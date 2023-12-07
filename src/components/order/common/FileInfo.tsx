@@ -26,6 +26,7 @@ export const FileInfo: Component<{
 
   const {
     totalCost,
+    fileCoins,
     setFileConfig,
     setTotalCost,
     clearFileConfig,
@@ -39,7 +40,7 @@ export const FileInfo: Component<{
     if (fileExtraMetadata.numOfCopies > 1) {
       if (isConfigStep) {
         setFileConfig(FILE_CONFIG.numOfCopies, fileExtraMetadata.numOfCopies - 1);
-        setTotalCost(totalCost - fileExtraMetadata.fileCoin);
+        setTotalCost(totalCost - fileCoins);
       } else {
         await updateAmountFile.mutateAsync({
           fileId: fileExtraMetadata.fileId,
@@ -56,14 +57,15 @@ export const FileInfo: Component<{
   const handleIncreaseCopies = async () => {
     if (isConfigStep) {
       setFileConfig(FILE_CONFIG.numOfCopies, fileExtraMetadata.numOfCopies + 1);
+      setTotalCost(totalCost + fileCoins);
     } else {
       await updateAmountFile.mutateAsync({
         fileId: fileExtraMetadata.fileId,
         numOfCopies: fileExtraMetadata.numOfCopies + 1
       });
       emitEvent('listFiles:refetch');
+      setTotalCost(totalCost + fileExtraMetadata.fileCoin);
     }
-    setTotalCost(totalCost + fileExtraMetadata.fileCoin);
     if (initialTotalCost) {
       initialTotalCost.current += fileExtraMetadata.fileCoin;
     }
@@ -77,7 +79,7 @@ export const FileInfo: Component<{
       emitEvent('listFiles:refetch');
     } else {
       await deleteFile.mutateAsync(fileExtraMetadata.fileId);
-      setTotalCost(totalCost - fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies);
+      setTotalCost(totalCost - fileCoins * fileExtraMetadata.numOfCopies);
       clearFileConfig();
       clearSpecificPageAndPageBothSide();
     }
@@ -111,11 +113,15 @@ export const FileInfo: Component<{
             <p className='flex items-center gap-1 text-sm mb-5'>
               <img src={coinImage} alt='coinImage' className='grayscale w-6 h-6' />
               <span className='text-gray/4 font-normal'>
-                {fileExtraMetadata.fileCoin + ' x ' + fileExtraMetadata.numOfCopies + ' copies = '}
+                {(isConfigStep ? fileCoins : fileExtraMetadata.fileCoin) +
+                  ' x ' +
+                  fileExtraMetadata.numOfCopies +
+                  ' copies = '}
               </span>
               <img src={coinImage} alt='coinImage' className='w-6 h-6' />
               <span className='text-yellow/1 font-bold'>
-                {fileExtraMetadata.fileCoin * fileExtraMetadata.numOfCopies}
+                {(isConfigStep ? fileCoins : fileExtraMetadata.fileCoin) *
+                  fileExtraMetadata.numOfCopies}
               </span>
             </p>
           </div>
